@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Hello synyx</title>
 		<link rel="stylesheet" href="/css/style.css" />
+		<script type="module" src="/js/app.js"></script>
 	</head>
 	<body class="bg-teal-500">
 		<svg
@@ -33,6 +34,11 @@
 				}
 				.st4 {
 					fill: #333333;
+				}
+
+				.player {
+				}
+				.player-self {
 				}
 			</style>
 			<g id="background">
@@ -738,6 +744,25 @@
 				/>
 			</g>
 			<g id="building_elevator"></g>
+
+			<defs>
+				<pattern
+					id="avatar-image"
+					patternContentUnits="objectBoundingBox"
+					height="100%"
+					width="100%"
+				>
+					<image
+						x="0"
+						y="0"
+						width="1"
+						height="1"
+						preserveAspectRatio="none"
+						href="/avatar.png"
+					></image>
+				</pattern>
+			</defs>
+			<circle id="player" cx="555" cy="666" r="10" fill="url(#avatar-image)" />
 		</svg>
 	</body>
 </html>
