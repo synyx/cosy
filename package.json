@@ -8,7 +8,6 @@
 		"css": "tailwind build src/css/style.css -o static/css/style.css"
 	},
 	"dependencies": {
-		"eslint": "^6.8.0",
 		"eslint-config-prettier": "^6.10.1",
 		"eslint-plugin-prettier": "^3.1.2",
 		"koa": "^2.11.0",
@@ -18,5 +17,8 @@
 		"postcss-cli": "^7.1.0",
 		"prettier": "^2.0.4",
 		"tailwindcss": "^1.2.0"
+	},
+	"devDependencies": {
+		"eslint": "^6.8.0"
 	}
 }
