@@ -23,36 +23,36 @@
     </style>
   </defs>
   <path id="background" class="cls-1" d="M1253.37,337.86c-52.84-.25-101.39-22.75-137.22-62.43-22.91-28.65-45.57-62.27-67.18-90.25.71.81,1.32,1.52,1.81,2.11l-86-120.09C888-30.79,750-16.18,687.39,68.92,650.09,121.46,637.24,210,625.11,265c-.54,1.84-1.05,3.58-1.53,5.2C599.4,348.09,592,390.59,567.42,433.45c-34,51.42-56,72.87-116.61,111.43l-2.28-4S79.56,739,76.24,741.39a167.89,167.89,0,0,0-61.69,73.16C-34,928.13,50,1045.63,165.44,1048.77h9.28v8.44H318.08v-8.4l935.29.28Zm-598.61-141c13.27-35.54,20.3-81.19,40-109.65,50.81-79.37,158.73-93.65,230-37.48,23.9,17.93,48.61,58.59,60.83,73.91C877.61,52.29,723.2,87.59,654.76,196.91Z" transform="translate(-0.53 0.73)"/>
+  <rect id="space-empty2" class="cls-2" x="738.47" y="726.33" width="29" height="90"/>
+  <rect id="space-empty" class="cls-2" x="878.47" y="726.33" width="37" height="90"/>
   <g id="floors">
-    <rect id="space-empty2" class="cls-2" x="738.47" y="726.33" width="29" height="90"/>
-    <rect id="space-empty" class="cls-2" x="878.47" y="726.33" width="37" height="90"/>
-    <rect id="floor-toilet-outside" class="cls-3" x="1030.47" y="646.33" width="76" height="63"/>
+    <path id="floor-toilet-outside" class="cls-3" d="M1031,645.6h76v63h-76Z" transform="translate(-0.53 0.73)"/>
     <path id="floor-office" class="cls-2" d="M572.4,435.7c25.4-45.3,31.1-82.8,55.8-162.3,13.5-52.4,41.4-101.8,89.6-136.9C787,87.9,868.2,78,942,104.2h0c69.3,28.8,93.8,65.8,126.3,110.5,30.8,41.3,39.4,56.5,60.2,76.9,32.8,30,77.1,49.3,120.5,50.1V469.6h-20v11h20v148h-88v94h-42v-81H975v-19H922v39H826v-100H763.5L568.8,441.8Z" transform="translate(-0.53 0.73)"/>
-    <polygon id="floor-storage-marketing" class="cls-3" points="1163.47 717.33 1163.47 632.33 1247.47 632.33 1247.47 717.33 1247.47 717.33 1163.47 717.33"/>
-    <rect id="floor-admin" class="cls-3" x="973.47" y="726.33" width="98" height="95"/>
-    <rect id="floor-shower2" class="cls-3" x="1077.47" y="735.33" width="38" height="50"/>
-    <rect id="floor-shower1" class="cls-3" x="1074.47" y="787.33" width="41" height="34"/>
+    <path id="floor-storage-marketing" class="cls-3" d="M1164,716.6v-85h84v85h-84Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-admin" class="cls-3" d="M974,725.6h98v95H974Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-shower2" class="cls-3" d="M1078,734.6h38v50h-38Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-shower1" class="cls-3" d="M1075,786.6h41v34h-41Z" transform="translate(-0.53 0.73)"/>
     <path id="floor-wasser" class="cls-2" d="M347.5,603.4l66.2,123.3-98.8,52.9L248.8,656.3Z" transform="translate(-0.53 0.73)"/>
     <path id="floor-10vorne" class="cls-2" d="M167.6,1043.2h0C70.8,1039.9,2.6,957.9,9.8,869a161.82,161.82,0,0,1,61-113.2c2.9-2.2,3.2-2.5,3.9-3,8.1-6.3,21.7-13.7,20.9-13.2l49-26.2L168,757Z" transform="translate(-0.53 0.73)"/>
-    <rect id="floor-elevator" class="cls-2" x="776.47" y="726.33" width="94" height="90"/>
-    <rect id="floor-stairs" class="cls-3" x="559.47" y="726.43" width="171" height="90"/>
-    <polygon id="floor-storage-drinks" class="cls-3" points="550.47 721.43 550.47 821.23 455.47 821.23 455.47 772.53 550.47 721.43"/>
-    <polygon id="floor-kitchen" class="cls-4" points="316.47 977.33 175.47 977.33 175.47 879.33 297.47 879.33 297.47 891.33 316.47 891.33 316.47 891.33 316.47 977.33"/>
-    <polygon id="floor-toilet-m2" class="cls-2" points="419.47 1043.33 318.47 1043.33 318.47 1021.33 327.47 1021.33 327.47 925.33 419.47 925.33 419.47 1043.33"/>
-    <polygon id="floor-toilet-m1" class="cls-3" points="420.47 922.33 327.47 922.23 327.47 881.33 383.47 881.33 383.47 879.33 420.47 879.33 420.47 922.33"/>
-    <rect id="floor-living-room" class="cls-2" x="423.47" y="879.33" width="93" height="165"/>
-    <rect id="floor-memory" class="cls-2" x="519.47" y="879.33" width="151" height="165"/>
-    <rect id="floor-kreativ" class="cls-2" x="673.47" y="879.33" width="74" height="165"/>
-    <rect id="floor-contargo" class="cls-2" x="750.47" y="879.33" width="151" height="165"/>
-    <rect id="floor-workspace" class="cls-2" x="1020.47" y="908.33" width="74" height="136"/>
-    <rect id="floor-fitness" class="cls-2" x="1097.47" y="908.33" width="74" height="136"/>
-    <rect id="floor-bmw" class="cls-2" x="1174.47" y="908.33" width="74" height="136"/>
-    <path class="cls-2" d="M1249,904.59v-80h-88v-99l-42,.1v98.9H925v54H906v165h113v-139Z" transform="translate(-0.53 0.73)"/>
-    <polygon id="floor-elevator2" class="cls-4" points="1027.47 646.33 970.47 646.33 970.47 627.33 924.47 627.33 924.47 666.33 654.47 666.33 654.47 717.33 925.47 717.33 925.47 821.33 970.47 821.33 970.47 709.33 1027.47 709.33 1027.47 646.33"/>
-    <polygon id="floor-balcony" class="cls-3" points="311.47 1045.33 180.47 1045.33 180.47 982.33 281.47 982.33 281.47 984.33 311.47 984.33 311.47 1045.33"/>
-    <rect id="floor-toilet-f3" class="cls-3" x="1194.47" y="762.33" width="43" height="29"/>
-    <rect id="floor-toilet-f2" class="cls-3" x="1194.47" y="793.33" width="43" height="29"/>
-    <rect id="floor-toilet-f1" class="cls-3" x="1162.47" y="762.33" width="31" height="60"/>
+    <path id="floor-elevator" class="cls-2" d="M777,725.6h94v90H777Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-stairs" class="cls-3" d="M560,725.7H731v90H560Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-storage-drinks" class="cls-3" d="M551,720.7v99.8H456V771.8Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-kitchen" class="cls-4" d="M317,976.6H176v-98H298v12h19Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-toilet-m2" class="cls-2" d="M420,1042.6H319v-22h9v-96h92Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-toilet-m1" class="cls-3" d="M421,921.6l-93-.1V880.6h56v-2h37Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-living-room" class="cls-2" d="M424,878.6h93v165H424Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-memory" class="cls-2" d="M520,878.6H671v165H520Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-keativ" class="cls-2" d="M674,878.6h74v165H674Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-contargo" class="cls-2" d="M751,878.6H902v165H751Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-workspace" class="cls-2" d="M1021,907.6h74v136h-74Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-fitness" class="cls-2" d="M1098,907.6h74v136h-74Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-bmw" class="cls-2" d="M1175,907.6h74v136h-74Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-billard" class="cls-2" d="M1249,904.59v-80h-88v-99l-42,.1v98.9H925v54H906v165h113v-139Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-elevator2" class="cls-4" d="M1028,645.6H971v-19H925v39H655v51H926v104h45v-112h57Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-balcony" class="cls-3" d="M312,1044.6H181v-63H282v2h30Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-toilet-f3" class="cls-3" d="M1195,761.6h43v29h-43Z" transform="translate(-0.53 0.73)"/>
+    <path id="floor-toilet-f2" class="cls-3" d="M1195,792.6h43v29h-43Z" transform="translate(-0.53 0.73)"/>
+    <path id="floow-toilet-f1" class="cls-3" d="M1163,761.6h31v60h-31Z" transform="translate(-0.53 0.73)"/>
     <path id="floor-coffee" class="cls-2" d="M451.38,824c-33.41.3-32.41-30.87-19.17-42.56a78.39,78.39,0,0,1,8.93-6.29l109.37-58.25,100.73-.1v-55.9h171v-96H763.09L569.81,445.58C521.57,510.08,499.55,521,455.7,550.25L522,674.05l-.3.2h0l-206.8,111-68-127-99.09,53.19,28.42,54.08V874.87h746v-51Z" transform="translate(-0.53 0.73)"/>
     <path id="floor-balcony-north" class="cls-2" d="M695.1,87.6c-19.7,28.5-26.7,74.1-40,109.7C723.6,88,878,52.7,985.9,124.1c-12.2-15.3-36.9-56-60.8-73.9C853.9-6,745.9,8.3,695.1,87.6Z" transform="translate(-0.53 0.73)"/>
     <path id="floor-nullpointer" class="cls-2" d="M516.1,672.6l-98.8,52.8-66-123.5c15-7.9,30-15.8,45.1-23.9,18.1-9.6,36-19.3,53.7-28.9Q483.1,610.9,516.1,672.6Z" transform="translate(-0.53 0.73)"/>
