@@ -83,6 +83,8 @@ function moveDown() {
 			playerAvatar.cy.baseVal.value = nextCy;
 		}
 	}
+
+	updateCurrentRoom();
 }
 
 function moveUp() {
@@ -121,6 +123,24 @@ function moveRight() {
 
 	if (isStillInRoom) {
 		playerAvatar.cx.baseVal.value = nextCx;
+	}
+}
+
+function updateCurrentRoom() {
+	const nextCurrentRoom = floors.find((floor) => {
+		return circleFullyInsidePolygon(
+			[
+				playerAvatar.cx.baseVal.value,
+				playerAvatar.cy.baseVal.value,
+				playerAvatar.r.baseVal.value,
+			],
+			floor.polygon.points,
+		);
+	});
+
+	// no room found -> we're crossing a door right now
+	if (nextCurrentRoom) {
+		currentRoom = nextCurrentRoom;
 	}
 }
 
