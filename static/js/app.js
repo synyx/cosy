@@ -94,27 +94,6 @@ let currentRoom = floors.find((floor) => {
 	return yep;
 });
 
-// let nullpointerPoints = pathToPoints(nullpointer.pathSegList);
-// let polygonSVGPoints = pointCommandsToSVGPoints(nullpointerPoints);
-
-// let polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-// polygon.setAttributeNS(null, "fill", "lime");
-// polygon.setAttributeNS(null, "points", polygonSVGPoints);
-// nullpointer.parentNode.replaceChild(polygon, nullpointer);
-
-let walls = [...document.querySelectorAll("#invisible-walls > line")].map(
-	(line) => {
-		let x1 = Number(line.getAttribute("x1"));
-		let y1 = Number(line.getAttribute("y1"));
-		let x2 = Number(line.getAttribute("x2"));
-		let y2 = Number(line.getAttribute("y2"));
-		return [
-			[x1, y1],
-			[x2, y2],
-		];
-	},
-);
-
 function moveDown() {
 	const nextCy = playerAvatar.cy.baseVal.value + moveSteps;
 
@@ -188,16 +167,6 @@ function pointInPolygon(point, polygon) {
 	return inside;
 }
 
-// function pointInPolygon(point, polygon) {
-// 	for (let n = polygon.length, i = 0, j = n - 1; i < n; j = i++) {
-// 		let touchesBorder = intersects(point, [[polygon[i], polygon[j]]]);
-// 		if (touchesBorder) {
-// 			return false;
-// 		}
-// 	}
-// 	return true;
-// }
-
 function circleFullyInsidePolygin(circle, polygon) {
 	const edges = polygonEdges(polygon);
 	const touchesEdges = edges.some(function (line) {
@@ -221,12 +190,6 @@ function polygonEdges(polygon) {
 		return i ? [polygon[i - 1], p] : [polygon[polygon.length - 1], p];
 	});
 }
-
-// function intersects(circle, lines) {
-// 	return lines.some(function (line) {
-// 		return pointLineSegmentDistance(circle, line) < circle[2];
-// 	});
-// }
 
 function pointLineSegmentDistance(point, line) {
 	var v = line[0],
