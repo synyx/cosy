@@ -42,7 +42,7 @@ document.addEventListener("keydown", function (event) {
 
 const moveSteps = 2;
 const playerAvatar = document.getElementById("player");
-const floors = [...document.querySelectorAll("path[id^=floor_]")].map((floor) =>
+const floors = [...document.querySelectorAll("path[id^=floor-]")].map((floor) =>
 	pathToPolyglot(floor),
 );
 
