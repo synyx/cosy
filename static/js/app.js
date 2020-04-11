@@ -41,7 +41,49 @@ document.addEventListener("keydown", function (event) {
 });
 
 const moveSteps = 2;
-const playerAvatar = document.querySelector("#player");
+const playerAvatar = document.getElementById("player");
+
+/// ---------------------------------------
+// https://stackoverflow.com/questions/53393966/convert-svg-path-to-polygon-coordinates
+//
+const nullpointer = pathToPolyglot(
+	document.getElementById("floor_nullpointer"),
+);
+const coffee = pathToPolyglot(document.getElementById("floor_coffee"));
+const vorne = pathToPolyglot(document.getElementById("floor_10vorne"));
+const polygonPoints = { nullpointer, coffee, vorne };
+
+function pathToPolyglot(path) {
+	var len = path.getTotalLength();
+	var points = [];
+
+	// var NUM_POINTS = 6;
+	var NUM_POINTS = Math.round(len / 10);
+
+	for (var i = 0; i < NUM_POINTS; i++) {
+		var pt = path.getPointAtLength((i * len) / (NUM_POINTS - 1));
+		points.push([pt.x, pt.y]);
+	}
+
+	let polygon = document.createElementNS(
+		"http://www.w3.org/2000/svg",
+		"polygon",
+	);
+	polygon.setAttributeNS(null, "fill", "tomato");
+	polygon.setAttributeNS(null, "points", pointCommandsToSVGPoints(points));
+	path.parentNode.replaceChild(polygon, path);
+
+	return points;
+}
+/// ---------------------------------------
+
+// let nullpointerPoints = pathToPoints(nullpointer.pathSegList);
+// let polygonSVGPoints = pointCommandsToSVGPoints(nullpointerPoints);
+
+// let polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+// polygon.setAttributeNS(null, "fill", "lime");
+// polygon.setAttributeNS(null, "points", polygonSVGPoints);
+// nullpointer.parentNode.replaceChild(polygon, nullpointer);
 
 let walls = [...document.querySelectorAll("#invisible-walls > line")].map(
 	(line) => {
@@ -58,6 +100,13 @@ let walls = [...document.querySelectorAll("#invisible-walls > line")].map(
 
 function moveDown() {
 	const nextCy = playerAvatar.cy.baseVal.value + moveSteps;
+
+	let isStillInRoom = pointInPolygon(
+		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
+		polygonPoints.nullpointer,
+	);
+	console.log({ isStillInRoom });
+
 	const collision = intersects(
 		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
 		walls,
@@ -100,6 +149,16 @@ function moveRight() {
 	}
 }
 
+function pointInPolygon(point, polygon) {
+	for (let n = polygon.length, i = 0, j = n - 1; i < n; j = i++) {
+		let touchesBorder = intersects(point, [[polygon[i], polygon[j]]]);
+		if (touchesBorder) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function intersects(circle, lines) {
 	return lines.some(function (line) {
 		return pointLineSegmentDistance(circle, line) < circle[2];
@@ -133,4 +192,10 @@ function pointPointSquaredDistance(v, w) {
 	var dx = v[0] - w[0],
 		dy = v[1] - w[1];
 	return dx * dx + dy * dy;
+}
+
+function pointCommandsToSVGPoints(pointCommands) {
+	return pointCommands
+		.map((value, index) => (index % 2 === 1 ? "," : " ") + value)
+		.join("");
 }
