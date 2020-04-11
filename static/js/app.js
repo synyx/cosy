@@ -45,6 +45,9 @@ const playerAvatar = document.getElementById("player");
 const floors = [...document.querySelectorAll("path[id^=floor-]")].map((floor) =>
 	pathToPolyglot(floor),
 );
+const doors = [...document.querySelectorAll("path[id^=door-]")].map((floor) =>
+	pathToPolyglot(floor, { precision: 0.3, color: "black" }),
+);
 
 let currentRoom = floors.find((floor) => {
 	let yep = pointInPolygon(
@@ -55,27 +58,37 @@ let currentRoom = floors.find((floor) => {
 		],
 		floor.polygon.points,
 	);
-	console.log({ yep, floor });
+	// console.log({ yep, floor });
 	return yep;
 });
 
 function moveDown() {
 	const nextCy = playerAvatar.cy.baseVal.value + moveSteps;
 
-	let isStillInRoom = circleFullyInsidePolygin(
+	let isStillInRoom = circleFullyInsidePolygon(
 		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
 	);
 
 	if (isStillInRoom) {
 		playerAvatar.cy.baseVal.value = nextCy;
+	} else {
+		const doorId = currentRoom.id.replace(/floor-/, "door-");
+		const door = doors.find((door) => door.id === doorId);
+		const wantsToLeave = circleTouchesPolygonEdges(
+			[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
+			door.polygon.points,
+		);
+		if (wantsToLeave) {
+			playerAvatar.cy.baseVal.value = nextCy;
+		}
 	}
 }
 
 function moveUp() {
 	const nextCy = playerAvatar.cy.baseVal.value - moveSteps;
 
-	let isStillInRoom = circleFullyInsidePolygin(
+	let isStillInRoom = circleFullyInsidePolygon(
 		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
 	);
@@ -88,7 +101,7 @@ function moveUp() {
 function moveLeft() {
 	const nextCx = playerAvatar.cx.baseVal.value - moveSteps;
 
-	let isStillInRoom = circleFullyInsidePolygin(
+	let isStillInRoom = circleFullyInsidePolygon(
 		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
 	);
@@ -101,7 +114,7 @@ function moveLeft() {
 function moveRight() {
 	const nextCx = playerAvatar.cx.baseVal.value + moveSteps;
 
-	let isStillInRoom = circleFullyInsidePolygin(
+	let isStillInRoom = circleFullyInsidePolygon(
 		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
 	);
@@ -114,12 +127,11 @@ function moveRight() {
 /// ---------------------------------------
 // https://stackoverflow.com/questions/53393966/convert-svg-path-to-polygon-coordinates
 //
-function pathToPolyglot(path) {
+function pathToPolyglot(path, { precision = 0.2, color = "tomato" } = {}) {
 	var len = path.getTotalLength();
 	var points = [];
 
-	// var NUM_POINTS = 6;
-	var NUM_POINTS = Math.round(len / 10);
+	var NUM_POINTS = Math.round(len * precision);
 
 	for (var i = 0; i < NUM_POINTS; i++) {
 		var pt = path.getPointAtLength((i * len) / (NUM_POINTS - 1));
@@ -131,7 +143,7 @@ function pathToPolyglot(path) {
 		"polygon",
 	);
 	polygon.setAttributeNS(null, "id", path.id);
-	polygon.setAttributeNS(null, "fill", "tomato");
+	polygon.setAttributeNS(null, "fill", color);
 	polygon.setAttributeNS(null, "points", pointCommandsToSVGPoints(points));
 	path.parentNode.replaceChild(polygon, path);
 
@@ -166,15 +178,8 @@ function pointInPolygon(point, polygon) {
 	return inside;
 }
 
-function circleFullyInsidePolygin(circle, polygon) {
-	const edges = polygonEdges(polygon);
-	const touchesEdges = edges.some(function (line) {
-		const radius = circle[2];
-		const distance = pointLineSegmentDistance(circle, line);
-		console.log({ radius, distance, line });
-		return distance < radius;
-	});
-
+function circleFullyInsidePolygon(circle, polygon) {
+	const touchesEdges = circleTouchesPolygonEdges(circle, polygon);
 	if (touchesEdges) {
 		console.log("touches an edge");
 		return false;
@@ -182,6 +187,18 @@ function circleFullyInsidePolygin(circle, polygon) {
 
 	const withinPolygon = pointInPolygon(circle, polygon);
 	return withinPolygon;
+}
+
+function circleTouchesPolygonEdges(circle, polygon) {
+	const edges = polygonEdges(polygon);
+	const touchesEdges = edges.some(function (line) {
+		const radius = circle[2];
+		const distance = pointLineSegmentDistance(circle, line);
+		// console.log({ radius, distance, line });
+		return distance < radius;
+	});
+
+	return touchesEdges;
 }
 
 function polygonEdges(polygon) {
