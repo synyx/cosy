@@ -73,13 +73,12 @@ function moveDown() {
 	if (isStillInRoom) {
 		playerAvatar.cy.baseVal.value = nextCy;
 	} else {
-		const doorId = currentRoom.id.replace(/floor-/, "door-");
-		const door = doors.find((door) => door.id === doorId);
-		const wantsToLeave = circleTouchesPolygonEdges(
-			[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
-			door.polygon.points,
-		);
-		if (wantsToLeave) {
+		const door = getIntersectingDoor([
+			playerAvatar.cx.baseVal.value,
+			nextCy,
+			playerAvatar.r.baseVal.value,
+		]);
+		if (door) {
 			playerAvatar.cy.baseVal.value = nextCy;
 		}
 	}
@@ -97,7 +96,18 @@ function moveUp() {
 
 	if (isStillInRoom) {
 		playerAvatar.cy.baseVal.value = nextCy;
+	} else {
+		const door = getIntersectingDoor([
+			playerAvatar.cx.baseVal.value,
+			nextCy,
+			playerAvatar.r.baseVal.value,
+		]);
+		if (door) {
+			playerAvatar.cy.baseVal.value = nextCy;
+		}
 	}
+
+	updateCurrentRoom();
 }
 
 function moveLeft() {
@@ -110,7 +120,18 @@ function moveLeft() {
 
 	if (isStillInRoom) {
 		playerAvatar.cx.baseVal.value = nextCx;
+	} else {
+		const door = getIntersectingDoor([
+			nextCx,
+			playerAvatar.cy.baseVal.value,
+			playerAvatar.r.baseVal.value,
+		]);
+		if (door) {
+			playerAvatar.cx.baseVal.value = nextCx;
+		}
 	}
+
+	updateCurrentRoom();
 }
 
 function moveRight() {
@@ -123,12 +144,29 @@ function moveRight() {
 
 	if (isStillInRoom) {
 		playerAvatar.cx.baseVal.value = nextCx;
+	} else {
+		const door = getIntersectingDoor([
+			nextCx,
+			playerAvatar.cy.baseVal.value,
+			playerAvatar.r.baseVal.value,
+		]);
+		if (door) {
+			playerAvatar.cx.baseVal.value = nextCx;
+		}
 	}
+
+	updateCurrentRoom();
+}
+
+function getIntersectingDoor(nextPlayer) {
+	return doors.find((door) => {
+		return circleTouchesPolygonEdges(nextPlayer, door.polygon.points);
+	});
 }
 
 function updateCurrentRoom() {
 	const nextCurrentRoom = floors.find((floor) => {
-		return circleFullyInsidePolygon(
+		return pointInPolygon(
 			[
 				playerAvatar.cx.baseVal.value,
 				playerAvatar.cy.baseVal.value,
@@ -140,7 +178,10 @@ function updateCurrentRoom() {
 
 	// no room found -> we're crossing a door right now
 	if (nextCurrentRoom) {
+		console.log("next current room:", nextCurrentRoom.id);
 		currentRoom = nextCurrentRoom;
+	} else {
+		console.log("next current room:", " no room found :-(");
 	}
 }
 
