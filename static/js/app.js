@@ -28,19 +28,8 @@ function randomName() {
 	const number = Math.floor(Math.random() * 6) + 1;
 }
 
-document.addEventListener("keydown", function (event) {
-	if (event.key === "ArrowUp") {
-		moveUp();
-	} else if (event.key === "ArrowDown") {
-		moveDown();
-	} else if (event.key === "ArrowLeft") {
-		moveLeft();
-	} else if (event.key === "ArrowRight") {
-		moveRight();
-	}
-});
-
-const moveSteps = 2;
+let moveSteps = 2;
+let moveStepsFactor = 1;
 const playerAvatar = document.getElementById("player");
 const floors = [...document.querySelectorAll("path[id^=floor-]")].map((floor) =>
 	pathToPolyglot(floor),
@@ -62,8 +51,30 @@ let currentRoom = floors.find((floor) => {
 	return yep;
 });
 
+document.addEventListener("keydown", function (event) {
+	console.log("keydown", event.key);
+	if (event.key === "Shift") {
+		moveStepsFactor = 2;
+	} else if (event.key === "ArrowUp") {
+		moveUp();
+	} else if (event.key === "ArrowDown") {
+		moveDown();
+	} else if (event.key === "ArrowLeft") {
+		moveLeft();
+	} else if (event.key === "ArrowRight") {
+		moveRight();
+	}
+});
+
+document.addEventListener("keyup", function (event) {
+	console.log("keyup", event.key);
+	if (event.key === "Shift") {
+		moveStepsFactor = 1;
+	}
+});
+
 function moveDown() {
-	const nextCy = playerAvatar.cy.baseVal.value + moveSteps;
+	const nextCy = playerAvatar.cy.baseVal.value + moveSteps * moveStepsFactor;
 
 	let isStillInRoom = circleFullyInsidePolygon(
 		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
@@ -87,7 +98,7 @@ function moveDown() {
 }
 
 function moveUp() {
-	const nextCy = playerAvatar.cy.baseVal.value - moveSteps;
+	const nextCy = playerAvatar.cy.baseVal.value - moveSteps * moveStepsFactor;
 
 	let isStillInRoom = circleFullyInsidePolygon(
 		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
@@ -111,7 +122,7 @@ function moveUp() {
 }
 
 function moveLeft() {
-	const nextCx = playerAvatar.cx.baseVal.value - moveSteps;
+	const nextCx = playerAvatar.cx.baseVal.value - moveSteps * moveStepsFactor;
 
 	let isStillInRoom = circleFullyInsidePolygon(
 		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
@@ -135,7 +146,7 @@ function moveLeft() {
 }
 
 function moveRight() {
-	const nextCx = playerAvatar.cx.baseVal.value + moveSteps;
+	const nextCx = playerAvatar.cx.baseVal.value + moveSteps * moveStepsFactor;
 
 	let isStillInRoom = circleFullyInsidePolygon(
 		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
