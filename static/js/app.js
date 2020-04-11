@@ -46,12 +46,9 @@ const playerAvatar = document.getElementById("player");
 /// ---------------------------------------
 // https://stackoverflow.com/questions/53393966/convert-svg-path-to-polygon-coordinates
 //
-const nullpointer = pathToPolyglot(
-	document.getElementById("floor_nullpointer"),
+const floors = [...document.querySelectorAll("path[id^=floor_]")].map((floor) =>
+	pathToPolyglot(floor),
 );
-const coffee = pathToPolyglot(document.getElementById("floor_coffee"));
-const vorne = pathToPolyglot(document.getElementById("floor_10vorne"));
-const polygonPoints = { nullpointer, coffee, vorne };
 
 function pathToPolyglot(path) {
 	var len = path.getTotalLength();
@@ -69,13 +66,33 @@ function pathToPolyglot(path) {
 		"http://www.w3.org/2000/svg",
 		"polygon",
 	);
+	polygon.setAttributeNS(null, "id", path.id);
 	polygon.setAttributeNS(null, "fill", "tomato");
 	polygon.setAttributeNS(null, "points", pointCommandsToSVGPoints(points));
 	path.parentNode.replaceChild(polygon, path);
 
-	return points;
+	return {
+		id: path.id,
+		polygon: {
+			element: polygon,
+			points,
+		},
+	};
 }
 /// ---------------------------------------
+
+let currentRoom = floors.find((floor) => {
+	let yep = pointInPolygon(
+		[
+			playerAvatar.cx.baseVal.value,
+			playerAvatar.cy.baseVal.value,
+			playerAvatar.r.baseVal.value,
+		],
+		floor.polygon.points,
+	);
+	console.log({ yep, floor });
+	return yep;
+});
 
 // let nullpointerPoints = pathToPoints(nullpointer.pathSegList);
 // let polygonSVGPoints = pointCommandsToSVGPoints(nullpointerPoints);
@@ -101,69 +118,115 @@ let walls = [...document.querySelectorAll("#invisible-walls > line")].map(
 function moveDown() {
 	const nextCy = playerAvatar.cy.baseVal.value + moveSteps;
 
-	let isStillInRoom = pointInPolygon(
+	let isStillInRoom = circleFullyInsidePolygin(
 		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
-		polygonPoints.nullpointer,
+		currentRoom.polygon.points,
 	);
-	console.log({ isStillInRoom });
 
-	const collision = intersects(
-		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
-		walls,
-	);
-	if (!collision) {
+	if (isStillInRoom) {
 		playerAvatar.cy.baseVal.value = nextCy;
 	}
 }
 
 function moveUp() {
 	const nextCy = playerAvatar.cy.baseVal.value - moveSteps;
-	const collision = intersects(
+
+	let isStillInRoom = circleFullyInsidePolygin(
 		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
-		walls,
+		currentRoom.polygon.points,
 	);
-	if (!collision) {
+
+	if (isStillInRoom) {
 		playerAvatar.cy.baseVal.value = nextCy;
 	}
 }
 
 function moveLeft() {
 	const nextCx = playerAvatar.cx.baseVal.value - moveSteps;
-	const collision = intersects(
+
+	let isStillInRoom = circleFullyInsidePolygin(
 		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
-		walls,
+		currentRoom.polygon.points,
 	);
-	if (!collision) {
+
+	if (isStillInRoom) {
 		playerAvatar.cx.baseVal.value = nextCx;
 	}
 }
 
 function moveRight() {
 	const nextCx = playerAvatar.cx.baseVal.value + moveSteps;
-	const collision = intersects(
+
+	let isStillInRoom = circleFullyInsidePolygin(
 		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
-		walls,
+		currentRoom.polygon.points,
 	);
-	if (!collision) {
+
+	if (isStillInRoom) {
 		playerAvatar.cx.baseVal.value = nextCx;
 	}
 }
 
 function pointInPolygon(point, polygon) {
-	for (let n = polygon.length, i = 0, j = n - 1; i < n; j = i++) {
-		let touchesBorder = intersects(point, [[polygon[i], polygon[j]]]);
-		if (touchesBorder) {
-			return false;
-		}
+	for (
+		var n = polygon.length,
+			i = 0,
+			j = n - 1,
+			x = point[0],
+			y = point[1],
+			inside = false;
+		i < n;
+		j = i++
+	) {
+		var xi = polygon[i][0],
+			yi = polygon[i][1],
+			xj = polygon[j][0],
+			yj = polygon[j][1];
+		if ((yi > y) ^ (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi)
+			inside = !inside;
 	}
-	return true;
+	return inside;
 }
 
-function intersects(circle, lines) {
-	return lines.some(function (line) {
-		return pointLineSegmentDistance(circle, line) < circle[2];
+// function pointInPolygon(point, polygon) {
+// 	for (let n = polygon.length, i = 0, j = n - 1; i < n; j = i++) {
+// 		let touchesBorder = intersects(point, [[polygon[i], polygon[j]]]);
+// 		if (touchesBorder) {
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
+
+function circleFullyInsidePolygin(circle, polygon) {
+	const edges = polygonEdges(polygon);
+	const touchesEdges = edges.some(function (line) {
+		const radius = circle[2];
+		const distance = pointLineSegmentDistance(circle, line);
+		console.log({ radius, distance, line });
+		return distance < radius;
+	});
+
+	if (touchesEdges) {
+		console.log("touches an edge");
+		return false;
+	}
+
+	const withinPolygon = pointInPolygon(circle, polygon);
+	return withinPolygon;
+}
+
+function polygonEdges(polygon) {
+	return polygon.map(function (p, i) {
+		return i ? [polygon[i - 1], p] : [polygon[polygon.length - 1], p];
 	});
 }
+
+// function intersects(circle, lines) {
+// 	return lines.some(function (line) {
+// 		return pointLineSegmentDistance(circle, line) < circle[2];
+// 	});
+// }
 
 function pointLineSegmentDistance(point, line) {
 	var v = line[0],
