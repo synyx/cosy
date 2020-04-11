@@ -42,44 +42,9 @@ document.addEventListener("keydown", function (event) {
 
 const moveSteps = 2;
 const playerAvatar = document.getElementById("player");
-
-/// ---------------------------------------
-// https://stackoverflow.com/questions/53393966/convert-svg-path-to-polygon-coordinates
-//
 const floors = [...document.querySelectorAll("path[id^=floor_]")].map((floor) =>
 	pathToPolyglot(floor),
 );
-
-function pathToPolyglot(path) {
-	var len = path.getTotalLength();
-	var points = [];
-
-	// var NUM_POINTS = 6;
-	var NUM_POINTS = Math.round(len / 10);
-
-	for (var i = 0; i < NUM_POINTS; i++) {
-		var pt = path.getPointAtLength((i * len) / (NUM_POINTS - 1));
-		points.push([pt.x, pt.y]);
-	}
-
-	let polygon = document.createElementNS(
-		"http://www.w3.org/2000/svg",
-		"polygon",
-	);
-	polygon.setAttributeNS(null, "id", path.id);
-	polygon.setAttributeNS(null, "fill", "tomato");
-	polygon.setAttributeNS(null, "points", pointCommandsToSVGPoints(points));
-	path.parentNode.replaceChild(polygon, path);
-
-	return {
-		id: path.id,
-		polygon: {
-			element: polygon,
-			points,
-		},
-	};
-}
-/// ---------------------------------------
 
 let currentRoom = floors.find((floor) => {
 	let yep = pointInPolygon(
@@ -145,6 +110,40 @@ function moveRight() {
 		playerAvatar.cx.baseVal.value = nextCx;
 	}
 }
+
+/// ---------------------------------------
+// https://stackoverflow.com/questions/53393966/convert-svg-path-to-polygon-coordinates
+//
+function pathToPolyglot(path) {
+	var len = path.getTotalLength();
+	var points = [];
+
+	// var NUM_POINTS = 6;
+	var NUM_POINTS = Math.round(len / 10);
+
+	for (var i = 0; i < NUM_POINTS; i++) {
+		var pt = path.getPointAtLength((i * len) / (NUM_POINTS - 1));
+		points.push([pt.x, pt.y]);
+	}
+
+	let polygon = document.createElementNS(
+		"http://www.w3.org/2000/svg",
+		"polygon",
+	);
+	polygon.setAttributeNS(null, "id", path.id);
+	polygon.setAttributeNS(null, "fill", "tomato");
+	polygon.setAttributeNS(null, "points", pointCommandsToSVGPoints(points));
+	path.parentNode.replaceChild(polygon, path);
+
+	return {
+		id: path.id,
+		polygon: {
+			element: polygon,
+			points,
+		},
+	};
+}
+/// ---------------------------------------
 
 function pointInPolygon(point, polygon) {
 	for (
