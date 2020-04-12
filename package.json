@@ -8,17 +8,22 @@
 		"css": "tailwind build src/css/style.css -o static/css/style.css"
 	},
 	"dependencies": {
-		"eslint-config-prettier": "^6.10.1",
-		"eslint-plugin-prettier": "^3.1.2",
-		"koa": "^2.11.0",
-		"koa-static": "^5.0.0",
-		"koa-websocket": "^6.0.0",
-		"onchange": "^6.1.0",
-		"postcss-cli": "^7.1.0",
-		"prettier": "^2.0.4",
-		"tailwindcss": "^1.2.0"
-	},
-	"devDependencies": {
-		"eslint": "^6.8.0"
+		"eslint": "6.8.0",
+		"eslint-config-prettier": "6.10.1",
+		"eslint-plugin-prettier": "3.1.2",
+		"handlebars": "4.7.6",
+		"koa": "2.11.0",
+		"koa-bodyparser": "4.3.0",
+		"koa-passport": "4.1.3",
+		"koa-route": "3.2.0",
+		"koa-session": "5.13.1",
+		"koa-static": "5.0.0",
+		"koa-views": "6.2.1",
+		"koa-websocket": "6.0.0",
+		"onchange": "6.1.0",
+		"passport-ldapauth": "2.1.4",
+		"postcss-cli": "7.1.0",
+		"prettier": "2.0.4",
+		"tailwindcss": "1.2.0"
 	}
 }
