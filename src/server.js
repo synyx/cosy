@@ -9,11 +9,22 @@ const route = require("koa-route");
 const serve = require("koa-static");
 const websockify = require("koa-websocket");
 const LdapStrategy = require("passport-ldapauth");
+const CSRF = require("koa-csrf");
 
 const { PORT = 3000, APP_SECRET = "app-secret" } = process.env;
 
 const app = websockify(new Koa());
 app.use(bodyParser());
+
+// csrf
+app.use(
+	new CSRF({
+		// invalidTokenMessage: "Invalid CSRF token",
+		// invalidTokenStatusCode: 403,
+		// excludedMethods: ["GET", "HEAD", "OPTIONS"],
+		// disableQuery: false,
+	}),
+);
 
 // authentication
 passport.use(
@@ -69,6 +80,7 @@ app.use(
 		await ctx.render("login", {
 			error: error != undefined,
 			username,
+			csrf: ctx.csrf,
 		});
 	}),
 );
