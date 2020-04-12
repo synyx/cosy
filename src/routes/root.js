@@ -14,8 +14,12 @@ module.exports = function (app) {
 
 	app.use(
 		route.get("/", async function (ctx) {
+			console.log(":: root", ctx.state.user);
 			await ctx.render("index", {
 				csrf: ctx.csrf,
+				email: ctx.state.user.email,
+				name: ctx.state.user.username,
+				nickname: ctx.state.user.nickname,
 			});
 		}),
 	);

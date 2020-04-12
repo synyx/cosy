@@ -3,7 +3,11 @@ const passport = require("koa-passport");
 const LdapStrategy = require("passport-ldapauth");
 
 passport.serializeUser((user, next) => {
-	next(null, user);
+	next(null, {
+		email: user.mail,
+		username: user.cn,
+		nickname: user.synyxNickname,
+	});
 });
 
 passport.deserializeUser((obj, next) => {

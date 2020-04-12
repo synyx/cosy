@@ -9,6 +9,17 @@
 	</head>
 	<body class="bg-teal-500">
 		<div class="p-4">
+			<ul class="font-mono mb-4">
+				<li>
+					email: {{email}}
+				</li>
+				<li>
+					username: {{name}}
+				</li>
+				<li>
+					nickname: {{nickname}}
+				</li>
+			</ul>
 			<form action="/logout" method="POST">
 				<input type="hidden" name="_csrf" value="{{csrf}}" />
 				<button type="submit" class="border border-white text-white font-bold py-2 px-4 rounded-sm">
