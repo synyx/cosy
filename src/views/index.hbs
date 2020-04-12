@@ -8,6 +8,14 @@
 		<script type="module" src="/js/app.js"></script>
 	</head>
 	<body class="bg-teal-500">
+		<div class="p-4">
+			<form action="/logout" method="POST">
+				<input type="hidden" name="_csrf" value="{{csrf}}" />
+				<button type="submit" class="border border-white text-white font-bold py-2 px-4 rounded-sm">
+					Abmelden
+				</button>
+			</form>
+		</div>
 		<!-- prettier-ignore -->
 		<svg id="office" xmlns="http://www.w3.org/2000/svg" width="1252.85" height="1057.94" viewBox="0 0 1252.85 1057.94">
 			<defs>

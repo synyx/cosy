@@ -14,7 +14,9 @@ module.exports = function (app) {
 
 	app.use(
 		route.get("/", async function (ctx) {
-			await ctx.render("index");
+			await ctx.render("index", {
+				csrf: ctx.csrf,
+			});
 		}),
 	);
 
