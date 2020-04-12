@@ -217,7 +217,7 @@ function pathToPolyglot(path, { precision = 0.2, color = "tomato" } = {}) {
 	polygon.setAttributeNS(null, "id", path.id);
 	polygon.setAttributeNS(null, "fill", color);
 	polygon.setAttributeNS(null, "points", pointCommandsToSVGPoints(points));
-	path.parentNode.replaceChild(polygon, path);
+	// path.parentNode.replaceChild(polygon, path);
 
 	return {
 		id: path.id,
