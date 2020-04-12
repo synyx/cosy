@@ -10,6 +10,7 @@ const serve = require("koa-static");
 const websockify = require("koa-websocket");
 const LdapStrategy = require("passport-ldapauth");
 const CSRF = require("koa-csrf");
+const helmet = require("koa-helmet");
 
 const { PORT = 3000, APP_SECRET = "super-awesome-app-secret" } = process.env;
 
@@ -25,6 +26,9 @@ app.use(
 		// disableQuery: false,
 	}),
 );
+
+// security headers
+app.use(helmet());
 
 // authentication
 passport.serializeUser((user, next) => {
