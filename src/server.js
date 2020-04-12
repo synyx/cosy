@@ -11,7 +11,7 @@ const websockify = require("koa-websocket");
 const LdapStrategy = require("passport-ldapauth");
 const CSRF = require("koa-csrf");
 
-const { PORT = 3000, APP_SECRET = "app-secret" } = process.env;
+const { PORT = 3000, APP_SECRET = "super-awesome-app-secret" } = process.env;
 
 const app = websockify(new Koa());
 app.use(bodyParser());
@@ -27,6 +27,13 @@ app.use(
 );
 
 // authentication
+passport.serializeUser((user, next) => {
+	next(null, user);
+});
+
+passport.deserializeUser((obj, next) => {
+	next(null, obj);
+});
 passport.use(
 	new LdapStrategy({
 		server: {
@@ -42,7 +49,7 @@ passport.use(
 app.keys = [APP_SECRET];
 app.use(session({}, app));
 app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.session());
 
 // Must be used before any router is used
 app.use(
@@ -88,7 +95,7 @@ app.use(
 	route.post("/login", async function (ctx, next) {
 		const { username } = ctx.request.body;
 		await passport.authenticate("ldapauth", {
-			session: false,
+			session: true,
 			successRedirect: "/",
 			failureRedirect: `/login?error&username=${username}`,
 		})(ctx, next);
@@ -109,11 +116,8 @@ app.use(
 // GAME
 //
 app.use(
-	route.get("/", function (ctx) {
-		ctx.type = "html";
-		ctx.body = fs.createReadStream(
-			path.resolve(__dirname, "../templates/index.html"),
-		);
+	route.get("/", async function (ctx) {
+		await ctx.render("index");
 	}),
 );
 
