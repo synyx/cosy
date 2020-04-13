@@ -86,11 +86,11 @@ app.use(
 	}),
 );
 
-// public assets
-app.use(serve(path.resolve(__dirname, "../../static")));
-
 require("./authentication")(app);
 require("./routes")(app);
+
+// public assets
+app.use(serve(path.resolve(__dirname, "../../static")));
 
 app.listen(PORT, () => {
 	console.log(`server is listening on http://localhost:${PORT}`);
