@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Hello synyx</title>
 		<link rel="stylesheet" href="/css/style.css" />
-		<script>
+		<script nonce="{{{cspNonceValue 'script'}}}">
 			window.synyxoffice = {
 				player: {
 					name: "{{player.name}}"
@@ -28,7 +28,7 @@
 				</li>
 			</ul>
 			<form action="/logout" method="POST">
-				<input type="hidden" name="_csrf" value="{{csrf}}" />
+				<input type="hidden" name="_csrf" value="{{{csrf}}}" />
 				<button type="submit" class="border border-white text-white font-bold py-2 px-4 rounded-sm">
 					Abmelden
 				</button>
@@ -37,7 +37,7 @@
 		<!-- prettier-ignore -->
 		<svg id="office" xmlns="http://www.w3.org/2000/svg" width="1252.85" height="1057.94" viewBox="0 0 1252.85 1057.94">
 			<defs>
-				<style>
+				<style nonce="{{{cspNonceValue 'style'}}}">
 					.cls-1 {
 						fill: #eee;
 					}
