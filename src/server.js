@@ -31,5 +31,6 @@ require("./authentication")(app);
 require("./routes")(app);
 
 app.listen(PORT, () => {
-	console.log(`server is listening in http://localhost:${PORT}`);
+	console.log(`server is listening on http://localhost:${PORT}`);
+	console.log(`running with NODE_ENV=${process.env.NODE_ENV}`);
 });

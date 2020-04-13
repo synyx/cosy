@@ -4,7 +4,7 @@
 	"private": true,
 	"author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
 	"scripts": {
-		"dev": "onchange -i -k 'src/**/*.js' -- node src/server.js",
+		"dev": "NODE_ENV=development onchange -i -k 'src/**/*.js' -- node src/server.js",
 		"css": "tailwind build src/css/style.css -o static/css/style.css"
 	},
 	"dependencies": {
@@ -20,7 +20,8 @@
 		"koa-static": "5.0.0",
 		"koa-views": "6.2.1",
 		"koa-websocket": "6.0.0",
-		"passport-ldapauth": "2.1.4"
+		"passport-ldapauth": "2.1.4",
+		"passport-local": "1.0.0"
 	},
 	"devDependencies": {
 		"eslint": "6.8.0",
