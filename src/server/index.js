@@ -7,6 +7,7 @@ const bodyParser = require("koa-bodyparser");
 const serve = require("koa-static");
 const CSRF = require("koa-csrf");
 const helmet = require("koa-helmet");
+const cspMiddleware = require("./security/csp-middleware");
 
 const { PORT = 3000, APP_SECRET = "super-awesome-app-secret" } = process.env;
 
@@ -14,39 +15,27 @@ const app = new Koa();
 app.keys = [APP_SECRET];
 app.use(bodyParser());
 
+// csrf tokens for html forms
 app.use(new CSRF());
+// common security headers
 app.use(helmet());
+// content-security-policy headers
+app.use(cspMiddleware());
 
 // install view resolver
-// Must be used
-// - before any router is used
-// - before CSP middleware
-//   (as we're generating nonce value here which are used by the CSP middleware)
+// Must be used before any router is used
 app.use(function viewResolver(context, next) {
-	// cache generated nonce values in the context state
-	// these are handled by helmet-csp middleware later
-	context.res.state = context.res.state || {};
-	context.res.state.csp = context.res.state.csp || {};
-	context.res.state.csp.nonce = context.res.state.csp.nonce || {};
-	context.res.state.csp.nonce.script = context.res.state.csp.nonce.script || [];
-	context.res.state.csp.nonce.style = context.res.state.csp.nonce.style || [];
-
 	return views(path.resolve(__dirname, "templates"), {
 		extension: "hbs",
 		map: { hbs: "handlebars" },
 		options: {
 			helpers: {
 				cspNonceValue: (type) => {
-					const value = require("crypto").randomBytes(16).toString("base64");
 					switch (type) {
-						case "script": {
-							context.res.state.csp.nonce.script.push(value);
-							return value;
-						}
-						case "style": {
-							context.res.state.csp.nonce.style.push(value);
-							return value;
-						}
+						case "script":
+							return cspMiddleware.generateScriptValue(context);
+						case "style":
+							return cspMiddleware.generateStyleValue(context);
 						default:
 							console.log(
 								`cannot handle type=${type} to generate a nonce value. must be of type [script|style]`,
@@ -58,33 +47,6 @@ app.use(function viewResolver(context, next) {
 		},
 	})(context, next);
 });
-
-// install CSP middleware
-// must be after the view resolver. as the view resolver writes nonce values
-// into the response state
-app.use(
-	helmet.contentSecurityPolicy({
-		directives: {
-			defaultSrc: ["'self'"],
-			scriptSrc: [
-				"'self'",
-				(request, response) => {
-					return response.state.csp.nonce.script.map((v) => `'nonce-${v}'`);
-				},
-			],
-			styleSrc: [
-				"'self'",
-				(request, response) => {
-					return response.state.csp.nonce.style.map((v) => `'nonce-${v}'`);
-				},
-			],
-			fontSrc: ["'self'"],
-			imgSrc: ["'self'"],
-			objectSrc: ["'none'"],
-			sandbox: ["allow-scripts", "allow-forms", "allow-same-origin"],
-		},
-	}),
-);
 
 require("./authentication")(app);
 require("./routes")(app);
