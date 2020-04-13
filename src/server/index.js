@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const path = require("path");
 const Koa = require("koa");
 const views = require("koa-views");
@@ -18,14 +20,14 @@ app.use(helmet());
 // install view resolver
 // Must be used before any router is used
 app.use(
-	views(path.resolve(__dirname, "views"), {
+	views(path.resolve(__dirname, "templates"), {
 		extension: "hbs",
 		map: { hbs: "handlebars" },
 	}),
 );
 
 // public assets
-app.use(serve(path.resolve(__dirname, "../static")));
+app.use(serve(path.resolve(__dirname, "../../static")));
 
 require("./authentication")(app);
 require("./routes")(app);

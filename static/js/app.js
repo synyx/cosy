@@ -5,22 +5,27 @@ const socket = new WebSocket("ws://localhost:3000");
 
 // Connection opened
 socket.addEventListener("open", function (event) {
-	socket.send("Hello Server!");
-
-	const message = JSON.stringify({
-		type: "login",
-		message: {
-			user: "John " + new Date().getTime(),
-		},
-	});
-
-	socket.send(message);
+	socket.send(
+		JSON.stringify({
+			type: "login",
+			message: {},
+		}),
+	);
 });
 
 // Listen for messages
 socket.addEventListener("message", function (event) {
 	console.log("Message from server ", event.data);
+
+	const data = JSON.parse(event.data);
+	if (data.type === "login") {
+		handleNewPlayer(data.message);
+	}
 });
+
+function handleNewPlayer(user) {
+	console.log("new player joined", user);
+}
 
 function randomName() {
 	const names = [];

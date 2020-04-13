@@ -4,10 +4,11 @@
 	"private": true,
 	"author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
 	"scripts": {
-		"dev": "NODE_ENV=development onchange -i -k 'src/**/*.js' -- node src/server.js",
+		"dev": "NODE_ENV=development onchange -i -k 'src/**/*.js' -- node src/server/index.js",
 		"css": "tailwind build src/css/style.css -o static/css/style.css"
 	},
 	"dependencies": {
+		"dotenv": "8.2.0",
 		"glob": "7.1.6",
 		"handlebars": "4.7.6",
 		"koa": "2.11.0",

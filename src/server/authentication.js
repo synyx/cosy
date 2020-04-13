@@ -2,6 +2,11 @@ const session = require("koa-session");
 const passport = require("koa-passport");
 const LdapStrategy = require("passport-ldapauth");
 
+const {
+	LDAP_SERVER_URL: ldapServerUrl,
+	LDAP_SERVER_SEARCHBASE: ldapServerSearchBase,
+} = process.env;
+
 passport.serializeUser((user, next) => {
 	next(null, {
 		email: user.mail,
@@ -14,11 +19,14 @@ passport.deserializeUser((obj, next) => {
 	next(null, obj);
 });
 
+console.log(
+	`configure ldap auth [url=${ldapServerUrl}] [searchBase=${ldapServerSearchBase}]`,
+);
 passport.use(
 	new LdapStrategy({
 		server: {
-			url: "ldap://---------------",
-			searchBase: "----------------",
+			url: ldapServerUrl,
+			searchBase: ldapServerSearchBase,
 			searchFilter: "(uid={{username}})",
 		},
 		// form post requestBody field names
@@ -27,33 +35,13 @@ passport.use(
 	}),
 );
 
-module.exports = function (app) {
-	app.use(session({}, app));
-	app.use(passport.initialize());
-	app.use(passport.session());
-
-	// ensure authenticated access
-	app.use(async function (ctx, next) {
-		if (
-			ctx.isAuthenticated() ||
-			ctx.originalUrl.startsWith("/login") ||
-			ctx.originalUrl.startsWith("/css/")
-		) {
-			await next();
-		} else {
-			console.log("not authenticated. redirecting to /login");
-			ctx.redirect("/login");
-		}
-	});
-};
-
 if (process.env.NODE_ENV === "development") {
 	let localUsers = {};
 
 	const LocalStrategy = require("passport-local");
 	const path = require("path");
 	const fs = require("fs");
-	const localUsersFilePath = path.resolve(__dirname, "../local-users.json");
+	const localUsersFilePath = path.resolve(__dirname, "../../local-users.json");
 
 	try {
 		const localUsersFile = fs.readFileSync(localUsersFilePath, "utf8");
@@ -64,6 +52,7 @@ if (process.env.NODE_ENV === "development") {
 		);
 	}
 
+	console.log(`configure local auth [usernames=${Object.keys(localUsers)}]`);
 	passport.use(
 		new LocalStrategy(
 			{
@@ -83,3 +72,25 @@ if (process.env.NODE_ENV === "development") {
 		),
 	);
 }
+
+module.exports = function (app) {
+	app.use(session({}, app));
+	app.use(passport.initialize());
+	app.use(passport.session());
+
+	// ensure authenticated access
+	app.use(async function (context, next) {
+		if (
+			context.originalUrl.startsWith("/login") ||
+			context.originalUrl.startsWith("/css/") ||
+			context.isAuthenticated()
+		) {
+			await next();
+		} else {
+			console.log(
+				`not authenticated for url=${context.request.originalUrl}. redirecting to /login`,
+			);
+			context.redirect("/login");
+		}
+	});
+};

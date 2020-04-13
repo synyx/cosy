@@ -4,8 +4,6 @@ const route = require("koa-route");
 module.exports = function (app) {
 	app.use(
 		route.get("/login", async function (ctx) {
-			console.log(":: /login");
-			console.log(":: ", ctx);
 			const { error, username } = ctx.request.query;
 			await ctx.render("login", {
 				error: error != undefined,

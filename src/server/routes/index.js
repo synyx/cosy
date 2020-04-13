@@ -1,4 +1,4 @@
-// this is a convinience entry point to load all files within this directory instead of requiring each file.
+// this is a convenience entry point to load all files within this directory instead of requiring each file.
 // if you're looking for the "index" view please refer to `root.js`
 
 const path = require("path");
