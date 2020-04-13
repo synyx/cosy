@@ -41,12 +41,10 @@ let currentRoom = floors.find((floor) => {
 		],
 		floor.polygon.points,
 	);
-	// console.log({ yep, floor });
 	return yep;
 });
 
 document.addEventListener("keydown", function (event) {
-	console.log("keydown", event.key);
 	if (event.key === "Shift") {
 		moveStepsFactor = 2;
 	} else if (event.key === "ArrowUp") {
@@ -61,7 +59,6 @@ document.addEventListener("keydown", function (event) {
 });
 
 document.addEventListener("keyup", function (event) {
-	console.log("keyup", event.key);
 	if (event.key === "Shift") {
 		moveStepsFactor = 1;
 	}
@@ -182,11 +179,9 @@ function updateCurrentRoom() {
 	});
 
 	// no room found -> we're crossing a door right now
+
 	if (nextCurrentRoom) {
-		console.log("next current room:", nextCurrentRoom.id);
 		currentRoom = nextCurrentRoom;
-	} else {
-		console.log("next current room:", " no room found :-(");
 	}
 }
 
@@ -247,7 +242,6 @@ function pointInPolygon(point, polygon) {
 function circleFullyInsidePolygon(circle, polygon) {
 	const touchesEdges = circleTouchesPolygonEdges(circle, polygon);
 	if (touchesEdges) {
-		console.log("touches an edge");
 		return false;
 	}
 
@@ -260,7 +254,6 @@ function circleTouchesPolygonEdges(circle, polygon) {
 	const touchesEdges = edges.some(function (line) {
 		const radius = circle[2];
 		const distance = pointLineSegmentDistance(circle, line);
-		// console.log({ radius, distance, line });
 		return distance < radius;
 	});
 
