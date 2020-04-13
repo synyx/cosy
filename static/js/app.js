@@ -1,13 +1,12 @@
-console.log("hello from JavaScript");
-
 // Create WebSocket connection.
+// TODO use 'wss' protocol to enable SSL over websocket
 const socket = new WebSocket("ws://localhost:3000");
 
 // Connection opened
 socket.addEventListener("open", function (event) {
 	socket.send(
 		JSON.stringify({
-			type: "login",
+			type: "join",
 			message: {},
 		}),
 	);
@@ -15,23 +14,13 @@ socket.addEventListener("open", function (event) {
 
 // Listen for messages
 socket.addEventListener("message", function (event) {
-	console.log("Message from server ", event.data);
+	console.log("ws message", event.data);
 
 	const data = JSON.parse(event.data);
-	if (data.type === "login") {
-		handleNewPlayer(data.message);
+	if (data.type === "user-joined") {
+		console.log("new player joined.", data.content);
 	}
 });
-
-function handleNewPlayer(user) {
-	console.log("new player joined", user);
-}
-
-function randomName() {
-	const names = [];
-
-	const number = Math.floor(Math.random() * 6) + 1;
-}
 
 let moveSteps = 2;
 let moveStepsFactor = 1;
