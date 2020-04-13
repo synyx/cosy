@@ -2,6 +2,8 @@
 // TODO use 'wss' protocol to enable SSL over websocket
 const socket = new WebSocket("ws://localhost:3000");
 
+let playerAvatarMap = new Map();
+
 // Connection opened
 socket.addEventListener("open", function (event) {
 	socket.send(
@@ -17,10 +19,42 @@ socket.addEventListener("message", function (event) {
 	console.log("ws message", event.data);
 
 	const data = JSON.parse(event.data);
-	if (data.type === "user-joined") {
-		console.log("new player joined.", data.content);
+
+	switch (data.type) {
+		case "user-joined": {
+			const newPlayer = data.content;
+			if (newPlayer.name === window.synyxoffice.player.name) {
+				return;
+			}
+			console.log("new player joined", newPlayer);
+			const newPlayerAvatar = playerAvatar.cloneNode();
+			newPlayerAvatar.setAttributeNS(null, "id", "");
+			if (newPlayer.position) {
+				newPlayerAvatar.cx.baseVal.value = newPlayer.position.x;
+				newPlayerAvatar.cy.baseVal.value = newPlayer.position.y;
+			}
+			playerAvatar.parentNode.appendChild(newPlayerAvatar);
+			playerAvatarMap.set(newPlayer.name, newPlayerAvatar);
+			break;
+		}
+
+		case "user-moved": {
+			const player = data.content;
+			if (player.name === window.synyxoffice.player.name) {
+				return;
+			}
+			console.log("player moved", player);
+			const playerAvatar = playerAvatarMap.get(player.name);
+			playerAvatar.cx.baseVal.value = player.position.x;
+			playerAvatar.cy.baseVal.value = player.position.y;
+			break;
+		}
 	}
 });
+
+function send(data) {
+	socket.send(JSON.stringify(data));
+}
 
 let moveSteps = 2;
 let moveStepsFactor = 1;
@@ -55,6 +89,16 @@ document.addEventListener("keydown", function (event) {
 		moveLeft();
 	} else if (event.key === "ArrowRight") {
 		moveRight();
+	}
+
+	if (event.key.startsWith("Arrow")) {
+		send({
+			type: "moved",
+			content: {
+				x: playerAvatar.cx.baseVal.value,
+				y: playerAvatar.cy.baseVal.value,
+			},
+		});
 	}
 });
 

@@ -5,7 +5,7 @@ let users = [];
 
 function user(internalAppUser) {
 	return {
-		username: internalAppUser.username,
+		name: internalAppUser.username,
 		nickname: internalAppUser.nickname,
 	};
 }
@@ -20,6 +20,9 @@ module.exports = function (app) {
 				email: context.state.user.email,
 				name: context.state.user.username,
 				nickname: context.state.user.nickname,
+				player: {
+					name: context.state.user.username,
+				},
 			});
 		}),
 	);
@@ -67,6 +70,8 @@ module.exports = function (app) {
 				return;
 			}
 
+			const loggedInUser = context.state.user;
+
 			switch (messageJson.type) {
 				case "join": {
 					// inform the new user about all current users
@@ -75,9 +80,20 @@ module.exports = function (app) {
 					}
 
 					// add new user and broadcast it to every client
-					let newUser = user(context.state.user);
+					let newUser = user(loggedInUser);
 					users.push(newUser);
 					broadcast({ type: "user-joined", content: newUser });
+					break;
+				}
+				case "moved": {
+					const user = users.find(
+						(user) => user.name === loggedInUser.username,
+					);
+					if (user) {
+						const position = messageJson.content;
+						user.position = { x: position.x, y: position.y };
+						broadcast({ type: "user-moved", content: user });
+					}
 					break;
 				}
 			}
