@@ -20,7 +20,7 @@ Rufe dann die URL die dir gesagt wird im Browser auf (müsste `http://localhost:
 
 Einloggen kannst du dich mit deinen LDAP Credentials.
 
-Um den Multiplayer (den es nocht nicht gibt 😭) lokal auprobieren zu können kannst du dich im
+Um den Multiplayer lokal ausprobieren zu können kannst du dich im
 `dev` Modus auch mit loken Benutzern einloggen. Das Passwort ist bei diesen Benutzern egal. Es
 muss jedoch mindestens ein Zeichen sein. Die lokalen Benutzer kannst du in der [local-users.json](./local-users.json)
 Datei pflegen.
