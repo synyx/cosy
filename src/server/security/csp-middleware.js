@@ -41,7 +41,7 @@ function cspMiddleware() {
 			`script-src 'self' ${nonce(getNonceValuesForType("script"))}`,
 			`style-src 'self' ${nonce(getNonceValuesForType("style"))}`,
 			`font-src 'self'`,
-			`img-src 'self'`,
+			`img-src 'self' https://gravatar.com/`,
 			`object-src 'none'`,
 			`sandbox allow-forms allow-scripts allow-same-origin`,
 		].join("; ");

@@ -27,8 +27,36 @@ socket.addEventListener("message", function (event) {
 				return;
 			}
 			console.log("new player joined", newPlayer);
+
+			// avatar image
+			const newPlayerAvatarImagePattern = playerAvatarImagePattern.cloneNode(
+				true,
+			);
+			newPlayerAvatarImagePattern.setAttributeNS(
+				null,
+				"id",
+				`${newPlayer.nickname}-image-pattern`,
+			);
+			newPlayerAvatarImagePattern
+				.querySelector("image")
+				.setAttributeNS(null, "href", newPlayer.avatarUrl);
+			playerAvatarImagePattern.parentNode.appendChild(
+				newPlayerAvatarImagePattern,
+			);
+
+			// avatar element
 			const newPlayerAvatar = playerAvatar.cloneNode();
 			newPlayerAvatar.setAttributeNS(null, "id", "");
+			newPlayerAvatar.setAttributeNS(
+				null,
+				"fill",
+				newPlayerAvatar
+					.getAttributeNS(null, "fill")
+					.replace(
+						"#player-avatar-image-pattern",
+						`#${newPlayer.nickname}-image-pattern`,
+					),
+			);
 			if (newPlayer.position) {
 				newPlayerAvatar.cx.baseVal.value = newPlayer.position.x;
 				newPlayerAvatar.cy.baseVal.value = newPlayer.position.y;
@@ -68,6 +96,9 @@ function send(data) {
 let moveSteps = 2;
 let moveStepsFactor = 1;
 const playerAvatar = document.getElementById("player");
+const playerAvatarImagePattern = document.getElementById(
+	"player-avatar-image-pattern",
+);
 const floors = [...document.querySelectorAll("path[id^=floor-]")].map((floor) =>
 	pathToPolyglot(floor),
 );

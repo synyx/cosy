@@ -1,5 +1,6 @@
 const route = require("koa-route");
 const websockify = require("koa-websocket");
+const gravatarUrl = require("gravatar-url");
 
 let users = [];
 
@@ -7,6 +8,9 @@ function user(internalAppUser) {
 	return {
 		name: internalAppUser.username,
 		nickname: internalAppUser.nickname,
+		avatarUrl: internalAppUser.email
+			? gravatarUrl(internalAppUser.email, { size: 64 })
+			: "",
 	};
 }
 
@@ -22,6 +26,7 @@ module.exports = function (app) {
 				nickname: context.state.user.nickname,
 				player: {
 					name: context.state.user.username,
+					avatarUrl: gravatarUrl(context.state.user.email, { size: 64 }),
 				},
 			});
 		}),
