@@ -49,6 +49,15 @@ socket.addEventListener("message", function (event) {
 			playerAvatar.cy.baseVal.value = player.position.y;
 			break;
 		}
+
+		case "user-left": {
+			const player = data.content;
+			console.log("player left", player);
+			const avatar = playerAvatarMap.get(player.name);
+			avatar.remove();
+			playerAvatarMap.delete(player.name);
+			break;
+		}
 	}
 });
 

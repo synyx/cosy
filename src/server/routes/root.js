@@ -55,6 +55,15 @@ module.exports = function (app) {
 			context.websocket.send(JSON.stringify(data));
 		}
 
+		context.websocket.on("close", function () {
+			const currentUser = user(context.state.user);
+			users = users.filter((u) => u.name !== currentUser.name);
+			broadcast({
+				type: "user-left",
+				content: currentUser,
+			});
+		});
+
 		context.websocket.on("message", function (message) {
 			// do something with the message from client
 			console.log("websocket message:", message);
