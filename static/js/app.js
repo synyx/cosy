@@ -205,6 +205,8 @@ let currentRoom = floors.find((floor) => {
 	return yep;
 });
 
+animatePlayerAvatar();
+
 document.addEventListener("keydown", function (event) {
 	if (event.key === "Shift") {
 		moveStepsFactor = 2;
@@ -219,6 +221,7 @@ document.addEventListener("keydown", function (event) {
 	}
 
 	if (event.key.startsWith("Arrow")) {
+		stopPlayerAvatarAnimate();
 		send({
 			type: "moved",
 			content: {
@@ -234,6 +237,39 @@ document.addEventListener("keyup", function (event) {
 		moveStepsFactor = 1;
 	}
 });
+
+function animatePlayerAvatar(times = 0) {
+	const animate = document.createElementNS(
+		"http://www.w3.org/2000/svg",
+		"animate",
+	);
+	animate.setAttributeNS(null, "attributeName", "r");
+	animate.setAttributeNS(null, "dur", "4s");
+	animate.setAttributeNS(null, "repeatCount", times ? times : "indefinite");
+	animate.setAttributeNS(null, "calcMode", "spline");
+	animate.setAttributeNS(null, "values", "10 ; 32; 10 ; 10");
+	animate.setAttributeNS(null, "keyTimes", "0 ; 0.33 ; 0.88 ; 1");
+	animate.setAttributeNS(
+		null,
+		"keySplines",
+		"0.5 0 0.5 1 ; 0.5 0 0.5 1 ; 0.5 0 0.5 1",
+	);
+	playerAvatar.appendChild(animate);
+}
+
+function stopPlayerAvatarAnimate() {
+	const animate = playerAvatar.firstElementChild;
+	if (animate) {
+		animate.addEventListener(
+			"repeatEvent",
+			(event) => {
+				event.preventDefault();
+				animate.setAttributeNS(null, "repeatCount", "0");
+			},
+			{ once: true },
+		);
+	}
+}
 
 function moveDown() {
 	const nextCy = playerAvatar.cy.baseVal.value + moveSteps * moveStepsFactor;
