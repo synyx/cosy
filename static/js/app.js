@@ -82,6 +82,42 @@
 // GAME
 // ================================================================
 
+const nameTooltip = document.createElement("div");
+nameTooltip.classList.add(
+	"fixed",
+	"z-40",
+	"px-1",
+	"text-black",
+	"text-xs",
+	"shadow-outline",
+	"font-bold",
+	"font-mono",
+	"bg-white",
+	"opacity-75",
+	"border",
+	"border-black",
+	"rounded",
+);
+document.body.appendChild(nameTooltip);
+
+document
+	.getElementById("office")
+	.addEventListener("mousemove", function (event) {
+		console.log(event.target);
+		if (event.target.dataset.tooltip) {
+			console.log("self clicked");
+			const { pageX: x, pageY: y } = event;
+			nameTooltip.innerText = event.target.dataset.tooltip;
+			const { width, height } = nameTooltip.getBoundingClientRect();
+			nameTooltip.style.top = `${y - height * 1.5}px`;
+			nameTooltip.style.left = `${x - width / 2}px`;
+		} else {
+			nameTooltip.innerText = "";
+			nameTooltip.style.top = "-10px";
+			nameTooltip.style.left = "-10px";
+		}
+	});
+
 document
 	.getElementById("logout-form")
 	.addEventListener("submit", function (event) {
@@ -139,6 +175,7 @@ socket.addEventListener("message", function (event) {
 
 			// avatar element
 			const newPlayerAvatar = playerAvatar.cloneNode();
+			newPlayerAvatar.dataset.tooltip = newPlayer.name;
 			newPlayerAvatar.setAttributeNS(null, "id", "");
 			newPlayerAvatar.setAttributeNS(null, "cx", startPointMainEntrance.x);
 			newPlayerAvatar.setAttributeNS(null, "cy", startPointMainEntrance.y);
