@@ -281,95 +281,47 @@ function stopPlayerAvatarAnimate() {
 }
 
 function moveDown() {
-	const nextCy = playerAvatar.cy.baseVal.value + moveSteps * moveStepsFactor;
-
-	let isStillInRoom = circleFullyInsidePolygon(
-		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
-		currentRoom.polygon.points,
-	);
-
-	if (isStillInRoom) {
-		playerAvatar.cy.baseVal.value = nextCy;
-	} else {
-		const door = getIntersectingDoor([
-			playerAvatar.cx.baseVal.value,
-			nextCy,
-			playerAvatar.r.baseVal.value,
-		]);
-		if (door) {
-			playerAvatar.cy.baseVal.value = nextCy;
-		}
-	}
-
-	updateCurrentRoom();
+	const nextX = playerAvatar.cx.baseVal.value;
+	const nextY = playerAvatar.cy.baseVal.value + moveSteps * moveStepsFactor;
+	move({ nextX, nextY });
 }
 
 function moveUp() {
-	const nextCy = playerAvatar.cy.baseVal.value - moveSteps * moveStepsFactor;
-
-	let isStillInRoom = circleFullyInsidePolygon(
-		[playerAvatar.cx.baseVal.value, nextCy, playerAvatar.r.baseVal.value],
-		currentRoom.polygon.points,
-	);
-
-	if (isStillInRoom) {
-		playerAvatar.cy.baseVal.value = nextCy;
-	} else {
-		const door = getIntersectingDoor([
-			playerAvatar.cx.baseVal.value,
-			nextCy,
-			playerAvatar.r.baseVal.value,
-		]);
-		if (door) {
-			playerAvatar.cy.baseVal.value = nextCy;
-		}
-	}
-
-	updateCurrentRoom();
+	const nextX = playerAvatar.cx.baseVal.value;
+	const nextY = playerAvatar.cy.baseVal.value - moveSteps * moveStepsFactor;
+	move({ nextX, nextY });
 }
 
 function moveLeft() {
-	const nextCx = playerAvatar.cx.baseVal.value - moveSteps * moveStepsFactor;
-
-	let isStillInRoom = circleFullyInsidePolygon(
-		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
-		currentRoom.polygon.points,
-	);
-
-	if (isStillInRoom) {
-		playerAvatar.cx.baseVal.value = nextCx;
-	} else {
-		const door = getIntersectingDoor([
-			nextCx,
-			playerAvatar.cy.baseVal.value,
-			playerAvatar.r.baseVal.value,
-		]);
-		if (door) {
-			playerAvatar.cx.baseVal.value = nextCx;
-		}
-	}
-
-	updateCurrentRoom();
+	const nextX = playerAvatar.cx.baseVal.value - moveSteps * moveStepsFactor;
+	const nextY = playerAvatar.cy.baseVal.value;
+	move({ nextX, nextY });
 }
 
 function moveRight() {
-	const nextCx = playerAvatar.cx.baseVal.value + moveSteps * moveStepsFactor;
+	const nextX = playerAvatar.cx.baseVal.value + moveSteps * moveStepsFactor;
+	const nextY = playerAvatar.cy.baseVal.value;
+	move({ nextX, nextY });
+}
 
+function move({ nextX, nextY }) {
 	let isStillInRoom = circleFullyInsidePolygon(
-		[nextCx, playerAvatar.cy.baseVal.value, playerAvatar.r.baseVal.value],
+		[nextX, nextY, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
 	);
 
 	if (isStillInRoom) {
-		playerAvatar.cx.baseVal.value = nextCx;
+		playerAvatar.cx.baseVal.value = nextX;
+		playerAvatar.cy.baseVal.value = nextY;
 	} else {
 		const door = getIntersectingDoor([
-			nextCx,
-			playerAvatar.cy.baseVal.value,
+			nextX,
+			nextY,
 			playerAvatar.r.baseVal.value,
 		]);
 		if (door) {
-			playerAvatar.cx.baseVal.value = nextCx;
+			playerAvatar.cx.baseVal.value = nextX;
+			playerAvatar.cy.baseVal.value = nextY;
 		}
 	}
 
