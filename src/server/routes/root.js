@@ -24,6 +24,7 @@ module.exports = function (app) {
 				email: context.state.user.email,
 				name: context.state.user.username,
 				nickname: context.state.user.nickname,
+				jitsiDomain: "xxxxxx",
 				player: {
 					name: context.state.user.username,
 					avatarUrl: gravatarUrl(context.state.user.email, { size: 64 }),

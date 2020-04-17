@@ -13,6 +13,9 @@ module.exports = {
 		sourceType: "module",
 	},
 	rules: {},
+	globals: {
+		JitsiMeetExternalAPI: true,
+	},
 	overrides: [
 		{
 			files: ["src/**/*.js"],
