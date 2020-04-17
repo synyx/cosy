@@ -1,86 +1,7 @@
-// ================================================================
-// jitsi prototype
-// ================================================================
+import * as chat from "./jitsi.js";
 
-(function () {
-	const { jitsiDomain, player } = window.synyxoffice;
-
-	let jitsiApi;
-	const jitsiParentElement = document.getElementById("jitsi");
-	const jitsiButton = document.getElementById("jitsi-button");
-	const jitsiCamStatus = document.getElementById("jitsi-camera-status");
-	const jitsiMicStatus = document.getElementById("jitsi-microphone-status");
-
-	const root = document.getElementById("chat-root");
-	root.style.transition = "background 1s ease-out";
-	root.style.backgroundColor = "rgba(0,0,0,0)";
-
-	const rootInner = document.getElementById("chat-root-inner");
-
-	jitsiButton.addEventListener("click", (event) => {
-		jitsiButton.blur();
-
-		// jitsi connection
-		const options = {
-			roomName: "JitsiMeetAPIExample",
-			width: "100%",
-			height: "100%",
-			parentNode: jitsiParentElement,
-			userInfo: {
-				email: player.email,
-				displayName: player.name,
-			},
-		};
-		jitsiApi = new JitsiMeetExternalAPI(jitsiDomain, options);
-
-		jitsiApi.addEventListener("audioMuteStatusChanged", ({ muted }) => {
-			jitsiMicStatus.innerText = muted ? "AUS" : "AN";
-		});
-
-		jitsiApi.addEventListener("videoMuteStatusChanged", ({ muted }) => {
-			jitsiCamStatus.innerText = muted ? "AUS" : "AN";
-		});
-
-		jitsiApi.executeCommand("avatarUrl", player.avatarUrl);
-		// audio is on by default, disable it for the pleasure of all other participants
-		jitsiApi.executeCommand("toggleAudio");
-		// video is on by default, disable it so other participants see the awesome avatar first :o)
-		jitsiApi.executeCommand("toggleVideo");
-
-		// chat window
-		root.style.backgroundColor = "rgba(0,0,0,0.25)";
-		root.classList.add("z-50");
-
-		rootInner.style.transition = "height 0.3s ease-out, width 0.3s ease-out";
-		rootInner.classList.add("w-full", "h-full");
-
-		setTimeout(function () {
-			rootInner.classList.add("w-full");
-			rootInner.style.height = "100%";
-		}, 0);
-	});
-
-	const closeChatButton = document.getElementById("close-chat-button");
-	closeChatButton.addEventListener("click", function (event) {
-		closeChatButton.blur();
-
-		jitsiApi.executeCommand("hangup");
-		jitsiApi.dispose();
-
-		root.style.backgroundColor = "rgba(0,0,0,0)";
-		root.classList.remove("z-50", "w-full");
-
-		rootInner.style.transition = "";
-		rootInner.style.height = "";
-
-		rootInner.classList.remove("w-full", "h-full");
-		setTimeout(() => (jitsiParentElement.innerHTML = ""));
-	});
-})();
-
-// ================================================================
-// GAME
-// ================================================================
+const playerAvatar = document.getElementById("player");
+const actionMenu = document.getElementById("action-menu");
 
 const nameTooltip = document.createElement("div");
 nameTooltip.classList.add(
@@ -103,9 +24,10 @@ document.body.appendChild(nameTooltip);
 document
 	.getElementById("office")
 	.addEventListener("mousemove", function (event) {
-		console.log(event.target);
-		if (event.target.dataset.tooltip) {
-			console.log("self clicked");
+		if (
+			event.target.dataset.tooltip &&
+			actionMenu.classList.contains("hidden")
+		) {
 			const { pageX: x, pageY: y } = event;
 			nameTooltip.innerText = event.target.dataset.tooltip;
 			const { width, height } = nameTooltip.getBoundingClientRect();
@@ -117,6 +39,25 @@ document
 			nameTooltip.style.left = "-10px";
 		}
 	});
+
+document.body.addEventListener("click", (event) => {
+	if (actionMenu.contains(event.target)) {
+		//
+	} else if (event.target === playerAvatar) {
+		actionMenu.classList.remove("hidden");
+
+		const { pageX: x, pageY: y } = event;
+		const { width, height } = actionMenu.getBoundingClientRect();
+		actionMenu.style.top = `${y + 20}px`;
+		actionMenu.style.left = `${x - width / 2}px`;
+	} else {
+		actionMenu.classList.add("hidden");
+	}
+});
+
+document.getElementById("start-chat").addEventListener("click", (event) => {
+	chat.startChat();
+});
 
 document
 	.getElementById("logout-form")
@@ -228,7 +169,6 @@ function send(data) {
 let moveSteps = 1;
 let moveStepsFactor = 1;
 const startPointMainEntrance = { x: 799, y: 692 };
-const playerAvatar = document.getElementById("player");
 const playerAvatarImagePattern = document.getElementById(
 	"player-avatar-image-pattern",
 );
