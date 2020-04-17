@@ -47,7 +47,7 @@ function cspMiddleware() {
 			`img-src 'self' https://gravatar.com/`,
 			`object-src 'none'`,
 			`frame-src https://xxxxxx`,
-			`sandbox allow-forms allow-scripts allow-same-origin`,
+			`sandbox allow-forms allow-scripts allow-same-origin allow-modals`,
 		].join("; ");
 
 		context.res.setHeader("Content-Security-Policy", directives);

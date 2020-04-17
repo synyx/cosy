@@ -82,6 +82,15 @@
 // GAME
 // ================================================================
 
+document
+	.getElementById("logout-form")
+	.addEventListener("submit", function (event) {
+		if (!window.confirm("Schon gebucht?!")) {
+			event.preventDefault();
+			document.activeElement.blur();
+		}
+	});
+
 // Create WebSocket connection.
 // TODO use 'wss' protocol to enable SSL over websocket
 const socket = new WebSocket("ws://localhost:3000");
