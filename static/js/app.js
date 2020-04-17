@@ -216,35 +216,24 @@ let currentRoom = floors.find((floor) => {
 
 animatePlayerAvatar();
 
-document.addEventListener("keydown", function (event) {
-	if (event.key === "Shift") {
-		moveStepsFactor = 2;
-	} else if (event.key === "ArrowUp") {
-		moveUp();
-	} else if (event.key === "ArrowDown") {
-		moveDown();
-	} else if (event.key === "ArrowLeft") {
-		moveLeft();
-	} else if (event.key === "ArrowRight") {
-		moveRight();
-	}
+let movementInterval;
+const keyPressedMap = new Map();
 
-	if (event.key.startsWith("Arrow")) {
-		stopPlayerAvatarAnimate();
-		send({
-			type: "moved",
-			content: {
-				x: playerAvatar.cx.baseVal.value,
-				y: playerAvatar.cy.baseVal.value,
-			},
-		});
+document.addEventListener("keyup", function (event) {
+	keyPressedMap.delete(event.key);
+	if (keyPressedMap.size === 0) {
+		window.clearInterval(movementInterval);
 	}
 });
 
-document.addEventListener("keyup", function (event) {
-	if (event.key === "Shift") {
-		moveStepsFactor = 1;
+document.addEventListener("keydown", function (event) {
+	if (event.key.startsWith("Arrow")) {
+		if (keyPressedMap.size === 0) {
+			movementInterval = window.setInterval(move, 20);
+		}
+		stopPlayerAvatarAnimate();
 	}
+	keyPressedMap.set(event.key, true);
 });
 
 function animatePlayerAvatar(times = 0) {
@@ -280,31 +269,56 @@ function stopPlayerAvatarAnimate() {
 	}
 }
 
+function move() {
+	moveStepsFactor = keyPressedMap.has("Shift") ? 2 : 1;
+
+	if (keyPressedMap.has("ArrowDown")) {
+		moveDown();
+	}
+	if (keyPressedMap.has("ArrowUp")) {
+		moveUp();
+	}
+	if (keyPressedMap.has("ArrowLeft")) {
+		moveLeft();
+	}
+	if (keyPressedMap.has("ArrowRight")) {
+		moveRight();
+	}
+
+	send({
+		type: "moved",
+		content: {
+			x: playerAvatar.cx.baseVal.value,
+			y: playerAvatar.cy.baseVal.value,
+		},
+	});
+}
+
 function moveDown() {
 	const nextX = playerAvatar.cx.baseVal.value;
 	const nextY = playerAvatar.cy.baseVal.value + moveSteps * moveStepsFactor;
-	move({ nextX, nextY });
+	doMovement({ nextX, nextY });
 }
 
 function moveUp() {
 	const nextX = playerAvatar.cx.baseVal.value;
 	const nextY = playerAvatar.cy.baseVal.value - moveSteps * moveStepsFactor;
-	move({ nextX, nextY });
+	doMovement({ nextX, nextY });
 }
 
 function moveLeft() {
 	const nextX = playerAvatar.cx.baseVal.value - moveSteps * moveStepsFactor;
 	const nextY = playerAvatar.cy.baseVal.value;
-	move({ nextX, nextY });
+	doMovement({ nextX, nextY });
 }
 
 function moveRight() {
 	const nextX = playerAvatar.cx.baseVal.value + moveSteps * moveStepsFactor;
 	const nextY = playerAvatar.cy.baseVal.value;
-	move({ nextX, nextY });
+	doMovement({ nextX, nextY });
 }
 
-function move({ nextX, nextY }) {
+function doMovement({ nextX, nextY }) {
 	let isStillInRoom = circleFullyInsidePolygon(
 		[nextX, nextY, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
