@@ -1,3 +1,58 @@
+// ================================================================
+// jitsi prototype
+// ================================================================
+
+(function () {
+	const jitsiButton = document.getElementById("jitsi-button");
+
+	const root = document.createElement("div");
+	root.style.transition = "background 1s ease-out";
+	root.style.backgroundColor = "rgba(0,0,0,0)";
+	root.classList.add(
+		// "z-0",
+		"fixed",
+		"top-0",
+		"left-0",
+		"flex",
+		"items-center",
+		"justify-center",
+		"p-12",
+		"w-screen",
+		"h-screen",
+	);
+	document.body.appendChild(root);
+
+	jitsiButton.addEventListener("click", (event) => {
+		root.style.backgroundColor = "rgba(0,0,0,0.25)";
+		root.classList.add("z-50");
+
+		const animation = document.createElement("div");
+		animation.classList.add("w-0", "h-0");
+		animation.style.transition = "height 0.3s ease-out, width 0.3s ease-out";
+
+		const growingContainer = document.createElement("div");
+		growingContainer.classList.add(
+			"border",
+			"border-8",
+			"bg-white",
+			"w-full",
+			"h-full",
+		);
+
+		animation.appendChild(growingContainer);
+		root.appendChild(animation);
+
+		setTimeout(function () {
+			animation.classList.add("w-full");
+			animation.style.height = "100%";
+		}, 0);
+	});
+})();
+
+// ================================================================
+// GAME
+// ================================================================
+
 // Create WebSocket connection.
 // TODO use 'wss' protocol to enable SSL over websocket
 const socket = new WebSocket("ws://localhost:3000");
