@@ -216,24 +216,43 @@ let currentRoom = floors.find((floor) => {
 
 animatePlayerAvatar();
 
+const keyCodes = Object.freeze({
+	w: 87,
+	a: 65,
+	s: 83,
+	d: 68,
+	arrowUp: 38,
+	arrowDown: 40,
+	arrowLeft: 37,
+	arrowRight: 39,
+	byCode: (code) => Object.keys(keyCodes).find((key) => keyCodes[key] === code),
+});
+
 let movementInterval;
 const keyPressedMap = new Map();
 
 document.addEventListener("keyup", function (event) {
-	keyPressedMap.delete(event.key);
+	if (!event.shiftKey) {
+		keyPressedMap.delete("shift");
+	}
+	keyPressedMap.delete(keyCodes.byCode(event.keyCode));
 	if (keyPressedMap.size === 0) {
 		window.clearInterval(movementInterval);
 	}
 });
 
 document.addEventListener("keydown", function (event) {
-	if (event.key.startsWith("Arrow")) {
+	if (event.shiftKey) {
+		keyPressedMap.set("shift", true);
+	}
+	const key = keyCodes.byCode(event.keyCode);
+	if (key) {
 		if (keyPressedMap.size === 0) {
+			stopPlayerAvatarAnimate();
 			movementInterval = window.setInterval(move, 20);
 		}
-		stopPlayerAvatarAnimate();
+		keyPressedMap.set(key, true);
 	}
-	keyPressedMap.set(event.key, true);
 });
 
 function animatePlayerAvatar(times = 0) {
@@ -270,18 +289,18 @@ function stopPlayerAvatarAnimate() {
 }
 
 function move() {
-	moveStepsFactor = keyPressedMap.has("Shift") ? 2 : 1;
+	moveStepsFactor = keyPressedMap.has("shift") ? 2 : 1;
 
-	if (keyPressedMap.has("ArrowDown")) {
+	if (keyPressedMap.has("arrowDown") || keyPressedMap.has("s")) {
 		moveDown();
 	}
-	if (keyPressedMap.has("ArrowUp")) {
+	if (keyPressedMap.has("arrowUp") || keyPressedMap.has("w")) {
 		moveUp();
 	}
-	if (keyPressedMap.has("ArrowLeft")) {
+	if (keyPressedMap.has("arrowLeft") || keyPressedMap.has("a")) {
 		moveLeft();
 	}
-	if (keyPressedMap.has("ArrowRight")) {
+	if (keyPressedMap.has("arrowRight") || keyPressedMap.has("d")) {
 		moveRight();
 	}
 
