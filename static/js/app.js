@@ -41,6 +41,8 @@ document
 	});
 
 document.body.addEventListener("click", (event) => {
+	stopPlayerAvatarAnimate();
+
 	if (actionMenu.contains(event.target)) {
 		//
 	} else if (event.target === playerAvatar) {
