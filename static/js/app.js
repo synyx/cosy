@@ -243,36 +243,32 @@ document.addEventListener("keydown", function (event) {
 });
 
 function animatePlayerAvatar(times = 0) {
-	const animate = document.createElementNS(
-		"http://www.w3.org/2000/svg",
-		"animate",
-	);
-	animate.setAttributeNS(null, "attributeName", "r");
-	animate.setAttributeNS(null, "dur", "4s");
-	animate.setAttributeNS(null, "repeatCount", times ? times : "indefinite");
-	animate.setAttributeNS(null, "calcMode", "spline");
-	animate.setAttributeNS(null, "values", "10 ; 32; 10 ; 10");
-	animate.setAttributeNS(null, "keyTimes", "0 ; 0.33 ; 0.88 ; 1");
-	animate.setAttributeNS(
-		null,
-		"keySplines",
-		"0.5 0 0.5 1 ; 0.5 0 0.5 1 ; 0.5 0 0.5 1",
-	);
-	playerAvatar.appendChild(animate);
+	const playerHint = document.getElementById("player-hint");
+	for (let animate of playerHint.querySelectorAll("animate")) {
+		animate.setAttributeNS(null, "repeatCount", times ? times : "indefinite");
+	}
 }
 
 function stopPlayerAvatarAnimate() {
-	const animate = playerAvatar.firstElementChild;
-	if (animate) {
-		animate.addEventListener(
-			"repeatEvent",
-			(event) => {
-				event.preventDefault();
-				animate.setAttributeNS(null, "repeatCount", "0");
-			},
-			{ once: true },
-		);
-	}
+	const playerHint = document.getElementById("player-hint");
+	const promises = [...playerHint.querySelectorAll("animate")].map(
+		(animate) =>
+			new Promise((resolve) => {
+				animate.addEventListener(
+					"repeatEvent",
+					() => {
+						event.preventDefault();
+						event.stopImmediatePropagation();
+						animate.setAttributeNS(null, "repeatCount", "0");
+						resolve();
+					},
+					{ once: true },
+				);
+			}),
+	);
+	Promise.all(promises).then(() => {
+		playerHint.classList.add("hidden");
+	});
 }
 
 function move() {
@@ -339,9 +335,18 @@ function doMovement({ nextX, nextY }) {
 		currentRoom.polygon.points,
 	);
 
-	if (isStillInRoom) {
+	const updateCoordinates = () => {
+		// player pulse circle
+		const playerHint = document.getElementById("player-hint");
+		playerHint.cx.baseVal.value = nextX;
+		playerHint.cy.baseVal.value = nextY;
+		// player avatar circle
 		playerAvatar.cx.baseVal.value = nextX;
 		playerAvatar.cy.baseVal.value = nextY;
+	};
+
+	if (isStillInRoom) {
+		updateCoordinates();
 	} else {
 		const door = getIntersectingDoor([
 			nextX,
@@ -354,8 +359,7 @@ function doMovement({ nextX, nextY }) {
 				!allowedUsers ||
 				allowedUsers.includes(window.synyxoffice.player.email)
 			) {
-				playerAvatar.cx.baseVal.value = nextX;
-				playerAvatar.cy.baseVal.value = nextY;
+				updateCoordinates();
 			} else if (allowedUsers) {
 				window.alert(`Hey! hier kommt nur ${allowedUsers} durch!`);
 				stopMovementLoop();

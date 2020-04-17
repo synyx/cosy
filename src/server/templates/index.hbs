@@ -199,6 +199,11 @@
 						<image width="1" height="1" preserveAspectRatio="none" href="{{{player.avatarUrl}}}"></image>
 					</pattern>
 				</defs>
+				<circle id="player-hint" cx="799" cy="692" r="10" stroke="white" stroke-width="10" fill="white">
+					<animate attributeType="SVG" attributeName="r" begin="0s" dur="1.5s" repeatCount="indefinite" from="0" to="44"/>
+					<animate attributeType="CSS" attributeName="stroke-width" begin="0s"  dur="1.5s" repeatCount="indefinite" from="10" to="0" />
+					<animate attributeType="CSS" attributeName="opacity" begin="0s"  dur="1.5s" repeatCount="indefinite" from="1" to="0"/>
+				</circle>
 				<circle id="player" data-tooltip="{{player.name}}" cx="799" cy="692" r="10" fill="url(#player-avatar-image-pattern)"></circle>
 			</svg>
 		</div>
