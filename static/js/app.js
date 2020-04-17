@@ -93,7 +93,7 @@ document
 
 // Create WebSocket connection.
 // TODO use 'wss' protocol to enable SSL over websocket
-const socket = new WebSocket("ws://localhost:3000");
+const socket = new WebSocket(`ws://${window.location.host}`);
 
 let playerAvatarMap = new Map();
 
