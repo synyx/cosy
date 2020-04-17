@@ -27,8 +27,8 @@
 			height: "100%",
 			parentNode: jitsiParentElement,
 			userInfo: {
-				email: "{{email}}",
-				displayName: "{{name}}",
+				email: player.email,
+				displayName: player.name,
 			},
 		};
 		jitsiApi = new JitsiMeetExternalAPI(jitsiDomain, options);
