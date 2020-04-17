@@ -41,6 +41,7 @@ function cspMiddleware() {
 
 		const directives = [
 			`default-src 'self'`,
+			`connect-src 'self' ws:`,
 			`script-src 'self' https://xxxxxx ${scriptNonce}`,
 			`style-src 'self' ${styleNonce}`,
 			`font-src 'self'`,
