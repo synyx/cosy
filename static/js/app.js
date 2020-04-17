@@ -131,6 +131,8 @@ socket.addEventListener("message", function (event) {
 			// avatar element
 			const newPlayerAvatar = playerAvatar.cloneNode();
 			newPlayerAvatar.setAttributeNS(null, "id", "");
+			newPlayerAvatar.setAttributeNS(null, "cx", startPointMainEntrance.x);
+			newPlayerAvatar.setAttributeNS(null, "cy", startPointMainEntrance.y);
 			newPlayerAvatar.setAttributeNS(
 				null,
 				"fill",
@@ -179,6 +181,7 @@ function send(data) {
 
 let moveSteps = 2;
 let moveStepsFactor = 1;
+const startPointMainEntrance = { x: 799, y: 692 };
 const playerAvatar = document.getElementById("player");
 const playerAvatarImagePattern = document.getElementById(
 	"player-avatar-image-pattern",
