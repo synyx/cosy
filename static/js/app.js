@@ -5,47 +5,38 @@
 (function () {
 	const jitsiButton = document.getElementById("jitsi-button");
 
-	const root = document.createElement("div");
+	const root = document.getElementById("chat-root");
 	root.style.transition = "background 1s ease-out";
 	root.style.backgroundColor = "rgba(0,0,0,0)";
-	root.classList.add(
-		// "z-0",
-		"fixed",
-		"top-0",
-		"left-0",
-		"flex",
-		"items-center",
-		"justify-center",
-		"p-12",
-		"w-screen",
-		"h-screen",
-	);
-	document.body.appendChild(root);
+
+	const rootInner = document.getElementById("chat-root-inner");
 
 	jitsiButton.addEventListener("click", (event) => {
+		jitsiButton.blur();
+
 		root.style.backgroundColor = "rgba(0,0,0,0.25)";
 		root.classList.add("z-50");
 
-		const animation = document.createElement("div");
-		animation.classList.add("w-0", "h-0");
-		animation.style.transition = "height 0.3s ease-out, width 0.3s ease-out";
-
-		const growingContainer = document.createElement("div");
-		growingContainer.classList.add(
-			"border",
-			"border-8",
-			"bg-white",
-			"w-full",
-			"h-full",
-		);
-
-		animation.appendChild(growingContainer);
-		root.appendChild(animation);
+		rootInner.style.transition = "height 0.3s ease-out, width 0.3s ease-out";
+		rootInner.classList.add("w-full", "h-full");
 
 		setTimeout(function () {
-			animation.classList.add("w-full");
-			animation.style.height = "100%";
+			rootInner.classList.add("w-full");
+			rootInner.style.height = "100%";
 		}, 0);
+	});
+
+	const closeChatButton = document.getElementById("close-chat-button");
+	closeChatButton.addEventListener("click", function (event) {
+		closeChatButton.blur();
+
+		root.style.backgroundColor = "rgba(0,0,0,0)";
+		root.classList.remove("z-50", "w-full");
+
+		rootInner.style.transition = "";
+		rootInner.style.height = "";
+
+		rootInner.classList.remove("w-full", "h-full");
 	});
 })();
 
