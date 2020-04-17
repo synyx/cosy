@@ -36,13 +36,17 @@ function cspMiddleware() {
 				.map((v) => `'nonce-${v}'`)
 				.join(" ");
 
+		const scriptNonce = nonce(getNonceValuesForType("script"));
+		const styleNonce = nonce(getNonceValuesForType("style"));
+
 		const directives = [
 			`default-src 'self'`,
-			`script-src 'self' ${nonce(getNonceValuesForType("script"))}`,
-			`style-src 'self' ${nonce(getNonceValuesForType("style"))}`,
+			`script-src 'self' https://xxxxxx ${scriptNonce}`,
+			`style-src 'self' ${styleNonce}`,
 			`font-src 'self'`,
 			`img-src 'self' https://gravatar.com/`,
 			`object-src 'none'`,
+			`frame-src https://xxxxxx`,
 			`sandbox allow-forms allow-scripts allow-same-origin`,
 		].join("; ");
 
