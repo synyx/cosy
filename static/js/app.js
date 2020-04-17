@@ -198,6 +198,9 @@ const playerAvatarImagePattern = document.getElementById(
 const floors = [...document.querySelectorAll("path[id^=floor-]")].map((floor) =>
 	pathToPolyglot(floor),
 );
+const pillars = [
+	...document.querySelectorAll("path[id^=pillar-]"),
+].map((pillar) => pathToPolyglot(pillar));
 const doors = [...document.querySelectorAll("path[id^=door-]")].map((floor) =>
 	pathToPolyglot(floor, { precision: 0.3, color: "black" }),
 );
@@ -343,6 +346,15 @@ function moveRight() {
 }
 
 function doMovement({ nextX, nextY }) {
+	const pillar = getIntersectingPillar([
+		nextX,
+		nextY,
+		playerAvatar.r.baseVal.value,
+	]);
+	if (pillar) {
+		return;
+	}
+
 	let isStillInRoom = circleFullyInsidePolygon(
 		[nextX, nextY, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
@@ -373,6 +385,12 @@ function doMovement({ nextX, nextY }) {
 	}
 
 	updateCurrentRoom();
+}
+
+function getIntersectingPillar(nextPlayer) {
+	return pillars.find((pillar) => {
+		return circleTouchesPolygonEdges(nextPlayer, pillar.polygon.points);
+	});
 }
 
 function getIntersectingDoor(nextPlayer) {
