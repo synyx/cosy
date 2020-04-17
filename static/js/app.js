@@ -237,9 +237,14 @@ document.addEventListener("keyup", function (event) {
 	}
 	keyPressedMap.delete(keyCodes.byCode(event.keyCode));
 	if (keyPressedMap.size === 0) {
-		window.clearInterval(movementInterval);
+		stopMovementLoop();
 	}
 });
+
+function stopMovementLoop() {
+	window.clearInterval(movementInterval);
+	keyPressedMap.clear();
+}
 
 document.addEventListener("keydown", function (event) {
 	if (event.shiftKey) {
@@ -353,8 +358,17 @@ function doMovement({ nextX, nextY }) {
 			playerAvatar.r.baseVal.value,
 		]);
 		if (door) {
-			playerAvatar.cx.baseVal.value = nextX;
-			playerAvatar.cy.baseVal.value = nextY;
+			const { allowedUsers = "" } = door.polygon.element.dataset;
+			if (
+				!allowedUsers ||
+				allowedUsers.includes(window.synyxoffice.player.email)
+			) {
+				playerAvatar.cx.baseVal.value = nextX;
+				playerAvatar.cy.baseVal.value = nextY;
+			} else if (allowedUsers) {
+				window.alert(`Hey! hier kommt nur ${allowedUsers} durch!`);
+				stopMovementLoop();
+			}
 		}
 	}
 
@@ -407,7 +421,10 @@ function pathToPolyglot(path, { precision = 0.2, color = "tomato" } = {}) {
 	polygon.setAttributeNS(null, "id", path.id);
 	polygon.setAttributeNS(null, "fill", color);
 	polygon.setAttributeNS(null, "points", pointCommandsToSVGPoints(points));
-	// path.parentNode.replaceChild(polygon, path);
+
+	for (let [key, value] of Object.entries(path.dataset)) {
+		polygon.dataset[key] = value;
+	}
 
 	return {
 		id: path.id,

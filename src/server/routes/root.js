@@ -27,6 +27,7 @@ module.exports = function (app) {
 				jitsiDomain: "xxxxxx",
 				player: {
 					name: context.state.user.username,
+					email: context.state.user.email,
 					avatarUrl: gravatarUrl(context.state.user.email, { size: 64 }),
 				},
 			});
