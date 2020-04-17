@@ -188,7 +188,7 @@ function send(data) {
 	socket.send(JSON.stringify(data));
 }
 
-let moveSteps = 2;
+let moveSteps = 1;
 let moveStepsFactor = 1;
 const startPointMainEntrance = { x: 799, y: 692 };
 const playerAvatar = document.getElementById("player");
