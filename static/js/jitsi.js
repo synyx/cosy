@@ -2,7 +2,6 @@ const { jitsiDomain, player } = window.synyxoffice;
 
 let jitsiApi;
 const jitsiParentElement = document.getElementById("jitsi");
-const jitsiButton = document.getElementById("jitsi-button");
 const jitsiCamStatus = document.getElementById("jitsi-camera-status");
 const jitsiMicStatus = document.getElementById("jitsi-microphone-status");
 
@@ -12,10 +11,10 @@ root.style.backgroundColor = "rgba(0,0,0,0)";
 
 const rootInner = document.getElementById("chat-root-inner");
 
-export function startChat() {
+export function startChat({ roomName }) {
 	// jitsi connection
 	const options = {
-		roomName: "JitsiMeetAPIExample",
+		roomName: roomName || "JitsiMeetAPIExample",
 		width: "100%",
 		height: "100%",
 		parentNode: jitsiParentElement,

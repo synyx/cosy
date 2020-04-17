@@ -3,6 +3,7 @@ const websockify = require("koa-websocket");
 const gravatarUrl = require("gravatar-url");
 
 let users = [];
+let chatRooms = new Map();
 
 function user(internalAppUser) {
 	return {
@@ -94,6 +95,10 @@ module.exports = function (app) {
 					for (let user of users) {
 						send({ type: "user-joined", content: user });
 					}
+					// inform the new user about all current chats
+					for (let chatRoom of chatRooms.keys()) {
+						send({ type: "chat-started", content: chatRoom });
+					}
 
 					// add new user and broadcast it to every client
 					let newUser = user(loggedInUser);
@@ -110,6 +115,19 @@ module.exports = function (app) {
 						user.position = { x: position.x, y: position.y };
 						broadcast({ type: "user-moved", content: user });
 					}
+					break;
+				}
+				case "chat-started": {
+					const room = {
+						moderator: messageJson.content.moderator,
+						roomName: messageJson.content.roomName,
+						point: {
+							x: messageJson.content.point.x,
+							y: messageJson.content.point.y,
+						},
+					};
+					chatRooms.set(room, [room.moderator]);
+					broadcast({ type: "chat-started", content: room });
 					break;
 				}
 			}

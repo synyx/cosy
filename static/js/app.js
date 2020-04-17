@@ -1,5 +1,6 @@
 import * as chat from "./jitsi.js";
 
+const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player");
 const actionMenu = document.getElementById("action-menu");
 
@@ -58,7 +59,21 @@ document.body.addEventListener("click", (event) => {
 });
 
 document.getElementById("start-chat").addEventListener("click", (event) => {
-	chat.startChat();
+	const random = () => Math.random().toString(36).substr(2, 5);
+	const roomName = `${currentRoom.id}-${random()}-${random()}-${random()}`;
+	// TODO enable real jitsi chat
+	// chat.startChat({ roomName });
+	send({
+		type: "chat-started",
+		content: {
+			moderator: player.name,
+			roomName,
+			point: {
+				x: playerAvatar.cx.baseVal.value,
+				y: playerAvatar.cy.baseVal.value,
+			},
+		},
+	});
 });
 
 document
@@ -159,6 +174,32 @@ socket.addEventListener("message", function (event) {
 			const avatar = playerAvatarMap.get(player.name);
 			avatar.remove();
 			playerAvatarMap.delete(player.name);
+			break;
+		}
+
+		case "chat-started": {
+			const { moderator, roomName, point } = data.content;
+			console.log("chatStarted", data.content);
+
+			const circle = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"circle",
+			);
+			circle.setAttributeNS(null, "cx", point.x);
+			circle.setAttributeNS(null, "cy", point.y);
+			circle.setAttributeNS(null, "r", "50");
+			circle.setAttributeNS(null, "fill", "lime");
+			circle.setAttributeNS(null, "fill-opacity", "0.25");
+
+			circle.dataset.chatRoomName = roomName;
+
+			circle.innerHTML = `
+				<animate attributeType="SVG" attributeName="r" begin="0s" dur="3.5s" repeatCount="indefinite" from="0" to="66"/>
+				<animate attributeType="CSS" attributeName="stroke-width" begin="0s"  dur="3.5s" repeatCount="indefinite" from="10" to="0" />
+				<animate attributeType="CSS" attributeName="opacity" begin="0s"  dur="3.5s" repeatCount="indefinite" from="1" to="0"/>
+			`;
+
+			playerAvatar.parentNode.insertBefore(circle, playerAvatar);
 			break;
 		}
 	}
