@@ -7,6 +7,8 @@ const actionMenu = document.getElementById("action-menu");
 const actionStartChat = document.getElementById("start-chat-button");
 const actionJoinChat = document.getElementById("join-chat-button");
 
+let currentlyChatting = false;
+
 const nameTooltip = document.createElement("div");
 nameTooltip.classList.add(
 	"fixed",
@@ -112,6 +114,7 @@ actionStartChat.addEventListener("click", (event) => {
 	const roomName = `${currentRoom.id}-${random()}-${random()}-${random()}`;
 
 	const room = beginChat(roomName);
+	currentlyChatting = true;
 
 	send({
 		type: "chat-started",
@@ -155,6 +158,7 @@ function beginChat(roomName) {
 	window.addEventListener("beforeunload", sendChatLeft);
 
 	room.on("close", function () {
+		currentlyChatting = false;
 		sendChatLeft();
 		window.removeEventListener("beforeunload", sendChatLeft);
 	});
@@ -461,6 +465,10 @@ function moveRight() {
 }
 
 function doMovement({ nextX, nextY }) {
+	if (currentlyChatting) {
+		return;
+	}
+
 	const pillar = getIntersectingPillar([
 		nextX,
 		nextY,
