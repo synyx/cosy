@@ -389,6 +389,15 @@ function doMovement({ nextX, nextY }) {
 	if (isStillInRoom) {
 		updateCoordinates();
 	} else {
+		const rooms = getIntersectingFloors([
+			nextX,
+			nextY,
+			playerAvatar.r.baseVal.value,
+		]);
+		if (rooms.length > 1) {
+			updateCoordinates();
+			return;
+		}
 		const door = getIntersectingDoor([
 			nextX,
 			nextY,
@@ -420,6 +429,12 @@ function getIntersectingPillar(nextPlayer) {
 function getIntersectingDoor(nextPlayer) {
 	return doors.find((door) => {
 		return circleTouchesPolygonEdges(nextPlayer, door.polygon.points);
+	});
+}
+
+function getIntersectingFloors(nextPlayer) {
+	return floors.filter((floor) => {
+		return circleTouchesPolygonEdges(nextPlayer, floor.polygon.points);
 	});
 }
 
