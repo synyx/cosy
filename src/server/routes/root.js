@@ -4,6 +4,7 @@ const gravatarUrl = require("gravatar-url");
 
 let users = [];
 let chatRooms = new Map();
+let chatParticipants = new Map();
 
 function user(internalAppUser) {
 	return {
@@ -96,8 +97,8 @@ module.exports = function (app) {
 						send({ type: "user-joined", content: user });
 					}
 					// inform the new user about all current chats
-					for (let chatRoom of chatRooms.keys()) {
-						send({ type: "chat-started", content: chatRoom });
+					for (let room of chatRooms.values()) {
+						send({ type: "chat-started", content: room });
 					}
 
 					// add new user and broadcast it to every client
@@ -119,15 +120,33 @@ module.exports = function (app) {
 				}
 				case "chat-started": {
 					const room = {
-						moderator: messageJson.content.moderator,
 						roomName: messageJson.content.roomName,
+						userName: messageJson.content.userName,
 						point: {
 							x: messageJson.content.point.x,
 							y: messageJson.content.point.y,
 						},
 					};
-					chatRooms.set(room, [room.moderator]);
+					chatRooms.set(room.roomName, room);
+					chatParticipants.set(room.roomName, [room.userName]);
 					broadcast({ type: "chat-started", content: room });
+					break;
+				}
+				case "chat-left": {
+					const room = {
+						roomName: messageJson.content.roomName,
+						userName: messageJson.content.userName,
+					};
+					const nextParticipants = chatParticipants
+						.get(room.roomName)
+						.filter((username) => username !== room.userName);
+					if (nextParticipants.length === 0) {
+						chatRooms.delete(room.roomName);
+						chatParticipants.delete(room.roomName);
+						broadcast({ type: "chat-closed", content: room });
+					} else {
+						chatParticipants.set(room, nextParticipants);
+					}
 					break;
 				}
 			}

@@ -12,9 +12,13 @@ root.style.backgroundColor = "rgba(0,0,0,0)";
 const rootInner = document.getElementById("chat-root-inner");
 
 export function startChat({ roomName }) {
+	const externalListeners = new Map();
+
+	const _roomName = "JitsiMeetAPIExample";
+
 	// jitsi connection
 	const options = {
-		roomName: roomName || "JitsiMeetAPIExample",
+		roomName: _roomName,
 		width: "100%",
 		height: "100%",
 		parentNode: jitsiParentElement,
@@ -33,6 +37,27 @@ export function startChat({ roomName }) {
 		jitsiCamStatus.innerText = muted ? "AUS" : "AN";
 	});
 
+	jitsiApi.addEventListener("readyToClose", () => {
+		jitsiApi.dispose();
+
+		root.style.backgroundColor = "rgba(0,0,0,0)";
+		root.classList.remove("z-50", "w-full");
+		root.classList.add("hidden");
+
+		rootInner.style.transition = "";
+		rootInner.style.height = "";
+
+		rootInner.classList.remove("w-full", "h-full");
+		setTimeout(() => {
+			jitsiParentElement.innerHTML = "";
+			if (externalListeners.has("close")) {
+				for (let listener of externalListeners.get("close")) {
+					listener({ roomName: _roomName });
+				}
+			}
+		});
+	});
+
 	jitsiApi.executeCommand("avatarUrl", player.avatarUrl);
 	// audio is on by default, disable it for the pleasure of all other participants
 	jitsiApi.executeCommand("toggleAudio");
@@ -42,6 +67,7 @@ export function startChat({ roomName }) {
 	// chat window
 	root.style.backgroundColor = "rgba(0,0,0,0.25)";
 	root.classList.add("z-50");
+	root.classList.remove("hidden");
 
 	rootInner.style.transition = "height 0.3s ease-out, width 0.3s ease-out";
 	rootInner.classList.add("w-full", "h-full");
@@ -50,21 +76,31 @@ export function startChat({ roomName }) {
 		rootInner.classList.add("w-full");
 		rootInner.style.height = "100%";
 	}, 0);
+
+	return {
+		get roomName() {
+			return _roomName;
+		},
+		on(event, listener) {
+			if (!externalListeners.has(event)) {
+				externalListeners.set(event, []);
+			}
+			externalListeners.get(event).push(listener);
+		},
+	};
 }
 
 const closeChatButton = document.getElementById("close-chat-button");
 closeChatButton.addEventListener("click", function (event) {
 	closeChatButton.blur();
 
-	jitsiApi.executeCommand("hangup");
-	jitsiApi.dispose();
+	if (jitsiApi) {
+		jitsiApi.executeCommand("hangup");
+	}
+});
 
-	root.style.backgroundColor = "rgba(0,0,0,0)";
-	root.classList.remove("z-50", "w-full");
-
-	rootInner.style.transition = "";
-	rootInner.style.height = "";
-
-	rootInner.classList.remove("w-full", "h-full");
-	setTimeout(() => (jitsiParentElement.innerHTML = ""));
+window.addEventListener("beforeunload", function () {
+	if (jitsiApi) {
+		jitsiApi.executeCommand("hangup");
+	}
 });

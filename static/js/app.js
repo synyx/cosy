@@ -86,12 +86,27 @@ document.getElementById("start-chat").addEventListener("click", (event) => {
 	const random = () => Math.random().toString(36).substr(2, 5);
 	const roomName = `${currentRoom.id}-${random()}-${random()}-${random()}`;
 	// TODO enable real jitsi chat
-	// chat.startChat({ roomName });
+	const room = chat.startChat({ roomName });
+
+	const sendChatLeft = () => {
+		send({
+			type: "chat-left",
+			content: {
+				roomName: room.roomName,
+				userName: player.name,
+			},
+		});
+	};
+
+	window.addEventListener("beforeunload", () => sendChatLeft());
+
+	room.on("close", () => sendChatLeft());
+
 	send({
 		type: "chat-started",
 		content: {
-			moderator: player.name,
-			roomName,
+			roomName: room.roomName,
+			userName: player.name,
 			point: {
 				x: playerAvatar.cx.baseVal.value,
 				y: playerAvatar.cy.baseVal.value,
@@ -197,12 +212,13 @@ socket.addEventListener("message", function (event) {
 		}
 
 		case "chat-started": {
-			const { moderator, roomName, point } = data.content;
+			const { roomName, point } = data.content;
 
 			const circle = document.createElementNS(
 				"http://www.w3.org/2000/svg",
 				"circle",
 			);
+			circle.setAttributeNS(null, "id", `chat-${roomName}`);
 			circle.setAttributeNS(null, "cx", point.x);
 			circle.setAttributeNS(null, "cy", point.y);
 			circle.setAttributeNS(null, "r", "50");
@@ -218,6 +234,12 @@ socket.addEventListener("message", function (event) {
 			`;
 
 			playerAvatar.parentNode.insertBefore(circle, playerAvatar);
+			break;
+		}
+
+		case "chat-closed": {
+			const circle = document.getElementById(`chat-${data.content.roomName}`);
+			circle.remove();
 			break;
 		}
 	}
