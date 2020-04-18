@@ -21,25 +21,48 @@ nameTooltip.classList.add(
 	"rounded",
 );
 document.body.appendChild(nameTooltip);
+document.body.style.overflow = "hidden";
 
-document
-	.getElementById("office")
-	.addEventListener("mousemove", function (event) {
-		if (
-			event.target.dataset.tooltip &&
-			actionMenu.classList.contains("hidden")
-		) {
-			const { pageX: x, pageY: y } = event;
-			nameTooltip.innerText = event.target.dataset.tooltip;
-			const { width, height } = nameTooltip.getBoundingClientRect();
-			nameTooltip.style.top = `${y - height * 1.5}px`;
-			nameTooltip.style.left = `${x - width / 2}px`;
-		} else {
-			nameTooltip.innerText = "";
-			nameTooltip.style.top = "-10px";
-			nameTooltip.style.left = "-10px";
+document.addEventListener(
+	"wheel",
+	function (event) {
+		if (!event.altKey) {
+			return;
 		}
-	});
+		const currentScaleValue = /\((.+)\)/.exec(officeSvg.style.transform)[1];
+		if (event.deltaY < 0) {
+			// zoom in
+			const nextScaleValue = Number(currentScaleValue) + 0.1;
+			if (nextScaleValue <= 3.5) {
+				officeSvg.style.transform = `scale(${nextScaleValue})`;
+			}
+		} else {
+			// zoom out
+			const nextScaleValue = Number(currentScaleValue) - 0.1;
+			if (nextScaleValue >= 1) {
+				officeSvg.style.transform = `scale(${nextScaleValue})`;
+			}
+		}
+	},
+	{ passive: true },
+);
+
+const officeSvg = document.getElementById("office");
+officeSvg.style.transform = "scale(1)";
+
+officeSvg.addEventListener("mousemove", function (event) {
+	if (event.target.dataset.tooltip && actionMenu.classList.contains("hidden")) {
+		const { pageX: x, pageY: y } = event;
+		nameTooltip.innerText = event.target.dataset.tooltip;
+		const { width, height } = nameTooltip.getBoundingClientRect();
+		nameTooltip.style.top = `${y - height * 1.5}px`;
+		nameTooltip.style.left = `${x - width / 2}px`;
+	} else {
+		nameTooltip.innerText = "";
+		nameTooltip.style.top = "-10px";
+		nameTooltip.style.left = "-10px";
+	}
+});
 
 document.body.addEventListener("click", (event) => {
 	if (actionMenu.contains(event.target)) {
