@@ -1,3 +1,4 @@
+import "./panning-effect.js";
 import * as chat from "./jitsi.js";
 
 const { player } = window.synyxoffice;
@@ -23,32 +24,33 @@ nameTooltip.classList.add(
 document.body.appendChild(nameTooltip);
 document.body.style.overflow = "hidden";
 
+const officeSvg = document.getElementById("office");
+let officeScale = 1;
+
 document.addEventListener(
 	"wheel",
 	function (event) {
 		if (!event.altKey) {
 			return;
 		}
-		const currentScaleValue = /\((.+)\)/.exec(officeSvg.style.transform)[1];
 		if (event.deltaY < 0) {
 			// zoom in
-			const nextScaleValue = Number(currentScaleValue) + 0.1;
+			const nextScaleValue = officeScale + 0.1;
 			if (nextScaleValue <= 3.5) {
-				officeSvg.style.transform = `scale(${nextScaleValue})`;
+				officeScale = nextScaleValue;
+				officeSvg.setAttributeNS(null, "transform", `scale(${officeScale})`);
 			}
 		} else {
 			// zoom out
-			const nextScaleValue = Number(currentScaleValue) - 0.1;
+			const nextScaleValue = officeScale - 0.1;
 			if (nextScaleValue >= 1) {
-				officeSvg.style.transform = `scale(${nextScaleValue})`;
+				officeScale = nextScaleValue;
+				officeSvg.setAttributeNS(null, "transform", `scale(${officeScale})`);
 			}
 		}
 	},
 	{ passive: true },
 );
-
-const officeSvg = document.getElementById("office");
-officeSvg.style.transform = "scale(1)";
 
 officeSvg.addEventListener("mousemove", function (event) {
 	if (event.target.dataset.tooltip && actionMenu.classList.contains("hidden")) {
@@ -125,8 +127,6 @@ socket.addEventListener("open", function (event) {
 
 // Listen for messages
 socket.addEventListener("message", function (event) {
-	console.log("ws message", event.data);
-
 	const data = JSON.parse(event.data);
 
 	switch (data.type) {
@@ -135,7 +135,6 @@ socket.addEventListener("message", function (event) {
 			if (newPlayer.name === window.synyxoffice.player.name) {
 				return;
 			}
-			console.log("new player joined", newPlayer);
 
 			// avatar image
 			const newPlayerAvatarImagePattern = playerAvatarImagePattern.cloneNode(
@@ -183,7 +182,6 @@ socket.addEventListener("message", function (event) {
 			if (player.name === window.synyxoffice.player.name) {
 				return;
 			}
-			console.log("player moved", player);
 			const playerAvatar = playerAvatarMap.get(player.name);
 			playerAvatar.cx.baseVal.value = player.position.x;
 			playerAvatar.cy.baseVal.value = player.position.y;
@@ -192,7 +190,6 @@ socket.addEventListener("message", function (event) {
 
 		case "user-left": {
 			const player = data.content;
-			console.log("player left", player);
 			const avatar = playerAvatarMap.get(player.name);
 			avatar.remove();
 			playerAvatarMap.delete(player.name);
@@ -201,7 +198,6 @@ socket.addEventListener("message", function (event) {
 
 		case "chat-started": {
 			const { moderator, roomName, point } = data.content;
-			console.log("chatStarted", data.content);
 
 			const circle = document.createElementNS(
 				"http://www.w3.org/2000/svg",
