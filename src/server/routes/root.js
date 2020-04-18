@@ -57,11 +57,15 @@ module.exports = function (app) {
 
 	app.ws.use((context) => {
 		function broadcast(data) {
-			context.websocket.broadcast(JSON.stringify(data));
+			const stringified = JSON.stringify(data);
+			console.log("websocket BROADCAST", stringified);
+			context.websocket.broadcast(stringified);
 		}
 
 		function send(data) {
-			context.websocket.send(JSON.stringify(data));
+			const stringified = JSON.stringify(data);
+			console.log("websocket SEND", stringified);
+			context.websocket.send(stringified);
 		}
 
 		context.websocket.on("close", function () {
@@ -75,7 +79,7 @@ module.exports = function (app) {
 
 		context.websocket.on("message", function (message) {
 			// do something with the message from client
-			console.log("websocket message:", message);
+			console.log("websocket RECEIVED", message);
 
 			let messageJson;
 			try {
@@ -99,6 +103,15 @@ module.exports = function (app) {
 					// inform the new user about all current chats
 					for (let room of chatRooms.values()) {
 						send({ type: "chat-started", content: room });
+						for (let participant of chatParticipants.get(room.roomName)) {
+							send({
+								type: "chat-user-joined",
+								content: {
+									roomName: room.roomName,
+									userName: participant,
+								},
+							});
+						}
 					}
 
 					// add new user and broadcast it to every client
@@ -130,22 +143,54 @@ module.exports = function (app) {
 					chatRooms.set(room.roomName, room);
 					chatParticipants.set(room.roomName, [room.userName]);
 					broadcast({ type: "chat-started", content: room });
+					broadcast({
+						type: "chat-user-joined",
+						content: {
+							roomName: room.roomName,
+							userName: room.userName,
+						},
+					});
 					break;
 				}
-				case "chat-left": {
+				case "chat-user-joined": {
 					const room = {
 						roomName: messageJson.content.roomName,
 						userName: messageJson.content.userName,
 					};
-					const nextParticipants = chatParticipants
-						.get(room.roomName)
-						.filter((username) => username !== room.userName);
+					const participants = chatParticipants.get(room.roomName);
+					participants.push(room.userName);
+					chatParticipants.set(room.roomName, participants);
+					broadcast({
+						type: "chat-user-joined",
+						content: {
+							roomName: room.roomName,
+							userName: room.userName,
+						},
+					});
+					break;
+				}
+				case "chat-user-left": {
+					const room = {
+						roomName: messageJson.content.roomName,
+						userName: messageJson.content.userName,
+					};
+					const currentParticipants = chatParticipants.get(room.roomName);
+					const nextParticipants = currentParticipants.filter(
+						(username) => username !== room.userName,
+					);
 					if (nextParticipants.length === 0) {
 						chatRooms.delete(room.roomName);
 						chatParticipants.delete(room.roomName);
 						broadcast({ type: "chat-closed", content: room });
 					} else {
-						chatParticipants.set(room, nextParticipants);
+						chatParticipants.set(room.roomName, nextParticipants);
+						broadcast({
+							type: "chat-user-left",
+							content: {
+								roomName: room.roomName,
+								userName: room.userName,
+							},
+						});
 					}
 					break;
 				}

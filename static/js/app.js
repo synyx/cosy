@@ -4,6 +4,8 @@ import * as chat from "./jitsi.js";
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player");
 const actionMenu = document.getElementById("action-menu");
+const actionStartChat = document.getElementById("start-chat-button");
+const actionJoinChat = document.getElementById("join-chat-button");
 
 const nameTooltip = document.createElement("div");
 nameTooltip.classList.add(
@@ -77,30 +79,39 @@ document.body.addEventListener("click", (event) => {
 		const { width, height } = actionMenu.getBoundingClientRect();
 		actionMenu.style.top = `${y + 20}px`;
 		actionMenu.style.left = `${x - width / 2}px`;
+
+		const runningChats = [...document.querySelectorAll("circle[id^=chat-]")];
+		const joinableChat = runningChats.find((chat) => {
+			// kudos https://stackoverflow.com/questions/33490334/check-if-a-circle-is-contained-in-another-circle
+			const x1 = chat.cx.baseVal.value;
+			const y1 = chat.cy.baseVal.value;
+			const c1 = chat.r.baseVal.value;
+			const x2 = playerAvatar.cx.baseVal.value;
+			const y2 = playerAvatar.cy.baseVal.value;
+			const c2 = playerAvatar.r.baseVal.value;
+			const d = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+			const playerInArea = c1 > d + c2;
+			return playerInArea;
+		});
+
+		if (joinableChat) {
+			actionStartChat.classList.add("hidden");
+			actionJoinChat.classList.remove("hidden");
+			actionJoinChat.dataset.chatRoomName = joinableChat.dataset.chatRoomName;
+		} else {
+			actionStartChat.classList.remove("hidden");
+			actionJoinChat.classList.add("hidden");
+		}
 	} else {
 		actionMenu.classList.add("hidden");
 	}
 });
 
-document.getElementById("start-chat").addEventListener("click", (event) => {
+actionStartChat.addEventListener("click", (event) => {
 	const random = () => Math.random().toString(36).substr(2, 5);
 	const roomName = `${currentRoom.id}-${random()}-${random()}-${random()}`;
-	// TODO enable real jitsi chat
-	const room = chat.startChat({ roomName });
 
-	const sendChatLeft = () => {
-		send({
-			type: "chat-left",
-			content: {
-				roomName: room.roomName,
-				userName: player.name,
-			},
-		});
-	};
-
-	window.addEventListener("beforeunload", () => sendChatLeft());
-
-	room.on("close", () => sendChatLeft());
+	const room = beginChat(roomName);
 
 	send({
 		type: "chat-started",
@@ -114,6 +125,42 @@ document.getElementById("start-chat").addEventListener("click", (event) => {
 		},
 	});
 });
+
+actionJoinChat.addEventListener("click", (event) => {
+	const { chatRoomName } = event.target.dataset;
+	beginChat(chatRoomName);
+
+	send({
+		type: "chat-user-joined",
+		content: {
+			roomName: chatRoomName,
+			userName: player.name,
+		},
+	});
+});
+
+function beginChat(roomName) {
+	const room = chat.startChat({ roomName });
+
+	function sendChatLeft() {
+		send({
+			type: "chat-user-left",
+			content: {
+				roomName: room.roomName,
+				userName: player.name,
+			},
+		});
+	}
+
+	window.addEventListener("beforeunload", sendChatLeft);
+
+	room.on("close", function () {
+		sendChatLeft();
+		window.removeEventListener("beforeunload", sendChatLeft);
+	});
+
+	return room;
+}
 
 document
 	.getElementById("logout-form")
@@ -234,6 +281,18 @@ socket.addEventListener("message", function (event) {
 			`;
 
 			playerAvatar.parentNode.insertBefore(circle, playerAvatar);
+			break;
+		}
+
+		case "chat-user-joined": {
+			const { roomName, userName } = data.content;
+			console.log("user joined a chat", { roomName, userName });
+			break;
+		}
+
+		case "chat-user-left": {
+			const { roomName, userName } = data.content;
+			console.log("user left a chat", { roomName, userName });
 			break;
 		}
 
