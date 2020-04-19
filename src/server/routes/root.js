@@ -6,6 +6,12 @@ let users = [];
 let chatRooms = new Map();
 let chatParticipants = new Map();
 
+// committed points; the final canvas
+let whiteboardPoints = new Map();
+// not comitted points (mousedown and still moving it)
+let whiteboardOngoingPoints = new Map();
+let whiteboardPointsChunkCursors = new Map();
+
 function user(internalAppUser) {
 	return {
 		name: internalAppUser.username,
@@ -58,13 +64,13 @@ module.exports = function (app) {
 	app.ws.use((context) => {
 		function broadcast(data) {
 			const stringified = JSON.stringify(data);
-			console.log("websocket BROADCAST", stringified);
+			// console.log("websocket BROADCAST", stringified);
 			context.websocket.broadcast(stringified);
 		}
 
 		function send(data) {
 			const stringified = JSON.stringify(data);
-			console.log("websocket SEND", stringified);
+			// console.log("websocket SEND", stringified);
 			context.websocket.send(stringified);
 		}
 
@@ -79,7 +85,7 @@ module.exports = function (app) {
 
 		context.websocket.on("message", function (message) {
 			// do something with the message from client
-			console.log("websocket RECEIVED", message);
+			// console.log("websocket RECEIVED", message);
 
 			let messageJson;
 			try {
@@ -195,7 +201,7 @@ module.exports = function (app) {
 					break;
 				}
 				case "whiteboard-pointer-moved": {
-					const { x, y, userName } = messageJson;
+					const { x, y, userName } = messageJson.content;
 					broadcast({
 						type: "whiteboard-pointer-moved",
 						content: { x, y, userName },
@@ -203,18 +209,43 @@ module.exports = function (app) {
 					break;
 				}
 				case "whiteboard-dots-added": {
-					const { dots, color, thickneess, userName } = messageJson;
+					const { dots, color, thickness, userName } = messageJson.content;
+					whiteboardOngoingPoints.set(userName, { dots, color, thickness });
+
+					let cursor;
+					if (!whiteboardPointsChunkCursors.has(userName)) {
+						cursor = {
+							start: 0,
+							end: dots.length,
+						};
+					} else {
+						const curCursor = whiteboardPointsChunkCursors.get(userName);
+						let nextStart = curCursor.end - 3;
+						if (nextStart < 0) nextStart = 0;
+						cursor = {
+							start: nextStart,
+							end: dots.length,
+						};
+					}
+
+					whiteboardPointsChunkCursors.set(userName, cursor);
+
+					const dotsChunk = dots.slice(cursor.start, cursor.end);
 					broadcast({
-						type: "whiteboard-dots-added",
-						content: { dots, color, thickneess, userName },
+						type: "whiteboard-dots-chunk-added",
+						content: { dots: dotsChunk, color, thickness, userName },
 					});
+
 					break;
 				}
 				case "whiteboard-dots-committed": {
-					const { dots, color, thickneess, userName } = messageJson;
+					const { dots, color, thickness, userName } = messageJson.content;
+					whiteboardOngoingPoints.delete(userName);
+					whiteboardPoints.push({ dots, color, thickness });
+					whiteboardPointsChunkCursors.delete(userName);
 					broadcast({
 						type: "whiteboard-dots-committed",
-						content: { dots, color, thickneess, userName },
+						content: whiteboardPoints,
 					});
 					break;
 				}

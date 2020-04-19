@@ -55,9 +55,9 @@ export function initWhiteboard({ socket, userName }) {
 	const permCanvasCtx = permCanvas.getContext("2d");
 	root.appendChild(permCanvas);
 
-	// const collabCanvas = initCanvas({ width, height });
-	// const collabCanvasCtx = collabCanvas.getContext("2d");
-	// root.appendChild(collabCanvas);
+	const collabCanvas = initCanvas({ width, height });
+	const collabCanvasCtx = collabCanvas.getContext("2d");
+	root.appendChild(collabCanvas);
 
 	// temp canvas is used while user is drawing something
 	// on mouseup the art is committed to the permCanvas
@@ -82,7 +82,30 @@ export function initWhiteboard({ socket, userName }) {
 				if (remoteUserName === userName) {
 					return;
 				}
-				console.log("remote pointer moved", data.content);
+				break;
+			}
+			case "whiteboard-dots-chunk-added": {
+				const {
+					dots,
+					color,
+					thickness,
+					userName: remoteUserName,
+				} = data.content;
+				if (remoteUserName === userName) return;
+				drawQuadraticCurve(dots, color, thickness, collabCanvasCtx);
+				break;
+			}
+			case "whiteboard-dots-committed": {
+				const {
+					dots,
+					color,
+					thickness,
+					userName: remoteUserName,
+				} = data.content;
+				if (remoteUserName === userName) {
+					return;
+				}
+				console.log("remote dots committed", data.content);
 				break;
 			}
 		}
@@ -157,9 +180,14 @@ export function initWhiteboard({ socket, userName }) {
 		// event.preventDefault();
 
 		// publish 'mouse move'
+		const { top, left } = permCanvas.getBoundingClientRect();
 		send({
 			type: "whiteboard-pointer-moved",
-			content: [],
+			content: {
+				x: event.clientX - left,
+				y: event.clientY - top,
+				userName,
+			},
 		});
 
 		if (!mousedown) {
@@ -173,7 +201,7 @@ export function initWhiteboard({ socket, userName }) {
 		// publish dots
 		send({
 			type: "whiteboard-dots-added",
-			content: [],
+			content: { dots, color, thickness, userName },
 		});
 	}
 
@@ -182,11 +210,7 @@ export function initWhiteboard({ socket, userName }) {
 
 		send({
 			type: "whiteboard-dots-comitted",
-			content: {
-				dots: dots,
-				color,
-				thickness,
-			},
+			content: { dots, color, thickness, userName },
 		});
 
 		// commit dots to permanent canvas
@@ -199,6 +223,6 @@ export function initWhiteboard({ socket, userName }) {
 	}
 
 	function send(data) {
-		// socket.send(JSON.stringify(data));
+		socket.send(JSON.stringify(data));
 	}
 }
