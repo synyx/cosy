@@ -10,7 +10,6 @@ let chatParticipants = new Map();
 let whiteboardPoints = [];
 // not comitted points (mousedown and still moving it)
 let whiteboardOngoingPoints = new Map();
-let whiteboardPointsChunkCursors = new Map();
 
 function user(internalAppUser) {
 	return {
@@ -201,10 +200,12 @@ module.exports = function (app) {
 					break;
 				}
 				case "whiteboard-user-joined": {
-					send({
-						type: "whiteboard-dots-committed",
-						content: whiteboardPoints,
-					});
+					for (let { dots, color, thickness } of whiteboardPoints) {
+						send({
+							type: "whiteboard-dots-committed",
+							content: { dots, color, thickness },
+						});
+					}
 					break;
 				}
 				case "whiteboard-pointer-moved": {
@@ -218,42 +219,25 @@ module.exports = function (app) {
 				case "whiteboard-dots-added": {
 					const { dots, color, thickness, userName } = messageJson.content;
 					whiteboardOngoingPoints.set(userName, { dots, color, thickness });
-
-					let cursor;
-					if (!whiteboardPointsChunkCursors.has(userName)) {
-						cursor = {
-							start: 0,
-							end: dots.length,
-						};
-					} else {
-						const curCursor = whiteboardPointsChunkCursors.get(userName);
-						let nextStart = curCursor.end - 3;
-						if (nextStart < 0) nextStart = 0;
-						cursor = {
-							start: nextStart,
-							end: dots.length,
-						};
-					}
-
-					whiteboardPointsChunkCursors.set(userName, cursor);
-
-					const dotsChunk = dots.slice(cursor.start, cursor.end);
 					broadcast({
-						type: "whiteboard-dots-chunk-added",
-						content: { dots: dotsChunk, color, thickness, userName },
+						type: "whiteboard-dots-added",
+						content: { dots, color, thickness, userName },
 					});
-
 					break;
 				}
 				case "whiteboard-dots-committed": {
 					const { dots, color, thickness, userName } = messageJson.content;
 					whiteboardOngoingPoints.delete(userName);
 					whiteboardPoints.push({ dots, color, thickness });
-					whiteboardPointsChunkCursors.delete(userName);
-					// broadcast({
-					// 	type: "whiteboard-dots-committed",
-					// 	content: whiteboardPoints,
-					// });
+					broadcast({
+						type: "whiteboard-dots-committed",
+						content: {
+							dots,
+							color,
+							thickness,
+							userName,
+						},
+					});
 					break;
 				}
 			}

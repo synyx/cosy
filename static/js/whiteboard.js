@@ -3,13 +3,15 @@
 // =========================================================================
 
 const root = document.getElementById("whiteboard-canvas");
-root.classList.add("relative");
+root.classList.add("relative", "overflow-hidden");
 
-function initCanvas({ width, height }) {
+function initCanvas({ width, height, left, top }) {
 	const canvas = document.createElement("canvas");
 	canvas.width = width;
 	canvas.height = height;
-	canvas.classList.add("absolute", "top-0", "left-0");
+	canvas.style.position = "absolute";
+	canvas.style.left = `${left}px`;
+	canvas.style.top = `${top}px`;
 	return canvas;
 }
 
@@ -49,19 +51,41 @@ function drawQuadraticCurve(dots, color, thickness, canvas) {
 }
 
 export function initWhiteboard({ socket, userName }) {
-	const { width, height } = root.getBoundingClientRect();
+	const { width: rootWidth, height: rootHeight } = root.getBoundingClientRect();
 
-	const permCanvas = initCanvas({ width, height });
-	const permCanvasCtx = permCanvas.getContext("2d");
-	root.appendChild(permCanvas);
+	const width = 5000;
+	const height = 5000;
+	const canvasPos = {
+		top: rootHeight / 2 - height / 2,
+		left: rootWidth / 2 - width / 2,
+	};
 
-	const collabCanvas = initCanvas({ width, height });
+	const collabCanvas = initCanvas({
+		width,
+		height,
+		left: canvasPos.left,
+		top: canvasPos.top,
+	});
 	const collabCanvasCtx = collabCanvas.getContext("2d");
 	root.appendChild(collabCanvas);
 
+	const permCanvas = initCanvas({
+		width,
+		height,
+		left: canvasPos.left,
+		top: canvasPos.top,
+	});
+	const permCanvasCtx = permCanvas.getContext("2d");
+	root.appendChild(permCanvas);
+
 	// temp canvas is used while user is drawing something
 	// on mouseup the art is committed to the permCanvas
-	const tempCanvas = initCanvas({ width, height });
+	const tempCanvas = initCanvas({
+		width,
+		height,
+		left: canvasPos.left,
+		top: canvasPos.top,
+	});
 	const tempCanvasCtx = tempCanvas.getContext("2d");
 	root.appendChild(tempCanvas);
 
@@ -76,26 +100,31 @@ export function initWhiteboard({ socket, userName }) {
 		switch (data.type) {
 			case "whiteboard-pointer-moved": {
 				const { x, y, userName: remoteUserName } = data.content;
-				if (remoteUserName === userName) {
-					return;
-				}
 				break;
 			}
-			case "whiteboard-dots-chunk-added": {
+			case "whiteboard-dots-added": {
 				const {
 					dots,
 					color,
 					thickness,
 					userName: remoteUserName,
 				} = data.content;
-				if (remoteUserName === userName) return;
-				drawQuadraticCurve(dots, color, thickness, collabCanvasCtx);
+				if (remoteUserName !== userName) {
+					const { width, height } = collabCanvas;
+					collabCanvasCtx.clearRect(0, 0, width, height);
+					drawQuadraticCurve(dots, color, thickness, collabCanvasCtx);
+				}
 				break;
 			}
 			case "whiteboard-dots-committed": {
-				// console.log("remote dots committed", data.content);
-				for (let { dots, color, thickness } of data.content) {
-					drawQuadraticCurve(dots, color, thickness, collabCanvasCtx);
+				const {
+					dots,
+					color,
+					thickness,
+					userName: remoteUserName,
+				} = data.content;
+				if (remoteUserName !== userName) {
+					drawQuadraticCurve(dots, color, thickness, permCanvasCtx);
 				}
 				break;
 			}
@@ -186,7 +215,6 @@ export function initWhiteboard({ socket, userName }) {
 		}
 
 		updateMousePosition(event);
-		tempCanvasCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		drawQuadraticCurve(dots, color, thickness, tempCanvasCtx);
 
 		// publish dots
@@ -204,10 +232,10 @@ export function initWhiteboard({ socket, userName }) {
 			content: { dots, color, thickness, userName },
 		});
 
-		// commit dots to permanent canvas
-		drawQuadraticCurve(dots, color, thickness, permCanvasCtx);
 		// and cleanup temp canvas
 		tempCanvasCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+		// commit dots to permanent canvas
+		drawQuadraticCurve(dots, color, thickness, permCanvasCtx);
 
 		// last but not least reset dots
 		dots = [];
