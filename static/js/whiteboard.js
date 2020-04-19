@@ -74,7 +74,6 @@ export function initWhiteboard({ socket, userName }) {
 		top: canvasPos.top,
 	});
 	const collabCanvasCtx = collabCanvas.getContext("2d");
-	root.appendChild(collabCanvas);
 
 	const permCanvas = initCanvas({
 		width: canvasWidth,
@@ -83,7 +82,6 @@ export function initWhiteboard({ socket, userName }) {
 		top: canvasPos.top,
 	});
 	const permCanvasCtx = permCanvas.getContext("2d");
-	root.appendChild(permCanvas);
 
 	// temp canvas is used while user is drawing something
 	// on mouseup the art is committed to the permCanvas
@@ -94,6 +92,9 @@ export function initWhiteboard({ socket, userName }) {
 		top: canvasPos.top,
 	});
 	const tempCanvasCtx = tempCanvas.getContext("2d");
+
+	root.appendChild(permCanvas);
+	root.appendChild(collabCanvas);
 	root.appendChild(tempCanvas);
 
 	let color = "#000000";
@@ -131,6 +132,10 @@ export function initWhiteboard({ socket, userName }) {
 					userName: remoteUserName,
 				} = data.content;
 				if (remoteUserName !== userName) {
+					const { width, height } = collabCanvas;
+					// TODO cleaning collab Canvas should not be neccessary
+					// when chunks are implemented.
+					collabCanvasCtx.clearRect(0, 0, width, height);
 					drawQuadraticCurve(dots, color, thickness, permCanvasCtx);
 				}
 				break;
