@@ -5,13 +5,20 @@
 const root = document.getElementById("whiteboard-canvas");
 root.classList.add("relative", "overflow-hidden");
 
+// required for canvas movement calculations
+// canvas should not be moved anymore when end is reached
+const canvasBorderWidth = 50;
+
 function initCanvas({ width, height, left, top }) {
 	const canvas = document.createElement("canvas");
-	canvas.width = width;
-	canvas.height = height;
+	canvas.width = width - canvasBorderWidth;
+	canvas.height = height - canvasBorderWidth;
 	canvas.style.position = "absolute";
-	canvas.style.left = `${left}px`;
-	canvas.style.top = `${top}px`;
+	canvas.style.left = `${0}px`;
+	canvas.style.top = `${0}px`;
+	canvas.style.transform = `translate(${left}px, ${top}px)`;
+	canvas.classList.add("border", "border-teal-700");
+	canvas.style.borderWidth = `${canvasBorderWidth}px`;
 	return canvas;
 }
 
@@ -53,16 +60,16 @@ function drawQuadraticCurve(dots, color, thickness, canvas) {
 export function initWhiteboard({ socket, userName }) {
 	const { width: rootWidth, height: rootHeight } = root.getBoundingClientRect();
 
-	const width = 5000;
-	const height = 5000;
+	const canvasWidth = 5000;
+	const canvasHeight = 3000;
 	const canvasPos = {
-		top: rootHeight / 2 - height / 2,
-		left: rootWidth / 2 - width / 2,
+		top: rootHeight / 2 - canvasHeight / 2,
+		left: rootWidth / 2 - canvasWidth / 2,
 	};
 
 	const collabCanvas = initCanvas({
-		width,
-		height,
+		width: canvasWidth,
+		height: canvasHeight,
 		left: canvasPos.left,
 		top: canvasPos.top,
 	});
@@ -70,8 +77,8 @@ export function initWhiteboard({ socket, userName }) {
 	root.appendChild(collabCanvas);
 
 	const permCanvas = initCanvas({
-		width,
-		height,
+		width: canvasWidth,
+		height: canvasHeight,
 		left: canvasPos.left,
 		top: canvasPos.top,
 	});
@@ -81,8 +88,8 @@ export function initWhiteboard({ socket, userName }) {
 	// temp canvas is used while user is drawing something
 	// on mouseup the art is committed to the permCanvas
 	const tempCanvas = initCanvas({
-		width,
-		height,
+		width: canvasWidth,
+		height: canvasHeight,
 		left: canvasPos.left,
 		top: canvasPos.top,
 	});
@@ -143,20 +150,30 @@ export function initWhiteboard({ socket, userName }) {
 			thickness = event.target.value;
 		});
 
+	let spaceKeyPressed = false;
 	let mousedown = false;
 	let dots = [];
 
-	tempCanvas.addEventListener("mousedown", onPointerDown);
-	tempCanvas.addEventListener("mouseup", onPointerUp);
-	tempCanvas.addEventListener("mouseleave", onPointerUp);
-	tempCanvas.addEventListener("mousemove", onPointerMove);
+	document.addEventListener("keydown", function (event) {
+		if (event.key === " ") {
+			spaceKeyPressed = true;
+			tempCanvas.classList.add("cursor-move");
+		}
+	});
+	document.addEventListener("keyup", function (event) {
+		if (event.key === " ") {
+			spaceKeyPressed = false;
+			tempCanvas.classList.remove("cursor-move");
+		}
+	});
 
-	function updateMousePosition(event) {
-		const { top, left } = permCanvas.getBoundingClientRect();
-		const coordinates = {
-			x: event.clientX - left,
-			y: event.clientY - top,
-		};
+	tempCanvas.addEventListener("mousedown", onMouseDown);
+	tempCanvas.addEventListener("mouseup", onMouseUp);
+	tempCanvas.addEventListener("mouseleave", onMouseUp);
+	tempCanvas.addEventListener("mousemove", onMouseMove);
+
+	function updateDrawingDotsPath(event) {
+		const coordinates = getCursorPosition(event);
 
 		// scaling is not implemented yet
 		// coordinates.x /= this.scale_x;
@@ -176,7 +193,7 @@ export function initWhiteboard({ socket, userName }) {
 				Math.pow(dots[dots.length - 1].x - dots[dots.length - 2].x, 2) +
 					Math.pow(dots[dots.length - 1].y - dots[dots.length - 2].y, 2),
 			) >
-				((width + height) * 15) / 100
+				((canvasWidth + canvasHeight) * 15) / 100
 		) {
 			var shift_x_times = dots.length - 1;
 			while (shift_x_times > 0) {
@@ -186,22 +203,65 @@ export function initWhiteboard({ socket, userName }) {
 		}
 	}
 
-	function onPointerDown(event) {
+	function getCursorPosition(event) {
+		const rect = tempCanvas.getBoundingClientRect();
+		const x = event.clientX - rect.left - canvasBorderWidth;
+		const y = event.clientY - rect.top - canvasBorderWidth;
+		return { x, y };
+	}
+
+	function onMouseDown(event) {
 		if (event.which !== 1) {
 			// not the left mouse button
 			return;
 		}
 
-		mousedown = true;
-		updateMousePosition(event);
+		mousedown = getCursorPosition(event);
 
-		tempCanvasCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-		drawQuadraticCurve(dots, color, thickness, tempCanvasCtx);
+		if (!spaceKeyPressed) {
+			updateDrawingDotsPath(event);
+			tempCanvasCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+			drawQuadraticCurve(dots, color, thickness, tempCanvasCtx);
+			return;
+		}
 	}
 
-	function onPointerMove(event) {
+	function onMouseMove(event) {
 		// why preventDefault? don't know yet
 		// event.preventDefault();
+
+		if (spaceKeyPressed && mousedown) {
+			// mouse doesn't move in relation to the canvas actually
+			// therefore do not send mouse position updates to the server
+			let nextLeft = canvasPos.left;
+			let nextTop = canvasPos.top;
+
+			const currentCursor = getCursorPosition(event);
+			nextLeft -= mousedown.x - currentCursor.x;
+			nextTop -= mousedown.y - currentCursor.y;
+
+			if (
+				nextTop > 0 ||
+				Math.abs(nextTop) > canvasHeight + canvasBorderWidth - rootHeight
+			) {
+				nextTop = canvasPos.top;
+			}
+			if (
+				nextLeft > 0 ||
+				Math.abs(nextLeft) > canvasWidth + canvasBorderWidth - rootWidth
+			) {
+				nextLeft = canvasPos.left;
+			}
+
+			collabCanvas.style.transform = `translate(${nextLeft}px, ${nextTop}px)`;
+			permCanvas.style.transform = `translate(${nextLeft}px, ${nextTop}px)`;
+			tempCanvas.style.transform = `translate(${nextLeft}px, ${nextTop}px)`;
+
+			canvasPos.left = nextLeft;
+			canvasPos.top = nextTop;
+
+			return;
+		}
 
 		// publish 'mouse move'
 		const { top, left } = permCanvas.getBoundingClientRect();
@@ -218,7 +278,7 @@ export function initWhiteboard({ socket, userName }) {
 			return;
 		}
 
-		updateMousePosition(event);
+		updateDrawingDotsPath(event);
 		drawQuadraticCurve(dots, color, thickness, tempCanvasCtx);
 
 		// publish dots
@@ -228,7 +288,7 @@ export function initWhiteboard({ socket, userName }) {
 		});
 	}
 
-	function onPointerUp(event) {
+	function onMouseUp(event) {
 		mousedown = false;
 
 		send({
