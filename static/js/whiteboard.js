@@ -187,8 +187,12 @@ export function initWhiteboard({ socket, userName }) {
 	}
 
 	function onPointerDown(event) {
-		mousedown = true;
+		if (event.which !== 1) {
+			// not the left mouse button
+			return;
+		}
 
+		mousedown = true;
 		updateMousePosition(event);
 
 		tempCanvasCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
