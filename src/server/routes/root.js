@@ -7,7 +7,7 @@ let chatRooms = new Map();
 let chatParticipants = new Map();
 
 // committed points; the final canvas
-let whiteboardPoints = new Map();
+let whiteboardPoints = [];
 // not comitted points (mousedown and still moving it)
 let whiteboardOngoingPoints = new Map();
 let whiteboardPointsChunkCursors = new Map();
@@ -200,6 +200,13 @@ module.exports = function (app) {
 					}
 					break;
 				}
+				case "whiteboard-user-joined": {
+					send({
+						type: "whiteboard-dots-committed",
+						content: whiteboardPoints,
+					});
+					break;
+				}
 				case "whiteboard-pointer-moved": {
 					const { x, y, userName } = messageJson.content;
 					broadcast({
@@ -243,10 +250,10 @@ module.exports = function (app) {
 					whiteboardOngoingPoints.delete(userName);
 					whiteboardPoints.push({ dots, color, thickness });
 					whiteboardPointsChunkCursors.delete(userName);
-					broadcast({
-						type: "whiteboard-dots-committed",
-						content: whiteboardPoints,
-					});
+					// broadcast({
+					// 	type: "whiteboard-dots-committed",
+					// 	content: whiteboardPoints,
+					// });
 					break;
 				}
 			}

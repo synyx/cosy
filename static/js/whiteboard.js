@@ -68,6 +68,8 @@ export function initWhiteboard({ socket, userName }) {
 	let color = "#000000";
 	let thickness = 3;
 
+	send({ type: "whiteboard-user-joined", content: { userName } });
+
 	socket.addEventListener("message", function (event) {
 		const data = JSON.parse(event.data);
 
@@ -91,16 +93,10 @@ export function initWhiteboard({ socket, userName }) {
 				break;
 			}
 			case "whiteboard-dots-committed": {
-				const {
-					dots,
-					color,
-					thickness,
-					userName: remoteUserName,
-				} = data.content;
-				if (remoteUserName === userName) {
-					return;
+				// console.log("remote dots committed", data.content);
+				for (let { dots, color, thickness } of data.content) {
+					drawQuadraticCurve(dots, color, thickness, collabCanvasCtx);
 				}
-				console.log("remote dots committed", data.content);
 				break;
 			}
 		}
@@ -204,7 +200,7 @@ export function initWhiteboard({ socket, userName }) {
 		mousedown = false;
 
 		send({
-			type: "whiteboard-dots-comitted",
+			type: "whiteboard-dots-committed",
 			content: { dots, color, thickness, userName },
 		});
 
@@ -218,6 +214,13 @@ export function initWhiteboard({ socket, userName }) {
 	}
 
 	function send(data) {
-		socket.send(JSON.stringify(data));
+		if (socket.readyState === 1) {
+			// 1 == OPEN
+			socket.send(JSON.stringify(data));
+		} else {
+			socket.addEventListener("open", function () {
+				socket.send(JSON.stringify(data));
+			});
+		}
 	}
 }
