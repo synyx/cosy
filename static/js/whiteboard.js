@@ -68,11 +68,6 @@ export function initWhiteboard({ socket, userName }) {
 	let color = "#000000";
 	let thickness = 3;
 
-	// tempCanvasCtx.lineJoin = "round";
-	// tempCanvasCtx.lineCap = "round";
-	// tempCanvasCtx.lineWidth = lineWidth;
-	// tempCanvasCtx.strokeStyle = color;
-
 	socket.addEventListener("message", function (event) {
 		const data = JSON.parse(event.data);
 
