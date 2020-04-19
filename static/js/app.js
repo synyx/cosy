@@ -1,4 +1,5 @@
 import "./panning-effect.js";
+import { initWhiteboard } from "./whiteboard.js";
 import * as chat from "./jitsi.js";
 
 const { player } = window.synyxoffice;
@@ -8,6 +9,15 @@ const actionStartChat = document.getElementById("start-chat-button");
 const actionJoinChat = document.getElementById("join-chat-button");
 
 let currentlyChatting = false;
+
+// Create WebSocket connection.
+// TODO use 'wss' protocol to enable SSL over websocket
+const socket = new WebSocket(`ws://${window.location.host}`);
+
+initWhiteboard({
+	socket,
+	userName: window.synyxoffice.player.name,
+});
 
 const nameTooltip = document.createElement("div");
 nameTooltip.classList.add(
@@ -104,6 +114,9 @@ document.body.addEventListener("click", (event) => {
 			actionStartChat.classList.remove("hidden");
 			actionJoinChat.classList.add("hidden");
 		}
+
+		if (currentRoom.id === "floor-keativ") {
+		}
 	} else {
 		actionMenu.classList.add("hidden");
 	}
@@ -174,10 +187,6 @@ document
 			document.activeElement.blur();
 		}
 	});
-
-// Create WebSocket connection.
-// TODO use 'wss' protocol to enable SSL over websocket
-const socket = new WebSocket(`ws://${window.location.host}`);
 
 let playerAvatarMap = new Map();
 

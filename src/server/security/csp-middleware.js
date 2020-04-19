@@ -51,7 +51,7 @@ function cspMiddleware() {
 			`sandbox allow-forms allow-scripts allow-same-origin allow-modals`,
 		].join("; ");
 
-		context.res.setHeader("Content-Security-Policy", directives);
+		// context.res.setHeader("Content-Security-Policy", directives);
 	}
 
 	middleware._name = "helmet-csp";

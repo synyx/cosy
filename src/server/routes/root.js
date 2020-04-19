@@ -194,6 +194,30 @@ module.exports = function (app) {
 					}
 					break;
 				}
+				case "whiteboard-pointer-moved": {
+					const { x, y, userName } = messageJson;
+					broadcast({
+						type: "whiteboard-pointer-moved",
+						content: { x, y, userName },
+					});
+					break;
+				}
+				case "whiteboard-dots-added": {
+					const { dots, color, thickneess, userName } = messageJson;
+					broadcast({
+						type: "whiteboard-dots-added",
+						content: { dots, color, thickneess, userName },
+					});
+					break;
+				}
+				case "whiteboard-dots-committed": {
+					const { dots, color, thickneess, userName } = messageJson;
+					broadcast({
+						type: "whiteboard-dots-committed",
+						content: { dots, color, thickneess, userName },
+					});
+					break;
+				}
 			}
 		});
 	});

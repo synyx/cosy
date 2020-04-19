@@ -16,9 +16,44 @@
 				},
 			};
 		</script>
-		<script type="module" crossorigin="use-credentials" src="/js/app.js"></script>
+		<script async type="module" crossorigin="use-credentials" src="/js/app.js"></script>
+		<script async type="module" crossorigin="use-credentials" src="/js/whiteboard.js"></script>
 	</head>
 	<body class="bg-teal-500">
+		<div id="whiteboard-root" class="z-50 fixed top-0 left-0 flex items-center justify-center p-12 w-screen h-screen rounded">
+			<div id="whiteboard-root-inner" class="w-full h-full border border-8 bg-white flex flex-col">
+				<div class="bg-teal-900 flex justify-between p-2 text-white">
+					<div class="flex">
+						<div class="mr-4">
+							<button class="mr-1 bg-white rounded" title="Malstift">
+								<img src="/pencil.svg" alt="Malstift" width="24px" height="24px" class="rounded border shadow-outline">
+							</button>
+							<button class="bg-white rounded" title="Radierer">
+								<img src="/eraser.svg" alt="Radierer" width="24px" height="24px" class="rounded border hover:shadow-outline">
+							</button>
+						</div>
+						<div class="flex mr-3">
+							<label for="whiteboard-color" class="mr-1">Farbe</label>
+							<input type="color" id="whiteboard-color">
+						</div>
+						<div class="flex mr-3">
+							<label for="whiteboard-stroke-width" class="mr-1">Strichstärke</label>
+							<select id="whiteboard-stroke-width">
+								<option value="1">1</option>
+								<option value="3">3</option>
+								<option value="5">5</option>
+								<option value="7">7</option>
+							</select>
+						</div>
+					</div>
+					<button id="close-whiteboard-button" class="px-2 py-1 text-sm font-light hover:underline">
+						Hab genug
+					</button>
+				</div>
+				<div id="whiteboard-canvas" class="flex-1">
+				</div>
+			</div>
+		</div>
 		<div id="action-menu" class="hidden fixed z-40 px-1 text-black text-xs shadow-outline font-bold font-mono bg-white opacity-75 border border-black rounded">
 			<ul>
 				<li>
@@ -29,6 +64,11 @@
 				<li>
 					<button id="join-chat-button" class="hidden">
 						dem Gespräch beitreten
+					</button>
+				</li>
+				<li>
+					<button id="whiteboard-button" class="hidden">
+						aufs Whiteboard malen
 					</button>
 				</li>
 			</ul>
@@ -53,7 +93,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="absolute top-0 left-0 p-4 z-10">
+		{{!-- <div class="absolute top-0 left-0 p-4 z-10">
 			<ul class="font-mono">
 				<li>
 					email: {{email}}
@@ -65,7 +105,7 @@
 					nickname: {{nickname}}
 				</li>
 			</ul>
-		</div>
+		</div> --}}
 		<div class="absolute top-0 right-0 p-4 z-10">
 			<form id="logout-form" action="/logout" method="POST">
 				<input type="hidden" name="_csrf" value="{{{csrf}}}" />
