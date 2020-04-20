@@ -149,6 +149,9 @@ export function initWhiteboard({ socket, userName }) {
 						});
 						remoteCursorImg.src = remoteCursorFiles[nextRemoteCursorIndex];
 						nextRemoteCursorIndex++;
+						if (nextRemoteCursorIndex >= remoteCursorFiles.length) {
+							nextRemoteCursorIndex = 0;
+						}
 						participants.set(remoteUserName, function ({ x, y }) {
 							whenImageLoaded.then(function (image) {
 								cursorCanvasCtx.drawImage(image, x, y);
