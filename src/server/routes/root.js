@@ -2,16 +2,11 @@ const route = require("koa-route");
 const websockify = require("koa-websocket");
 const gravatarUrl = require("gravatar-url");
 
+const whiteboard = require("../websocket/whiteboard");
+
 let users = [];
 let chatRooms = new Map();
 let chatParticipants = new Map();
-
-// whiteboard participants an it's cursor position
-let whiteboardParticipants = new Map();
-// committed points; the final canvas
-let whiteboardPoints = [];
-// not comitted points (mousedown and still moving it)
-let whiteboardOngoingPoints = new Map();
 
 function user(internalAppUser) {
 	return {
@@ -75,6 +70,8 @@ module.exports = function (app) {
 			context.websocket.send(stringified);
 		}
 
+		const whiteboardActions = whiteboard({ send, broadcast });
+
 		context.websocket.on("close", function () {
 			const currentUser = user(context.state.user);
 			users = users.filter((u) => u.name !== currentUser.name);
@@ -100,8 +97,11 @@ module.exports = function (app) {
 			}
 
 			const loggedInUser = context.state.user;
+			const { type, content } = messageJson;
 
-			switch (messageJson.type) {
+			whiteboardActions(type, content);
+
+			switch (type) {
 				case "join": {
 					// inform the new user about all current users
 					for (let user of users) {
@@ -132,7 +132,7 @@ module.exports = function (app) {
 						(user) => user.name === loggedInUser.username,
 					);
 					if (user) {
-						const position = messageJson.content;
+						const position = content;
 						user.position = { x: position.x, y: position.y };
 						broadcast({ type: "user-moved", content: user });
 					}
@@ -140,11 +140,11 @@ module.exports = function (app) {
 				}
 				case "chat-started": {
 					const room = {
-						roomName: messageJson.content.roomName,
-						userName: messageJson.content.userName,
+						roomName: content.roomName,
+						userName: content.userName,
 						point: {
-							x: messageJson.content.point.x,
-							y: messageJson.content.point.y,
+							x: content.point.x,
+							y: content.point.y,
 						},
 					};
 					chatRooms.set(room.roomName, room);
@@ -161,8 +161,8 @@ module.exports = function (app) {
 				}
 				case "chat-user-joined": {
 					const room = {
-						roomName: messageJson.content.roomName,
-						userName: messageJson.content.userName,
+						roomName: content.roomName,
+						userName: content.userName,
 					};
 					const participants = chatParticipants.get(room.roomName);
 					participants.push(room.userName);
@@ -178,8 +178,8 @@ module.exports = function (app) {
 				}
 				case "chat-user-left": {
 					const room = {
-						roomName: messageJson.content.roomName,
-						userName: messageJson.content.userName,
+						roomName: content.roomName,
+						userName: content.userName,
 					};
 					const currentParticipants = chatParticipants.get(room.roomName);
 					const nextParticipants = currentParticipants.filter(
@@ -199,72 +199,6 @@ module.exports = function (app) {
 							},
 						});
 					}
-					break;
-				}
-				case "whiteboard-user-joined": {
-					const { userName } = messageJson.content;
-					for (let { dots, color, thickness } of whiteboardPoints) {
-						send({
-							type: "whiteboard-dots-committed",
-							content: { dots, color, thickness },
-						});
-					}
-					broadcast({
-						type: "whiteboard-pointer-moved",
-						content: {
-							// prettier-ignore
-							cursors: [...whiteboardParticipants.entries()].map((e) => ({ userName: e[0], ...e[1] }))
-						},
-					});
-					whiteboardParticipants.set(userName, { x: 0, y: 0 });
-					break;
-				}
-				case "whiteboard-user-left": {
-					const { userName } = messageJson.content;
-					whiteboardParticipants.delete(userName);
-					broadcast({
-						type: "whiteboard-pointer-moved",
-						content: {
-							// prettier-ignore
-							cursors: [...whiteboardParticipants.entries()].map((e) => ({ userName: e[0], ...e[1] }))
-						},
-					});
-					break;
-				}
-				case "whiteboard-pointer-moved": {
-					const { x, y, userName } = messageJson.content;
-					whiteboardParticipants.set(userName, { x, y });
-					broadcast({
-						type: "whiteboard-pointer-moved",
-						content: {
-							// prettier-ignore
-							cursors: [...whiteboardParticipants.entries()].map((e) => ({ userName: e[0], ...e[1] }))
-						},
-					});
-					break;
-				}
-				case "whiteboard-dots-added": {
-					const { dots, color, thickness, userName } = messageJson.content;
-					whiteboardOngoingPoints.set(userName, { dots, color, thickness });
-					broadcast({
-						type: "whiteboard-dots-added",
-						content: { dots, color, thickness, userName },
-					});
-					break;
-				}
-				case "whiteboard-dots-committed": {
-					const { dots, color, thickness, userName } = messageJson.content;
-					whiteboardOngoingPoints.delete(userName);
-					whiteboardPoints.push({ dots, color, thickness });
-					broadcast({
-						type: "whiteboard-dots-committed",
-						content: {
-							dots,
-							color,
-							thickness,
-							userName,
-						},
-					});
 					break;
 				}
 			}
