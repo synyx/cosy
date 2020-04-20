@@ -93,6 +93,8 @@ export function initWhiteboard({ socket, userName }) {
 	});
 	const tempCanvasCtx = tempCanvas.getContext("2d");
 
+	tempCanvas.style.cursor = "url('/pencil_black.cur'), auto";
+
 	root.appendChild(permCanvas);
 	root.appendChild(collabCanvas);
 	root.appendChild(tempCanvas);
