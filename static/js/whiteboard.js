@@ -151,8 +151,9 @@ export function initWhiteboard({ socket, userName }) {
 						nextRemoteCursorIndex++;
 						participants.set(remoteUserName, function ({ x, y }) {
 							whenImageLoaded.then(function (image) {
-								// TODO also add username label next to the cursor
 								cursorCanvasCtx.drawImage(image, x, y);
+								cursorCanvasCtx.font = "monospace";
+								cursorCanvasCtx.fillText(remoteUserName, x + 30, y + 10);
 							});
 						});
 					}
