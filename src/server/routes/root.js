@@ -219,6 +219,18 @@ module.exports = function (app) {
 					whiteboardParticipants.set(userName, { x: 0, y: 0 });
 					break;
 				}
+				case "whiteboard-user-left": {
+					const { userName } = messageJson.content;
+					whiteboardParticipants.delete(userName);
+					broadcast({
+						type: "whiteboard-pointer-moved",
+						content: {
+							// prettier-ignore
+							cursors: [...whiteboardParticipants.entries()].map((e) => ({ userName: e[0], ...e[1] }))
+						},
+					});
+					break;
+				}
 				case "whiteboard-pointer-moved": {
 					const { x, y, userName } = messageJson.content;
 					whiteboardParticipants.set(userName, { x, y });

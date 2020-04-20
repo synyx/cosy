@@ -220,6 +220,13 @@ export function initWhiteboard({ socket, userName }) {
 	let mousedown = false;
 	let dots = [];
 
+	window.addEventListener("beforeunload", function () {
+		send({
+			type: "whiteboard-user-left",
+			content: { userName },
+		});
+	});
+
 	document.addEventListener("keydown", function (event) {
 		if (event.key === " ") {
 			spaceKeyPressed = true;
