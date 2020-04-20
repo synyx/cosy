@@ -2,20 +2,9 @@ const route = require("koa-route");
 const websockify = require("koa-websocket");
 const gravatarUrl = require("gravatar-url");
 
+const board = require("../websocket/board");
 const conference = require("../websocket/conference");
 const whiteboard = require("../websocket/whiteboard");
-
-let users = [];
-
-function user(internalAppUser) {
-	return {
-		name: internalAppUser.username,
-		nickname: internalAppUser.nickname,
-		avatarUrl: internalAppUser.email
-			? gravatarUrl(internalAppUser.email, { size: 64 })
-			: "",
-	};
-}
 
 module.exports = function (app) {
 	app = websockify(app);
@@ -69,17 +58,9 @@ module.exports = function (app) {
 			context.websocket.send(stringified);
 		}
 
+		const boardActions = board({ send, broadcast, context });
 		const conferenceActions = conference({ send, broadcast });
 		const whiteboardActions = whiteboard({ send, broadcast });
-
-		context.websocket.on("close", function () {
-			const currentUser = user(context.state.user);
-			users = users.filter((u) => u.name !== currentUser.name);
-			broadcast({
-				type: "user-left",
-				content: currentUser,
-			});
-		});
 
 		context.websocket.on("message", function (message) {
 			// do something with the message from client
@@ -96,36 +77,11 @@ module.exports = function (app) {
 				return;
 			}
 
-			const loggedInUser = context.state.user;
 			const { type, content } = messageJson;
 
+			boardActions(type, content);
 			conferenceActions(type, content);
 			whiteboardActions(type, content);
-
-			switch (type) {
-				case "join": {
-					// inform the new user about all current users
-					for (let user of users) {
-						send({ type: "user-joined", content: user });
-					}
-					// add new user and broadcast it to every client
-					let newUser = user(loggedInUser);
-					users.push(newUser);
-					broadcast({ type: "user-joined", content: newUser });
-					break;
-				}
-				case "moved": {
-					const user = users.find(
-						(user) => user.name === loggedInUser.username,
-					);
-					if (user) {
-						const position = content;
-						user.position = { x: position.x, y: position.y };
-						broadcast({ type: "user-moved", content: user });
-					}
-					break;
-				}
-			}
 		});
 	});
 };
