@@ -180,6 +180,7 @@ export function initWhiteboard({ socket, userName }) {
 			spaceKeyPressed = false;
 			tempCanvas.classList.remove("cursor-move");
 			tempCanvas.style.cursor = "url('/pencil_black.cur'), auto";
+			mousedown = false;
 		}
 	});
 
