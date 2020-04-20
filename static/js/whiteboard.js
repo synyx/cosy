@@ -158,19 +158,28 @@ export function initWhiteboard({ socket, userName }) {
 		});
 
 	let spaceKeyPressed = false;
+	let spaceKeyUpHandled = true;
 	let mousedown = false;
 	let dots = [];
 
 	document.addEventListener("keydown", function (event) {
 		if (event.key === " ") {
 			spaceKeyPressed = true;
-			tempCanvas.classList.add("cursor-move");
+			// keydown fires multiple times as long as the space key
+			// is pressed. therefore we have to use this lock
+			if (spaceKeyUpHandled) {
+				spaceKeyUpHandled = false;
+				tempCanvas.classList.add("cursor-move");
+				tempCanvas.style.cursor = "grab";
+			}
 		}
 	});
 	document.addEventListener("keyup", function (event) {
 		if (event.key === " ") {
+			spaceKeyUpHandled = true;
 			spaceKeyPressed = false;
 			tempCanvas.classList.remove("cursor-move");
+			tempCanvas.style.cursor = "url('/pencil_black.cur'), auto";
 		}
 	});
 
@@ -224,6 +233,10 @@ export function initWhiteboard({ socket, userName }) {
 		}
 
 		mousedown = getCursorPosition(event);
+
+		if (spaceKeyPressed) {
+			tempCanvas.style.cursor = "grabbing";
+		}
 
 		if (!spaceKeyPressed) {
 			updateDrawingDotsPath(event);
@@ -297,6 +310,12 @@ export function initWhiteboard({ socket, userName }) {
 
 	function onMouseUp(event) {
 		mousedown = false;
+
+		if (spaceKeyPressed) {
+			tempCanvas.style.cursor = "grab";
+		} else {
+			tempCanvas.style.cursor = "url('/pencil_black.cur'), auto";
+		}
 
 		send({
 			type: "whiteboard-dots-committed",
