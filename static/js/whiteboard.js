@@ -132,14 +132,6 @@ export function initWhiteboard({ socket, userName }) {
 		const data = JSON.parse(event.data);
 
 		switch (data.type) {
-			case "whiteboard-user-joined": {
-				const { userName: remoteUserName } = data.content;
-				break;
-			}
-			case "whiteboard-user-left": {
-				const { userName: remoteUserName } = data.content;
-				break;
-			}
 			case "whiteboard-pointer-moved": {
 				const { cursors } = data.content;
 				cursorCanvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
