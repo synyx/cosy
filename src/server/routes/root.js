@@ -48,13 +48,11 @@ module.exports = function (app) {
 	app.ws.use((context) => {
 		function broadcast(data) {
 			const stringified = JSON.stringify(data);
-			// console.log("websocket BROADCAST", stringified);
 			context.websocket.broadcast(stringified);
 		}
 
 		function send(data) {
 			const stringified = JSON.stringify(data);
-			// console.log("websocket SEND", stringified);
 			context.websocket.send(stringified);
 		}
 
@@ -63,9 +61,6 @@ module.exports = function (app) {
 		const whiteboardActions = whiteboard({ send, broadcast });
 
 		context.websocket.on("message", function (message) {
-			// do something with the message from client
-			// console.log("websocket RECEIVED", message);
-
 			let messageJson;
 			try {
 				messageJson = JSON.parse(message);
