@@ -93,21 +93,52 @@ export function initWhiteboard({ socket, userName }) {
 	});
 	const tempCanvasCtx = tempCanvas.getContext("2d");
 
-	tempCanvas.style.cursor = "url('/pencil_black.cur'), auto";
+	const cursorCanvas = initCanvas({
+		width: canvasWidth,
+		height: canvasHeight,
+		left: canvasPos.left,
+		top: canvasPos.top,
+	});
+	const cursorCanvasCtx = cursorCanvas.getContext("2d");
+
+	cursorCanvas.style.cursor = "url('/pencil_black.cur'), auto";
+	cursorCanvasCtx.globalAlpha = 0.33;
 
 	root.appendChild(permCanvas);
 	root.appendChild(collabCanvas);
 	root.appendChild(tempCanvas);
+	// cursors should be above everything else
+	// therefore it has to be the last added one
+	root.appendChild(cursorCanvas);
 
 	let color = "#000000";
 	let thickness = 3;
 
 	send({ type: "whiteboard-user-joined", content: { userName } });
 
+	// TODO do this when a user joins; and attach a name label next to it?
+	var remoteCursorImg = new Image();
+	remoteCursorImg.onload = function () {
+		cursorCanvasCtx.drawImage(
+			remoteCursorImg,
+			canvasWidth / 2,
+			canvasHeight / 2,
+		);
+	};
+	remoteCursorImg.src = "/pencil_pink.cur";
+
 	socket.addEventListener("message", function (event) {
 		const data = JSON.parse(event.data);
 
 		switch (data.type) {
+			case "whiteboard-user-joined": {
+				const { userName: remoteUserName } = data.content;
+				break;
+			}
+			case "whiteboard-user-left": {
+				const { userName: remoteUserName } = data.content;
+				break;
+			}
 			case "whiteboard-pointer-moved": {
 				const { x, y, userName: remoteUserName } = data.content;
 				break;
@@ -169,8 +200,7 @@ export function initWhiteboard({ socket, userName }) {
 			// is pressed. therefore we have to use this lock
 			if (spaceKeyUpHandled) {
 				spaceKeyUpHandled = false;
-				tempCanvas.classList.add("cursor-move");
-				tempCanvas.style.cursor = "grab";
+				cursorCanvas.style.cursor = "grab";
 			}
 		}
 	});
@@ -178,16 +208,15 @@ export function initWhiteboard({ socket, userName }) {
 		if (event.key === " ") {
 			spaceKeyUpHandled = true;
 			spaceKeyPressed = false;
-			tempCanvas.classList.remove("cursor-move");
-			tempCanvas.style.cursor = "url('/pencil_black.cur'), auto";
+			cursorCanvas.style.cursor = "url('/pencil_black.cur'), auto";
 			mousedown = false;
 		}
 	});
 
-	tempCanvas.addEventListener("mousedown", onMouseDown);
-	tempCanvas.addEventListener("mouseup", onMouseUp);
-	tempCanvas.addEventListener("mouseleave", onMouseUp);
-	tempCanvas.addEventListener("mousemove", onMouseMove);
+	cursorCanvas.addEventListener("mousedown", onMouseDown);
+	cursorCanvas.addEventListener("mouseup", onMouseUp);
+	cursorCanvas.addEventListener("mouseleave", onMouseUp);
+	cursorCanvas.addEventListener("mousemove", onMouseMove);
 
 	function updateDrawingDotsPath(event) {
 		const coordinates = getCursorPosition(event);
@@ -236,7 +265,7 @@ export function initWhiteboard({ socket, userName }) {
 		mousedown = getCursorPosition(event);
 
 		if (spaceKeyPressed) {
-			tempCanvas.style.cursor = "grabbing";
+			cursorCanvas.style.cursor = "grabbing";
 		}
 
 		if (!spaceKeyPressed) {
@@ -277,6 +306,7 @@ export function initWhiteboard({ socket, userName }) {
 			collabCanvas.style.transform = `translate(${nextLeft}px, ${nextTop}px)`;
 			permCanvas.style.transform = `translate(${nextLeft}px, ${nextTop}px)`;
 			tempCanvas.style.transform = `translate(${nextLeft}px, ${nextTop}px)`;
+			cursorCanvas.style.transform = `translate(${nextLeft}px, ${nextTop}px)`;
 
 			canvasPos.left = nextLeft;
 			canvasPos.top = nextTop;
@@ -313,9 +343,9 @@ export function initWhiteboard({ socket, userName }) {
 		mousedown = false;
 
 		if (spaceKeyPressed) {
-			tempCanvas.style.cursor = "grab";
+			cursorCanvas.style.cursor = "grab";
 		} else {
-			tempCanvas.style.cursor = "url('/pencil_black.cur'), auto";
+			cursorCanvas.style.cursor = "url('/pencil_black.cur'), auto";
 		}
 
 		send({
