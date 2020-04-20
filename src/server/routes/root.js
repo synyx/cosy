@@ -34,21 +34,14 @@ module.exports = function (app) {
 		return next(context);
 	});
 
-	// attach broadcast helper to websocket
-	// to send a message to all connected clients
-	app.ws.use((context, next) => {
-		context.websocket.broadcast = function (data) {
-			app.ws.server.clients.forEach(function each(client) {
-				client.send(data);
-			});
-		};
-		return next(context);
-	});
-
 	app.ws.use((context) => {
 		function broadcast(data) {
 			const stringified = JSON.stringify(data);
-			context.websocket.broadcast(stringified);
+			context.websocket.broadcast = function (data) {
+				app.ws.server.clients.forEach(function each(client) {
+					client.send(stringified);
+				});
+			};
 		}
 
 		function send(data) {
