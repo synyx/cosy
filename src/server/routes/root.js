@@ -2,11 +2,10 @@ const route = require("koa-route");
 const websockify = require("koa-websocket");
 const gravatarUrl = require("gravatar-url");
 
+const conference = require("../websocket/conference");
 const whiteboard = require("../websocket/whiteboard");
 
 let users = [];
-let chatRooms = new Map();
-let chatParticipants = new Map();
 
 function user(internalAppUser) {
 	return {
@@ -70,6 +69,7 @@ module.exports = function (app) {
 			context.websocket.send(stringified);
 		}
 
+		const conferenceActions = conference({ send, broadcast });
 		const whiteboardActions = whiteboard({ send, broadcast });
 
 		context.websocket.on("close", function () {
@@ -99,6 +99,7 @@ module.exports = function (app) {
 			const loggedInUser = context.state.user;
 			const { type, content } = messageJson;
 
+			conferenceActions(type, content);
 			whiteboardActions(type, content);
 
 			switch (type) {
@@ -107,20 +108,6 @@ module.exports = function (app) {
 					for (let user of users) {
 						send({ type: "user-joined", content: user });
 					}
-					// inform the new user about all current chats
-					for (let room of chatRooms.values()) {
-						send({ type: "chat-started", content: room });
-						for (let participant of chatParticipants.get(room.roomName)) {
-							send({
-								type: "chat-user-joined",
-								content: {
-									roomName: room.roomName,
-									userName: participant,
-								},
-							});
-						}
-					}
-
 					// add new user and broadcast it to every client
 					let newUser = user(loggedInUser);
 					users.push(newUser);
@@ -135,69 +122,6 @@ module.exports = function (app) {
 						const position = content;
 						user.position = { x: position.x, y: position.y };
 						broadcast({ type: "user-moved", content: user });
-					}
-					break;
-				}
-				case "chat-started": {
-					const room = {
-						roomName: content.roomName,
-						userName: content.userName,
-						point: {
-							x: content.point.x,
-							y: content.point.y,
-						},
-					};
-					chatRooms.set(room.roomName, room);
-					chatParticipants.set(room.roomName, [room.userName]);
-					broadcast({ type: "chat-started", content: room });
-					broadcast({
-						type: "chat-user-joined",
-						content: {
-							roomName: room.roomName,
-							userName: room.userName,
-						},
-					});
-					break;
-				}
-				case "chat-user-joined": {
-					const room = {
-						roomName: content.roomName,
-						userName: content.userName,
-					};
-					const participants = chatParticipants.get(room.roomName);
-					participants.push(room.userName);
-					chatParticipants.set(room.roomName, participants);
-					broadcast({
-						type: "chat-user-joined",
-						content: {
-							roomName: room.roomName,
-							userName: room.userName,
-						},
-					});
-					break;
-				}
-				case "chat-user-left": {
-					const room = {
-						roomName: content.roomName,
-						userName: content.userName,
-					};
-					const currentParticipants = chatParticipants.get(room.roomName);
-					const nextParticipants = currentParticipants.filter(
-						(username) => username !== room.userName,
-					);
-					if (nextParticipants.length === 0) {
-						chatRooms.delete(room.roomName);
-						chatParticipants.delete(room.roomName);
-						broadcast({ type: "chat-closed", content: room });
-					} else {
-						chatParticipants.set(room.roomName, nextParticipants);
-						broadcast({
-							type: "chat-user-left",
-							content: {
-								roomName: room.roomName,
-								userName: room.userName,
-							},
-						});
 					}
 					break;
 				}
