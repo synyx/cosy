@@ -6,6 +6,8 @@ let users = [];
 let chatRooms = new Map();
 let chatParticipants = new Map();
 
+// whiteboard participants an it's cursor position
+let whiteboardParticipants = new Map();
 // committed points; the final canvas
 let whiteboardPoints = [];
 // not comitted points (mousedown and still moving it)
@@ -200,19 +202,32 @@ module.exports = function (app) {
 					break;
 				}
 				case "whiteboard-user-joined": {
+					const { userName } = messageJson.content;
 					for (let { dots, color, thickness } of whiteboardPoints) {
 						send({
 							type: "whiteboard-dots-committed",
 							content: { dots, color, thickness },
 						});
 					}
+					broadcast({
+						type: "whiteboard-pointer-moved",
+						content: {
+							// prettier-ignore
+							cursors: [...whiteboardParticipants.entries()].map((e) => ({ userName: e[0], ...e[1] }))
+						},
+					});
+					whiteboardParticipants.set(userName, { x: 0, y: 0 });
 					break;
 				}
 				case "whiteboard-pointer-moved": {
 					const { x, y, userName } = messageJson.content;
+					whiteboardParticipants.set(userName, { x, y });
 					broadcast({
 						type: "whiteboard-pointer-moved",
-						content: { x, y, userName },
+						content: {
+							// prettier-ignore
+							cursors: [...whiteboardParticipants.entries()].map((e) => ({ userName: e[0], ...e[1] }))
+						},
 					});
 					break;
 				}

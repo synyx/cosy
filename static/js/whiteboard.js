@@ -116,16 +116,17 @@ export function initWhiteboard({ socket, userName }) {
 
 	send({ type: "whiteboard-user-joined", content: { userName } });
 
-	// TODO do this when a user joins; and attach a name label next to it?
-	var remoteCursorImg = new Image();
-	remoteCursorImg.onload = function () {
-		cursorCanvasCtx.drawImage(
-			remoteCursorImg,
-			canvasWidth / 2,
-			canvasHeight / 2,
-		);
-	};
-	remoteCursorImg.src = "/pencil_pink.cur";
+	const participants = new Map();
+	let nextRemoteCursorIndex = 0;
+	const remoteCursorFiles = [
+		"pencil_blue.cur",
+		"pencil_green.cur",
+		"pencil_orange.cur",
+		"pencil_pink.cur",
+		"pencil_purple.cur",
+		"pencil_red.cur",
+		"pencil_yellow.cur",
+	];
 
 	socket.addEventListener("message", function (event) {
 		const data = JSON.parse(event.data);
@@ -140,7 +141,33 @@ export function initWhiteboard({ socket, userName }) {
 				break;
 			}
 			case "whiteboard-pointer-moved": {
-				const { x, y, userName: remoteUserName } = data.content;
+				const { cursors } = data.content;
+				cursorCanvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+				for (let cursorData of cursors) {
+					const { userName: remoteUserName, x, y } = cursorData;
+					if (remoteUserName === userName) {
+						continue;
+					}
+					if (!participants.has(remoteUserName)) {
+						const remoteCursorImg = new Image();
+						const whenImageLoaded = new Promise((resolve) => {
+							remoteCursorImg.onload = function () {
+								resolve(remoteCursorImg);
+							};
+						});
+						remoteCursorImg.src = remoteCursorFiles[nextRemoteCursorIndex];
+						nextRemoteCursorIndex++;
+						participants.set(remoteUserName, function ({ x, y }) {
+							whenImageLoaded.then(function (image) {
+								// TODO also add username label next to the cursor
+								cursorCanvasCtx.drawImage(image, x, y);
+							});
+						});
+					}
+					const renderCursor = participants.get(remoteUserName);
+					// render cursor at position or out of canvas scope when not defined
+					renderCursor({ x: x != null ? x : -100, y: y != null ? y : -100 });
+				}
 				break;
 			}
 			case "whiteboard-dots-added": {
@@ -315,12 +342,12 @@ export function initWhiteboard({ socket, userName }) {
 		}
 
 		// publish 'mouse move'
-		const { top, left } = permCanvas.getBoundingClientRect();
+		const coordinates = getCursorPosition(event);
 		send({
 			type: "whiteboard-pointer-moved",
 			content: {
-				x: event.clientX - left,
-				y: event.clientY - top,
+				x: coordinates.x,
+				y: coordinates.y,
 				userName,
 			},
 		});
