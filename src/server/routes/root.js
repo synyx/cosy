@@ -37,11 +37,9 @@ module.exports = function (app) {
 	app.ws.use((context) => {
 		function broadcast(data) {
 			const stringified = JSON.stringify(data);
-			context.websocket.broadcast = function (data) {
-				app.ws.server.clients.forEach(function each(client) {
-					client.send(stringified);
-				});
-			};
+			app.ws.server.clients.forEach(function each(client) {
+				client.send(stringified);
+			});
 		}
 
 		function send(data) {

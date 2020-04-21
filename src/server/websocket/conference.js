@@ -1,7 +1,7 @@
-module.exports = function conference({ send, broadcast }) {
-	let chatRooms = new Map();
-	let chatParticipants = new Map();
+let chatRooms = new Map();
+let chatParticipants = new Map();
 
+module.exports = function conference({ send, broadcast }) {
 	return function (type, data) {
 		switch (type) {
 			case "join": {

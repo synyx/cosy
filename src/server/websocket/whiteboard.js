@@ -1,11 +1,11 @@
-module.exports = function whiteboard({ send, broadcast }) {
-	// whiteboard participants an it's cursor position
-	let whiteboardParticipants = new Map();
-	// committed points; the final canvas
-	let whiteboardPoints = [];
-	// not comitted points (mousedown and still moving it)
-	let whiteboardOngoingPoints = new Map();
+// whiteboard participants an it's cursor position
+let whiteboardParticipants = new Map();
+// committed points; the final canvas
+let whiteboardPoints = [];
+// not comitted points (mousedown and still moving it)
+let whiteboardOngoingPoints = new Map();
 
+module.exports = function whiteboard({ send, broadcast }) {
 	return function (type, data) {
 		switch (type) {
 			case "whiteboard-user-joined": {
