@@ -2,12 +2,39 @@
 // kudos https://ben.akrin.com/?p=4981
 // =========================================================================
 
-const root = document.getElementById("whiteboard-canvas");
-root.classList.add("relative", "overflow-hidden");
+const root = document.getElementById("whiteboard-root");
+root.style.transition = "background 1s ease-out";
+root.style.backgroundColor = "rgba(0,0,0,0)";
+
+const rootInner = document.getElementById("chat-root-inner");
+
+const canvasParent = document.getElementById("whiteboard-canvas");
+canvasParent.classList.add("relative", "overflow-hidden");
 
 // required for canvas movement calculations
 // canvas should not be moved anymore when end is reached
 const canvasBorderWidth = 50;
+
+const closeButton = document.getElementById("close-whiteboard-button");
+closeButton.addEventListener("click", function (event) {
+	closeButton.blur();
+	onCloseWhiteboard();
+});
+
+window.addEventListener("beforeunload", onCloseWhiteboard);
+
+function onCloseWhiteboard() {
+	root.style.backgroundColor = "rgba(0,0,0,0)";
+	root.classList.remove("z-50", "w-full");
+	root.classList.add("hidden");
+
+	rootInner.style.transition = "";
+	rootInner.style.height = "";
+
+	rootInner.classList.remove("w-full", "h-full");
+
+	// TODO close whiteboard websocket
+}
 
 function initCanvas({ width, height, left, top }) {
 	const canvas = document.createElement("canvas");
@@ -60,6 +87,18 @@ function drawQuadraticCurve(dots, color, thickness, canvas) {
 export function initWhiteboard({ socket, userName }) {
 	const { width: rootWidth, height: rootHeight } = root.getBoundingClientRect();
 
+	root.style.backgroundColor = "rgba(0,0,0,0.25)";
+	root.classList.add("z-50");
+	root.classList.remove("hidden");
+
+	rootInner.style.transition = "height 0.3s ease-out, width 0.3s ease-out";
+	rootInner.classList.add("w-full", "h-full");
+
+	setTimeout(function () {
+		rootInner.classList.add("w-full");
+		rootInner.style.height = "100%";
+	}, 0);
+
 	const canvasWidth = 5000;
 	const canvasHeight = 3000;
 	const canvasPos = {
@@ -104,12 +143,12 @@ export function initWhiteboard({ socket, userName }) {
 	cursorCanvas.style.cursor = "url('/pencil_black.cur'), auto";
 	cursorCanvasCtx.globalAlpha = 0.33;
 
-	root.appendChild(permCanvas);
-	root.appendChild(collabCanvas);
-	root.appendChild(tempCanvas);
+	canvasParent.appendChild(permCanvas);
+	canvasParent.appendChild(collabCanvas);
+	canvasParent.appendChild(tempCanvas);
 	// cursors should be above everything else
 	// therefore it has to be the last added one
-	root.appendChild(cursorCanvas);
+	canvasParent.appendChild(cursorCanvas);
 
 	let color = "#000000";
 	let thickness = 3;

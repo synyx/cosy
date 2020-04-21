@@ -7,17 +7,13 @@ const playerAvatar = document.getElementById("player");
 const actionMenu = document.getElementById("action-menu");
 const actionStartChat = document.getElementById("start-chat-button");
 const actionJoinChat = document.getElementById("join-chat-button");
+const actionWhiteboard = document.getElementById("whiteboard-button");
 
 let currentlyChatting = false;
 
 // Create WebSocket connection.
 // TODO use 'wss' protocol to enable SSL over websocket
 const socket = new WebSocket(`ws://${window.location.host}`);
-
-initWhiteboard({
-	socket,
-	userName: window.synyxoffice.player.name,
-});
 
 const nameTooltip = document.createElement("div");
 nameTooltip.classList.add(
@@ -115,7 +111,9 @@ document.body.addEventListener("click", (event) => {
 			actionJoinChat.classList.add("hidden");
 		}
 
+		actionWhiteboard.classList.add("hidden");
 		if (currentRoom.id === "floor-keativ") {
+			actionWhiteboard.classList.remove("hidden");
 		}
 	} else {
 		actionMenu.classList.add("hidden");
@@ -152,6 +150,13 @@ actionJoinChat.addEventListener("click", (event) => {
 			roomName: chatRoomName,
 			userName: player.name,
 		},
+	});
+});
+
+actionWhiteboard.addEventListener("click", (event) => {
+	initWhiteboard({
+		socket,
+		userName: window.synyxoffice.player.name,
 	});
 });
 
