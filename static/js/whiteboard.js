@@ -150,8 +150,8 @@ export function initWhiteboard({ socket, userName }) {
 	// therefore it has to be the last added one
 	canvasParent.appendChild(cursorCanvas);
 
-	let color = "#000000";
-	let thickness = 3;
+	let color = document.querySelector("button[id^=pencil-]").dataset.color;
+	let thickness = document.querySelector("#whiteboard-stroke-width").value;
 
 	send({ type: "whiteboard-user-joined", content: { userName } });
 
@@ -238,11 +238,14 @@ export function initWhiteboard({ socket, userName }) {
 		}
 	});
 
-	document
-		.getElementById("whiteboard-color")
-		.addEventListener("change", (event) => {
-			color = event.target.value;
+	const pencilButtons = [...document.querySelectorAll("button[id^=pencil-]")];
+	for (let button of pencilButtons) {
+		button.addEventListener("click", (event) => {
+			color = event.target.dataset.color;
+			pencilButtons.forEach((b) => (b.style.transform = ""));
+			event.target.style.transform = "translate(0, 2px)";
 		});
+	}
 
 	document
 		.getElementById("whiteboard-stroke-width")
