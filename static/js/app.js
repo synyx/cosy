@@ -252,7 +252,7 @@ socket.addEventListener("message", function (event) {
 				newPlayerAvatar.cx.baseVal.value = newPlayer.position.x;
 				newPlayerAvatar.cy.baseVal.value = newPlayer.position.y;
 			}
-			playerAvatar.parentNode.appendChild(newPlayerAvatar);
+			playerAvatar.parentNode.insertBefore(newPlayerAvatar, playerAvatar);
 			playerAvatarMap.set(newPlayer.name, newPlayerAvatar);
 			break;
 		}
