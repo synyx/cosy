@@ -15,27 +15,6 @@ canvasParent.classList.add("relative", "overflow-hidden");
 // canvas should not be moved anymore when end is reached
 const canvasBorderWidth = 50;
 
-const closeButton = document.getElementById("close-whiteboard-button");
-closeButton.addEventListener("click", function (event) {
-	closeButton.blur();
-	onCloseWhiteboard();
-});
-
-window.addEventListener("beforeunload", onCloseWhiteboard);
-
-function onCloseWhiteboard() {
-	root.style.backgroundColor = "rgba(0,0,0,0)";
-	root.classList.remove("z-50", "w-full");
-	root.classList.add("hidden");
-
-	rootInner.style.transition = "";
-	rootInner.style.height = "";
-
-	rootInner.classList.remove("w-full", "h-full");
-
-	// TODO close whiteboard websocket
-}
-
 function initCanvas({ width, height, left, top }) {
 	const canvas = document.createElement("canvas");
 	canvas.width = width - canvasBorderWidth;
@@ -149,6 +128,32 @@ export function initWhiteboard({ socket, userName }) {
 	// cursors should be above everything else
 	// therefore it has to be the last added one
 	canvasParent.appendChild(cursorCanvas);
+
+	const closeButton = document.getElementById("close-whiteboard-button");
+	closeButton.addEventListener("click", function (event) {
+		closeButton.blur();
+		onCloseWhiteboard();
+	});
+
+	window.addEventListener("beforeunload", onCloseWhiteboard);
+
+	function onCloseWhiteboard() {
+		root.style.backgroundColor = "rgba(0,0,0,0)";
+		root.classList.remove("z-50", "w-full");
+		root.classList.add("hidden");
+
+		rootInner.style.transition = "";
+		rootInner.style.height = "";
+
+		rootInner.classList.remove("w-full", "h-full");
+
+		closeButton.removeEventListener("click", onCloseWhiteboard);
+
+		send({
+			type: "whiteboard-user-left",
+			content: { userName },
+		});
+	}
 
 	let color = document.querySelector("button[id^=pencil-]").dataset.color;
 	let thickness = document.querySelector("#whiteboard-stroke-width").value;
