@@ -483,6 +483,8 @@ function doMovement({ nextX, nextY }) {
 		return;
 	}
 
+	actionMenu.classList.add("hidden");
+
 	const pillar = getIntersectingPillar([
 		nextX,
 		nextY,
