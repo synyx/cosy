@@ -1,17 +1,24 @@
 // onlye allow svg panning while space is pressed
 let spacekeyPressed = false;
+let spaceKeyUpHandled = true;
 
 document.addEventListener("keydown", (event) => {
 	if (event.key === " ") {
 		spacekeyPressed = true;
-		document.body.classList.add("cursor-move");
+		// keydown fires multiple times as long as the space key
+		// is pressed. therefore we have to use this lock
+		if (spaceKeyUpHandled) {
+			spaceKeyUpHandled = false;
+			document.body.style.cursor = "grab";
+		}
 	}
 });
 
 document.addEventListener("keyup", (event) => {
 	if (event.key === " ") {
 		spacekeyPressed = false;
-		document.body.classList.remove("cursor-move");
+		spaceKeyUpHandled = true;
+		document.body.style.cursor = "default";
 	}
 });
 
@@ -55,6 +62,7 @@ function onPointerDown(event) {
 	if (!spacekeyPressed) {
 		return;
 	}
+	document.body.style.cursor = "grabbing";
 	isPointerDown = true; // We set the pointer as down
 	// We get the pointer position on click/touchdown so we can get the value once the user starts to drag
 	pointerOrigin = getPointFromEvent(event);
@@ -84,4 +92,9 @@ function onPointerMove(event) {
 function onPointerUp() {
 	// The pointer is no longer considered as down
 	isPointerDown = false;
+	if (spacekeyPressed) {
+		document.body.style.cursor = "grab";
+	} else {
+		document.body.style.cursor = "default";
+	}
 }
