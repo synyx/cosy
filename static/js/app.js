@@ -412,19 +412,26 @@ function stopPlayerAvatarAnimate() {
 	const promises = [...playerHint.querySelectorAll("animate")].map(
 		(animate) =>
 			new Promise((resolve) => {
+				function stop() {
+					animate.setAttributeNS(null, "repeatCount", "0");
+					resolve();
+				}
+				// safari doesn't fire the "repeatEvent"
+				// therefore just add a 1s fallback ¯\_(ツ)_/¯
+				setTimeout(stop, 1000);
 				animate.addEventListener(
 					"repeatEvent",
-					() => {
+					function (event) {
 						event.preventDefault();
 						event.stopImmediatePropagation();
-						animate.setAttributeNS(null, "repeatCount", "0");
-						resolve();
+						stop();
 					},
 					{ once: true },
 				);
 			}),
 	);
 	Promise.all(promises).then(() => {
+		console.log("hide");
 		playerHint.classList.add("hidden");
 	});
 }
