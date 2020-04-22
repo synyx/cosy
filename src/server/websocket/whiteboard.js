@@ -5,7 +5,7 @@ let whiteboardPoints = [];
 // not comitted points (mousedown and still moving it)
 let whiteboardOngoingPoints = new Map();
 
-module.exports = function whiteboard({ send, broadcast }) {
+function whiteboard({ send, broadcast }) {
 	return function (type, data) {
 		switch (type) {
 			case "whiteboard-user-joined": {
@@ -76,4 +76,10 @@ module.exports = function whiteboard({ send, broadcast }) {
 			}
 		}
 	};
-};
+}
+
+Object.defineProperty(whiteboard, "points", {
+	get: () => [...whiteboardPoints],
+});
+
+module.exports = whiteboard;

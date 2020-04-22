@@ -8,6 +8,7 @@
 		"css": "tailwind build src/css/style.css -o static/css/style.css"
 	},
 	"dependencies": {
+		"canvas": "2.6.1",
 		"dotenv": "8.2.0",
 		"glob": "7.1.6",
 		"gravatar-url": "3.1.0",

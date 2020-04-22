@@ -100,6 +100,8 @@ export function initWhiteboard({ socket, userName }) {
 		top: canvasPos.top,
 	});
 	const permCanvasCtx = permCanvas.getContext("2d");
+	permCanvasCtx.fillStyle = "#ffffff";
+	permCanvasCtx.fillRect(0, 0, canvasWidth, canvasHeight);
 
 	// temp canvas is used while user is drawing something
 	// on mouseup the art is committed to the permCanvas
@@ -129,6 +131,20 @@ export function initWhiteboard({ socket, userName }) {
 	// therefore it has to be the last added one
 	canvasParent.appendChild(cursorCanvas);
 
+	function exportCanvasImage() {
+		const link = document.createElement("a");
+		link.style.display = "none";
+		link.href = "/whiteboard/canvas-export";
+		link.setAttribute("download", "");
+
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+
+	const exportButton = document.getElementById("whiteboard-image-export");
+	exportButton.addEventListener("click", exportCanvasImage);
+
 	const closeButton = document.getElementById("close-whiteboard-button");
 	closeButton.addEventListener("click", function (event) {
 		closeButton.blur();
@@ -148,6 +164,7 @@ export function initWhiteboard({ socket, userName }) {
 		rootInner.classList.remove("w-full", "h-full");
 
 		closeButton.removeEventListener("click", onCloseWhiteboard);
+		exportButton.removeEventListener("click", exportCanvasImage);
 
 		send({
 			type: "whiteboard-user-left",
