@@ -1,15 +1,22 @@
 import "./panning-effect.js";
+import { createChatActions } from "./actions/chat-action.js";
 import { initWhiteboard } from "./whiteboard.js";
-import * as chat from "./jitsi.js";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player");
 const actionMenu = document.getElementById("action-menu");
-const actionStartChat = document.getElementById("start-chat-button");
-const actionJoinChat = document.getElementById("join-chat-button");
 const actionWhiteboard = document.getElementById("whiteboard-button");
 
 let currentlyChatting = false;
+
+const chat = createChatActions({ send, player, playerAvatar });
+
+chat.onChatStart(function () {
+	currentlyChatting = true;
+});
+chat.onChatEnd(function () {
+	currentlyChatting = false;
+});
 
 // Create WebSocket connection.
 // TODO use 'wss' protocol to enable SSL over websocket
@@ -76,6 +83,8 @@ officeSvg.addEventListener("mousemove", function (event) {
 	}
 });
 
+const actionButtons = new Map();
+
 document.body.addEventListener("click", (event) => {
 	if (actionMenu.contains(event.target)) {
 		//
@@ -88,27 +97,31 @@ document.body.addEventListener("click", (event) => {
 		actionMenu.style.top = `${y + 20}px`;
 		actionMenu.style.left = `${x - width / 2}px`;
 
-		const runningChats = [...document.querySelectorAll("circle[id^=chat-]")];
-		const joinableChat = runningChats.find((chat) => {
-			// kudos https://stackoverflow.com/questions/33490334/check-if-a-circle-is-contained-in-another-circle
-			const x1 = chat.cx.baseVal.value;
-			const y1 = chat.cy.baseVal.value;
-			const c1 = chat.r.baseVal.value;
-			const x2 = playerAvatar.cx.baseVal.value;
-			const y2 = playerAvatar.cy.baseVal.value;
-			const c2 = playerAvatar.r.baseVal.value;
-			const d = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-			const playerInArea = c1 > d + c2;
-			return playerInArea;
-		});
-
-		if (joinableChat) {
-			actionStartChat.classList.add("hidden");
-			actionJoinChat.classList.remove("hidden");
-			actionJoinChat.dataset.chatRoomName = joinableChat.dataset.chatRoomName;
-		} else {
-			actionStartChat.classList.remove("hidden");
-			actionJoinChat.classList.add("hidden");
+		const actionMenuButtonList = actionMenu.querySelector("ul");
+		for (let action of chat.actions) {
+			if (action.shouldBeVisible()) {
+				if (actionButtons.has(action)) {
+					actionButtons.get(action).classList.remove("hidden");
+				} else {
+					const button = document.createElement("button");
+					button.type = "button";
+					button.textContent = action.label;
+					button.addEventListener("click", function () {
+						action.handleSelect({ currentRoom, attrs: button.dataset });
+					});
+					for (let [attr, value] of action.attrs()) {
+						button.dataset[attr] = value;
+					}
+					const li = document.createElement("li");
+					li.appendChild(button);
+					actionMenuButtonList.appendChild(li);
+					actionButtons.set(action, li);
+				}
+			} else {
+				if (actionButtons.has(action)) {
+					actionButtons.get(action).classList.add("hidden");
+				}
+			}
 		}
 
 		actionWhiteboard.classList.add("hidden");
@@ -120,69 +133,12 @@ document.body.addEventListener("click", (event) => {
 	}
 });
 
-actionStartChat.addEventListener("click", (event) => {
-	const random = () => Math.random().toString(36).substr(2, 5);
-	const roomName = `${currentRoom.id}-${random()}-${random()}-${random()}`;
-
-	const room = beginChat(roomName);
-	currentlyChatting = true;
-
-	send({
-		type: "chat-started",
-		content: {
-			roomName: room.roomName,
-			userName: player.name,
-			point: {
-				x: playerAvatar.cx.baseVal.value,
-				y: playerAvatar.cy.baseVal.value,
-			},
-		},
-	});
-});
-
-actionJoinChat.addEventListener("click", (event) => {
-	const { chatRoomName } = event.target.dataset;
-	beginChat(chatRoomName);
-
-	send({
-		type: "chat-user-joined",
-		content: {
-			roomName: chatRoomName,
-			userName: player.name,
-		},
-	});
-});
-
 actionWhiteboard.addEventListener("click", (event) => {
 	initWhiteboard({
 		socket,
 		userName: window.synyxoffice.player.name,
 	});
 });
-
-function beginChat(roomName) {
-	const room = chat.startChat({ roomName });
-
-	function sendChatLeft() {
-		send({
-			type: "chat-user-left",
-			content: {
-				roomName: room.roomName,
-				userName: player.name,
-			},
-		});
-	}
-
-	window.addEventListener("beforeunload", sendChatLeft);
-
-	room.on("close", function () {
-		currentlyChatting = false;
-		sendChatLeft();
-		window.removeEventListener("beforeunload", sendChatLeft);
-	});
-
-	return room;
-}
 
 document
 	.getElementById("logout-form")
@@ -208,6 +164,8 @@ socket.addEventListener("open", function (event) {
 // Listen for messages
 socket.addEventListener("message", function (event) {
 	const data = JSON.parse(event.data);
+
+	chat.handleWebsocket(data.type, data.content);
 
 	switch (data.type) {
 		case "user-joined": {
@@ -265,58 +223,6 @@ socket.addEventListener("message", function (event) {
 			const playerAvatar = playerAvatarMap.get(player.name);
 			playerAvatar.cx.baseVal.value = player.position.x;
 			playerAvatar.cy.baseVal.value = player.position.y;
-			break;
-		}
-
-		case "user-left": {
-			const player = data.content;
-			const avatar = playerAvatarMap.get(player.name);
-			avatar.remove();
-			playerAvatarMap.delete(player.name);
-			break;
-		}
-
-		case "chat-started": {
-			const { roomName, point } = data.content;
-
-			const circle = document.createElementNS(
-				"http://www.w3.org/2000/svg",
-				"circle",
-			);
-			circle.setAttributeNS(null, "id", `chat-${roomName}`);
-			circle.setAttributeNS(null, "cx", point.x);
-			circle.setAttributeNS(null, "cy", point.y);
-			circle.setAttributeNS(null, "r", "50");
-			circle.setAttributeNS(null, "fill", "lime");
-			circle.setAttributeNS(null, "fill-opacity", "0.25");
-
-			circle.dataset.chatRoomName = roomName;
-
-			circle.innerHTML = `
-				<animate attributeType="SVG" attributeName="r" begin="0s" dur="3.5s" repeatCount="indefinite" from="0" to="66"/>
-				<animate attributeType="CSS" attributeName="stroke-width" begin="0s"  dur="3.5s" repeatCount="indefinite" from="10" to="0" />
-				<animate attributeType="CSS" attributeName="opacity" begin="0s"  dur="3.5s" repeatCount="indefinite" from="1" to="0"/>
-			`;
-
-			playerAvatar.parentNode.insertBefore(circle, playerAvatar);
-			break;
-		}
-
-		case "chat-user-joined": {
-			const { roomName, userName } = data.content;
-			console.log("user joined a chat", { roomName, userName });
-			break;
-		}
-
-		case "chat-user-left": {
-			const { roomName, userName } = data.content;
-			console.log("user left a chat", { roomName, userName });
-			break;
-		}
-
-		case "chat-closed": {
-			const circle = document.getElementById(`chat-${data.content.roomName}`);
-			circle.remove();
 			break;
 		}
 	}
