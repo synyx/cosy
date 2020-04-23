@@ -4,8 +4,11 @@
 	"private": true,
 	"author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
 	"scripts": {
-		"dev": "NODE_ENV=development onchange -i -k 'src/**/*.js' -- node src/server/index.js",
-		"css": "tailwind build src/css/style.css -o static/css/style.css"
+		"dev": "NODE_ENV=development concurrently \"npm:dev:server\" \"npm:dev:browser\"",
+		"dev:server": "onchange -i -k 'src/server/**/*.js' -- node src/server/index.js",
+		"dev:browser": "onchange -i -k 'src/browser/**/*.js' -- rollup -c",
+		"css": "tailwind build src/css/style.css -o static/css/style.css",
+		"build": "NODE_ENV=production rollup -c"
 	},
 	"dependencies": {
 		"canvas": "2.6.1",
@@ -27,12 +30,16 @@
 		"passport-local": "1.0.0"
 	},
 	"devDependencies": {
+		"concurrently": "5.1.0",
 		"eslint": "6.8.0",
 		"eslint-config-prettier": "6.10.1",
 		"eslint-plugin-prettier": "3.1.2",
 		"onchange": "6.1.0",
 		"postcss-cli": "7.1.0",
 		"prettier": "2.0.4",
+		"rollup": "2.7.2",
+		"rollup-plugin-cleaner": "1.0.0",
+		"rollup-plugin-terser": "5.3.0",
 		"tailwindcss": "1.2.0"
 	}
 }

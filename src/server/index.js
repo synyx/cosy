@@ -53,6 +53,7 @@ require("./routes")(app);
 
 // public assets
 app.use(serve(path.resolve(__dirname, "../../static")));
+app.use(serve(path.resolve(__dirname, "../../out")));
 
 app.listen(PORT, () => {
 	console.log(`server is listening on http://localhost:${PORT}`);
