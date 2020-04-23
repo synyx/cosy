@@ -1,15 +1,15 @@
 import "./panning-effect.js";
 import { createChatActions } from "./actions/chat-action.js";
-import { initWhiteboard } from "./whiteboard.js";
+import { createWhiteboardActions } from "./actions/whiteboard-action.js";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player");
 const actionMenu = document.getElementById("action-menu");
-const actionWhiteboard = document.getElementById("whiteboard-button");
 
 let currentlyChatting = false;
 
 const chat = createChatActions({ send, player, playerAvatar });
+const whiteboard = createWhiteboardActions({ send, player, playerAvatar });
 
 chat.onChatStart(function () {
 	currentlyChatting = true;
@@ -98,46 +98,36 @@ document.body.addEventListener("click", (event) => {
 		actionMenu.style.left = `${x - width / 2}px`;
 
 		const actionMenuButtonList = actionMenu.querySelector("ul");
-		for (let action of chat.actions) {
-			if (action.shouldBeVisible()) {
-				if (actionButtons.has(action)) {
-					actionButtons.get(action).classList.remove("hidden");
-				} else {
-					const button = document.createElement("button");
-					button.type = "button";
-					button.textContent = action.label;
-					button.addEventListener("click", function () {
-						action.handleSelect({ currentRoom, attrs: button.dataset });
-					});
-					for (let [attr, value] of action.attrs()) {
-						button.dataset[attr] = value;
+		[chat, whiteboard].forEach(function ({ actions }) {
+			for (let action of actions) {
+				if (action.shouldBeVisible({ currentRoom })) {
+					if (actionButtons.has(action)) {
+						actionButtons.get(action).classList.remove("hidden");
+					} else {
+						const button = document.createElement("button");
+						button.type = "button";
+						button.textContent = action.label;
+						button.addEventListener("click", function () {
+							action.handleSelect({ currentRoom, attrs: button.dataset });
+						});
+						for (let [attr, value] of action.attrs()) {
+							button.dataset[attr] = value;
+						}
+						const li = document.createElement("li");
+						li.appendChild(button);
+						actionMenuButtonList.appendChild(li);
+						actionButtons.set(action, li);
 					}
-					const li = document.createElement("li");
-					li.appendChild(button);
-					actionMenuButtonList.appendChild(li);
-					actionButtons.set(action, li);
-				}
-			} else {
-				if (actionButtons.has(action)) {
-					actionButtons.get(action).classList.add("hidden");
+				} else {
+					if (actionButtons.has(action)) {
+						actionButtons.get(action).classList.add("hidden");
+					}
 				}
 			}
-		}
-
-		actionWhiteboard.classList.add("hidden");
-		if (currentRoom.id === "floor-keativ") {
-			actionWhiteboard.classList.remove("hidden");
-		}
+		});
 	} else {
 		actionMenu.classList.add("hidden");
 	}
-});
-
-actionWhiteboard.addEventListener("click", (event) => {
-	initWhiteboard({
-		socket,
-		userName: window.synyxoffice.player.name,
-	});
 });
 
 document
@@ -166,6 +156,7 @@ socket.addEventListener("message", function (event) {
 	const data = JSON.parse(event.data);
 
 	chat.handleWebsocket(data.type, data.content);
+	whiteboard.handleWebsocket(data.type, data.content);
 
 	switch (data.type) {
 		case "user-joined": {
@@ -229,7 +220,14 @@ socket.addEventListener("message", function (event) {
 });
 
 function send(data) {
-	socket.send(JSON.stringify(data));
+	if (socket.readyState === 1) {
+		// 1 == OPEN
+		socket.send(JSON.stringify(data));
+	} else {
+		socket.addEventListener("open", function () {
+			socket.send(JSON.stringify(data));
+		});
+	}
 }
 
 let moveSteps = 1;
