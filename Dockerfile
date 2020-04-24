@@ -5,6 +5,7 @@ FROM node:12-stretch
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
 ENV PORT=8080
+ENV NODE_ENV=production
 
 WORKDIR /home/node/app
 COPY package*.json ./
