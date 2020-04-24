@@ -4,6 +4,7 @@
 	"private": true,
 	"author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
 	"scripts": {
+		"lint": "eslint src",
 		"dev": "NODE_ENV=development concurrently \"npm:dev:server\" \"npm:dev:browser\"",
 		"dev:server": "onchange -i -k 'src/server/**/*.js' -- node src/server/index.js",
 		"dev:browser": "onchange -i -k 'src/browser/**/*.js' -- rollup -c",
