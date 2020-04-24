@@ -13,7 +13,7 @@ let currentlyChatting = false;
 
 // Create WebSocket connection.
 // TODO use 'wss' protocol to enable SSL over websocket
-const socket = new WebSocket(`ws://${window.location.host}`);
+const socket = new WebSocket(`wss://${window.location.host}`);
 
 const nameTooltip = document.createElement("div");
 nameTooltip.classList.add(
