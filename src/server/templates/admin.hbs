@@ -18,37 +18,68 @@
 		</p>
 		<p class="mb-6">
 			Lege einen neuen Spieler an und gebe ihm dann die Credentials weiter.<br />
-			Das Passwort wird generiert. synyxNickname / nick ist der Benutzername zum einloggen.<br />
+			Das Passwort wird generiert. synyxNickname / nick ist der Benutzername zum
+			einloggen.<br />
 			Die E-Mail Adresse wird für gravatar verwendet.
 		</p>
-		<form class="w-1/2 max-w-lg mb-8 bg-white p-2" action="/admin/users" method="POST">
+		<form
+			class="w-1/2 max-w-lg mb-8 bg-white p-2"
+			action="/admin/users"
+			method="POST"
+		>
 			<input type="hidden" name="_csrf" value="{{csrf}}" />
 			<p class="mb-4 font-bold text-sm">
 				neuen Spieler anlegen:
 			</p>
 			{{#if error}}
-			<p class="font-bold mb-4 text-red-800 text-sm">guggst du alles eingegeben?</p>
+			<p class="font-bold mb-4 text-red-800 text-sm">
+				guggst du alles eingegeben?
+			</p>
 			{{/if}}
 			<div class="mb-2 flex">
 				<label for="userName" class="w-1/4">
 					cn / username
 				</label>
-				<input type="text" id="userName" name="cn" placeholder="John Doe" value="{{cn}}" class="px-2 py-1 w-3/4 border border-gray-300">
+				<input
+					type="text"
+					id="userName"
+					name="cn"
+					placeholder="John Doe"
+					value="{{cn}}"
+					class="px-2 py-1 w-3/4 border border-gray-300"
+				/>
 			</div>
 			<div class="mb-2 flex">
 				<label for="nickname" class="w-1/4">
 					synyxNickname
 				</label>
-				<input type="text" id="nickname" name="synyxNickname" placeholder="johny" value="{{synyxNickname}}" class="px-2 py-1 w-3/4 border border-gray-300">
+				<input
+					type="text"
+					id="nickname"
+					name="synyxNickname"
+					placeholder="johny"
+					value="{{synyxNickname}}"
+					class="px-2 py-1 w-3/4 border border-gray-300"
+				/>
 			</div>
 			<div class="mb-2 flex">
 				<label for="email" class="w-1/4">
 					E-Mail
 				</label>
-				<input type="email" id="email" name="email" placeholder="john@doe" value="{{email}}" class="px-2 py-1 w-3/4 border border-gray-300">
+				<input
+					type="email"
+					id="email"
+					name="email"
+					placeholder="john@doe"
+					value="{{email}}"
+					class="px-2 py-1 w-3/4 border border-gray-300"
+				/>
 			</div>
 			<div class="flex justify-end">
-				<button type="submit" class="bg-indigo-800 text-white px-2 py-1 rounded">
+				<button
+					type="submit"
+					class="bg-indigo-800 text-white px-2 py-1 rounded"
+				>
 					Hinzufügen
 				</button>
 			</div>
@@ -58,26 +89,29 @@
 		<table class="border-collapse border-2 border-gray-500">
 			<thead>
 				<tr>
-					<th class="border border-gray-400 px-4 py-2 text-gray-800">userName</th>
+					<th class="border border-gray-400 px-4 py-2 text-gray-800">
+						userName
+					</th>
 					<th class="border border-gray-400 px-4 py-2 text-gray-800">nick</th>
 					<th class="border border-gray-400 px-4 py-2 text-gray-800">E-Mail</th>
-					<th class="border border-gray-400 px-4 py-2 text-gray-800">Passwort</th>
+					<th class="border border-gray-400 px-4 py-2 text-gray-800">
+						Passwort
+					</th>
 				</tr>
 			</thead>
 			<tbody>
-			{{#each players}}
-			<tr>
-				<td class="border border-gray-400 px-4 py-2">{{cn}}</td>
-				<td class="border border-gray-400 px-4 py-2">{{synyxNickname}}</td>
-				<td class="border border-gray-400 px-4 py-2">{{mail}}</td>
-				<td class="border border-gray-400 px-4 py-2">{{password}}</td>
-			</tr>
-			{{/each}}
+				{{#each players}}
+				<tr>
+					<td class="border border-gray-400 px-4 py-2">{{cn}}</td>
+					<td class="border border-gray-400 px-4 py-2">{{synyxNickname}}</td>
+					<td class="border border-gray-400 px-4 py-2">{{mail}}</td>
+					<td class="border border-gray-400 px-4 py-2">{{password}}</td>
+				</tr>
+				{{/each}}
 			</tbody>
 		</table>
 		{{else}}
-		<p class="italic text-sm">noch keine</span>
+		<p class="italic text-sm">noch keine</p>
 		{{/if}}
-		</ul>
 	</body>
 </html>

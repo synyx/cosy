@@ -15,13 +15,15 @@
 					class="bg-white rounded-sm shadow px-8 pt-6 pb-8 mb-4"
 				>
 					<input type="hidden" name="_csrf" value="{{csrf}}" />
-					{{#if error}}
-					{{#if username}}
+					{{#if error}} {{#if username}}
 					<p class="mb-4 text-red-500 text-sm text-center">
-						Ey, du kommst hier net rein. <small class="block mt-2">Vielleicht war auch nur dein Passwort falsch <span role="presentation">¯\_(ツ)_/¯</span></small>
+						Ey, du kommst hier net rein.
+						<small class="block mt-2"
+							>Vielleicht war auch nur dein Passwort falsch
+							<span role="presentation">¯\_(ツ)_/¯</span></small
+						>
 					</p>
-					{{/if}}
-					{{/if}}
+					{{/if}} {{/if}}
 					<div class="mb-4">
 						<label
 							class="block text-gray-700 text-sm font-bold mb-2"

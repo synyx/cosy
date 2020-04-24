@@ -10,16 +10,16 @@
 	<body class="bg-teal-500">
 		<div id="meet"></div>
 		<script nonce="{{{cspNonceValue 'script'}}}">
-			const domain = '{{jitsiDomain}}';
+			const domain = "{{jitsiDomain}}";
 			const options = {
-				roomName: 'JitsiMeetAPIExample',
+				roomName: "JitsiMeetAPIExample",
 				width: 700,
 				height: 700,
-				parentNode: document.querySelector('#meet'),
+				parentNode: document.querySelector("#meet"),
 				userInfo: {
-					email: '{{email}}',
-					displayName: '{{name}}',
-				}
+					email: "{{email}}",
+					displayName: "{{name}}",
+				},
 			};
 			const api = new JitsiMeetExternalAPI(domain, options);
 		</script>
