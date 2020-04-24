@@ -18,7 +18,7 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: ["src/server/**/*.js", "rollup.config.js"],
+			files: ["src/server/**/*.js", "rollup.config.js", "postcss.config.js"],
 			env: {
 				node: true,
 			},

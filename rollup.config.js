@@ -1,5 +1,4 @@
 import { terser } from "rollup-plugin-terser";
-import cleaner from "rollup-plugin-cleaner";
 import replace from "@rollup/plugin-replace";
 
 const paths = {
@@ -17,9 +16,6 @@ export default {
 		plugins: [isProd && terser()].filter(Boolean),
 	},
 	plugins: [
-		cleaner({
-			targets: [paths.dist],
-		}),
 		replace({
 			"process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
 		}),
