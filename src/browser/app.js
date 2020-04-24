@@ -19,8 +19,9 @@ chat.onChatEnd(function () {
 });
 
 // Create WebSocket connection.
-// TODO use 'wss' protocol to enable SSL over websocket
-const socket = new WebSocket(`wss://${window.location.host}`);
+// eslint-disable-next-line no-undef
+const socketProtocol = process.env.NODE_ENV === "production" ? "wss" : "ws";
+const socket = new WebSocket(`${socketProtocol}://${window.location.host}`);
 
 const nameTooltip = document.createElement("div");
 nameTooltip.classList.add(
