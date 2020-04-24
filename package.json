@@ -13,7 +13,8 @@
 		"prebuild": "rimraf out",
 		"build": "NODE_ENV=production concurrently 'npm:build:js' 'npm:build:css'",
 		"build:js": "rollup -c",
-		"build:css": "postcss src/browser/**/*.css --base src/browser --dir out/css"
+		"build:css": "postcss src/browser/**/*.css --base src/browser --dir out/css",
+		"format": "prettier --write src"
 	},
 	"dependencies": {
 		"canvas": "2.6.1",
