@@ -336,7 +336,6 @@ function stopPlayerAvatarAnimate() {
 			}),
 	);
 	Promise.all(promises).then(() => {
-		console.log("hide");
 		playerHint.classList.add("hidden");
 	});
 }
