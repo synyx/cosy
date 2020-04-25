@@ -39,7 +39,8 @@ app.use(function viewResolver(context, next) {
 		map: { hbs: "handlebars" },
 		options: {
 			partials: {
-				"application-version-info": "./partials/application-version-info",
+				"application-version-info-script":
+					"./partials/application-version-info-script",
 				chat: "./partials/chat",
 				office: "./partials/office",
 				whiteboard: "./partials/whiteboard",
