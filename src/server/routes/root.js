@@ -17,6 +17,7 @@ module.exports = function (app) {
 				name: context.state.user.username,
 				nickname: context.state.user.nickname,
 				jitsiDomain: "xxxxxx",
+				version: process.env.npm_package_version,
 				player: {
 					name: context.state.user.username,
 					email: context.state.user.email,

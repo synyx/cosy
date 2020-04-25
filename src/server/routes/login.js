@@ -9,6 +9,7 @@ module.exports = function (app) {
 				error: error != undefined,
 				username,
 				csrf: ctx.csrf,
+				version: process.env.npm_package_version,
 			});
 		}),
 	);
