@@ -40,6 +40,7 @@ app.use(function viewResolver(context, next) {
 		options: {
 			partials: {
 				"application-version-info": "./partials/application-version-info",
+				whiteboard: "./partials/whiteboard",
 			},
 			helpers: {
 				cspNonceValue: (type) => {
