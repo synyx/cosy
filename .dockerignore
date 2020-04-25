@@ -3,6 +3,7 @@
 .vscode
 .settings
 .DS_Store
+.git
 
 # dependencies
 node_modules
