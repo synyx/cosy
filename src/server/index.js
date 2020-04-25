@@ -60,7 +60,7 @@ app.use(function viewResolver(context, next) {
 	})(context, next);
 });
 
-require("./authentication")(app);
+require("./security/authentication")(app);
 require("./routes")(app);
 
 // public assets

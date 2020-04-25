@@ -14,7 +14,7 @@ const {
 let localUsers = {};
 const adminApprovedUsers = new Map();
 
-const localUsersFilePath = path.resolve(__dirname, "../../local-users.json");
+const localUsersFilePath = path.resolve(__dirname, "../../../local-users.json");
 try {
 	const localUsersFile = fs.readFileSync(localUsersFilePath, "utf8");
 	localUsers = JSON.parse(localUsersFile);

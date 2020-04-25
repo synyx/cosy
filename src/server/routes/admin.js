@@ -2,7 +2,7 @@ const route = require("koa-route");
 const {
 	addAdminApprovedUser,
 	getAdminApprovedUsers,
-} = require("../authentication");
+} = require("../security/authentication");
 
 module.exports = function (app) {
 	function auth(callback) {
