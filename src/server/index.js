@@ -41,6 +41,7 @@ app.use(function viewResolver(context, next) {
 			partials: {
 				"application-version-info": "./partials/application-version-info",
 				chat: "./partials/chat",
+				office: "./partials/office",
 				whiteboard: "./partials/whiteboard",
 			},
 			helpers: {
