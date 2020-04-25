@@ -98,7 +98,6 @@ document.body.addEventListener("click", (event) => {
 		actionMenu.style.top = `${y + 20}px`;
 		actionMenu.style.left = `${x - width / 2}px`;
 
-		const actionMenuButtonList = actionMenu.querySelector("ul");
 		[chat, whiteboard].forEach(function ({ actions }) {
 			for (let action of actions) {
 				if (action.shouldBeVisible({ currentRoom })) {
@@ -116,7 +115,7 @@ document.body.addEventListener("click", (event) => {
 						}
 						const li = document.createElement("li");
 						li.appendChild(button);
-						actionMenuButtonList.appendChild(li);
+						actionMenu.appendChild(li);
 						actionButtons.set(action, li);
 					}
 				} else {
