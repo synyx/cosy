@@ -38,6 +38,9 @@ app.use(function viewResolver(context, next) {
 		extension: "hbs",
 		map: { hbs: "handlebars" },
 		options: {
+			partials: {
+				"application-version-info": "./partials/application-version-info",
+			},
 			helpers: {
 				cspNonceValue: (type) => {
 					switch (type) {
