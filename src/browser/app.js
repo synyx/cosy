@@ -230,19 +230,19 @@ function send(data) {
 	}
 }
 
-let moveSteps = 1;
-let moveStepsFactor = 1;
+let moveSteps = 2;
+let moveStepsFactor = 1.1;
 const startPointMainEntrance = { x: 799, y: 692 };
 const playerAvatarImagePattern = document.getElementById(
 	"player-avatar-image-pattern",
 );
-const floors = [...document.querySelectorAll("path[id^=floor-]")].map((floor) =>
+const floors = [...document.querySelectorAll("path[id^=floor_]")].map((floor) =>
 	pathToPolyglot(floor),
 );
 const pillars = [
-	...document.querySelectorAll("path[id^=pillar-]"),
+	...document.querySelectorAll("path[id^=pillar_]"),
 ].map((pillar) => pathToPolyglot(pillar));
-const doors = [...document.querySelectorAll("path[id^=door-]")].map((floor) =>
+const doors = [...document.querySelectorAll("path[id^=door_]")].map((floor) =>
 	pathToPolyglot(floor, { precision: 0.3, color: "black" }),
 );
 
@@ -275,34 +275,42 @@ const keyCodes = Object.freeze({
 let movementInterval;
 const keyPressedMap = new Map();
 
-document.addEventListener("keyup", function (event) {
-	if (!event.shiftKey) {
-		keyPressedMap.delete("shift");
-	}
-	keyPressedMap.delete(keyCodes.byCode(event.keyCode));
-	if (keyPressedMap.size === 0) {
-		stopMovementLoop();
-	}
-});
+document.addEventListener(
+	"keyup",
+	function (event) {
+		if (!event.shiftKey) {
+			keyPressedMap.delete("shift");
+		}
+		keyPressedMap.delete(keyCodes.byCode(event.keyCode));
+		if (keyPressedMap.size === 0) {
+			stopMovementLoop();
+		}
+	},
+	{ passive: true },
+);
 
 function stopMovementLoop() {
 	window.clearInterval(movementInterval);
 	keyPressedMap.clear();
 }
 
-document.addEventListener("keydown", function (event) {
-	if (event.shiftKey) {
-		keyPressedMap.set("shift", true);
-	}
-	const key = keyCodes.byCode(event.keyCode);
-	if (key) {
-		if (keyPressedMap.size === 0) {
-			stopPlayerAvatarAnimate();
-			movementInterval = window.setInterval(move, 20);
+document.addEventListener(
+	"keydown",
+	function (event) {
+		if (event.shiftKey) {
+			keyPressedMap.set("shift", true);
 		}
-		keyPressedMap.set(key, true);
-	}
-});
+		const key = keyCodes.byCode(event.keyCode);
+		if (key) {
+			if (keyPressedMap.size === 0) {
+				stopPlayerAvatarAnimate();
+				movementInterval = window.setInterval(move, 20);
+			}
+			keyPressedMap.set(key, true);
+		}
+	},
+	{ passive: true },
+);
 
 function animatePlayerAvatar(times = 0) {
 	const playerHint = document.getElementById("player-hint");
