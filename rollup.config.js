@@ -1,6 +1,5 @@
 require("dotenv").config();
 
-import { terser } from "rollup-plugin-terser";
 import replace from "@rollup/plugin-replace";
 
 // NODE_ENV is set in the `<root>/.env` file intialized by `dotenv` above
@@ -13,14 +12,11 @@ const paths = {
 	dist: "out",
 };
 
-const isProd = NODE_ENV === "production";
-
 export default {
 	input: `${paths.src}/app.js`,
 	output: {
 		file: `${paths.dist}/js/app.js`,
 		format: "esm",
-		plugins: [isProd && terser()].filter(Boolean),
 	},
 	plugins: [
 		replace({
