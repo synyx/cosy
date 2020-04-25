@@ -1,0 +1,30 @@
+<div
+	id="chat-root"
+	class="hidden fixed top-0 left-0 flex items-center justify-center p-12 w-screen h-screen rounded"
+>
+	<div
+		id="chat-root-inner"
+		class="w-0 h-0 border border-8 bg-white flex flex-col"
+	>
+		<div class="bg-teal-900 flex justify-between p-2 text-white">
+			<div class="flex">
+				<div class="mr-4">
+					Kamera <span id="jitsi-camera-status" class="font-bold">AN</span>
+				</div>
+				<div>
+					Mikrofon
+					<span id="jitsi-microphone-status" class="font-bold">AN</span>
+				</div>
+			</div>
+			<button
+				id="close-chat-button"
+				class="px-2 py-1 text-sm font-light hover:underline"
+			>
+				Gespräch verlassen
+			</button>
+		</div>
+		<div id="jitsi" class="flex-1">
+			<!-- jitsi iframe -->
+		</div>
+	</div>
+</div>
