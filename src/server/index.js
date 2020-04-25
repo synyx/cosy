@@ -1,5 +1,10 @@
 require("dotenv").config();
 
+// NODE_ENV is set in the `<root>/.env` file intialized by `dotenv` above
+// a configured environment variable will override the default one
+const { NODE_ENV } = process.env;
+console.log(`running with NODE_ENV="${NODE_ENV}"`);
+
 const path = require("path");
 const Koa = require("koa");
 const views = require("koa-views");
@@ -57,5 +62,4 @@ app.use(serve(path.resolve(__dirname, "../../out")));
 
 app.listen(PORT, () => {
 	console.log(`server is listening on http://localhost:${PORT}`);
-	console.log(`running with NODE_ENV=${process.env.NODE_ENV}`);
 });

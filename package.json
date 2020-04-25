@@ -6,12 +6,12 @@
 	"scripts": {
 		"lint": "eslint src",
 		"predev": "rimraf out",
-		"dev": "NODE_ENV=development concurrently 'npm:dev:server' 'npm:dev:browser' 'npm:dev:css'",
-		"dev:server": "onchange -i -k 'src/server/**/*.js' -- node src/server/index.js",
-		"dev:browser": "onchange -i -k 'src/browser/**/*.js' -- rollup -c",
-		"dev:css": "postcss src/browser/**/*.css --base src/browser --dir out/css",
+		"dev": "concurrently 'npm:dev:server' 'npm:dev:browser' 'npm:dev:css'",
+		"dev:server": "NODE_ENV=development onchange -i -k 'src/server/**/*.js' -- node src/server/index.js",
+		"dev:browser": "NODE_ENV=development onchange -i -k 'src/browser/**/*.js' -- rollup -c",
+		"dev:css": "NODE_ENV=development postcss src/browser/**/*.css --base src/browser --dir out/css",
 		"prebuild": "rimraf out",
-		"build": "NODE_ENV=production concurrently 'npm:build:js' 'npm:build:css'",
+		"build": "concurrently 'npm:build:js' 'npm:build:css'",
 		"build:js": "rollup -c",
 		"build:css": "postcss src/browser/**/*.css --base src/browser --dir out/css",
 		"format": "prettier --write src"
