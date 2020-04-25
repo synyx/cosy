@@ -13,12 +13,16 @@ const serve = require("koa-static");
 const CSRF = require("koa-csrf");
 const helmet = require("koa-helmet");
 const cspMiddleware = require("./security/csp-middleware");
+const compress = require("koa-compress");
 
 const { PORT = 3000, APP_SECRET = "super-awesome-app-secret" } = process.env;
 
 const app = new Koa();
 app.keys = [APP_SECRET];
 app.use(bodyParser());
+
+// enable gzip compression
+app.use(compress());
 
 // csrf tokens for html forms
 app.use(new CSRF());
