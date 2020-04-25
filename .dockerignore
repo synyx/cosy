@@ -1,0 +1,17 @@
+# common stuff (.gitignore)
+.idea
+.vscode
+.settings
+.DS_Store
+
+# dependencies
+node_modules
+
+# build dir
+out
+
+# more stuff
+docs
+deploy
+Dockerfile
+.dockerignore
