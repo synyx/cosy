@@ -230,7 +230,7 @@ function send(data) {
 	}
 }
 
-let moveSteps = 2;
+let moveSteps = 1;
 let moveStepsFactor = 1.1;
 const startPointMainEntrance = { x: 799, y: 692 };
 const playerAvatarImagePattern = document.getElementById(
@@ -239,12 +239,9 @@ const playerAvatarImagePattern = document.getElementById(
 const floors = [...document.querySelectorAll("path[id^=floor_]")].map((floor) =>
 	pathToPolyglot(floor),
 );
-const pillars = [
-	...document.querySelectorAll("path[id^=pillar_]"),
-].map((pillar) => pathToPolyglot(pillar));
-const doors = [...document.querySelectorAll("path[id^=door_]")].map((floor) =>
-	pathToPolyglot(floor, { precision: 0.3, color: "black" }),
-);
+const doors = [
+	...document.querySelectorAll("path[id^=building_door]"),
+].map((floor) => pathToPolyglot(floor, { precision: 0.1, color: "black" }));
 
 let currentRoom = floors.find((floor) => {
 	let yep = pointInPolygon(
@@ -304,7 +301,7 @@ document.addEventListener(
 		if (key) {
 			if (keyPressedMap.size === 0) {
 				stopPlayerAvatarAnimate();
-				movementInterval = window.setInterval(move, 20);
+				movementInterval = window.setInterval(move, 10);
 			}
 			keyPressedMap.set(key, true);
 		}
@@ -403,15 +400,6 @@ function doMovement({ nextX, nextY }) {
 
 	actionMenu.classList.add("hidden");
 
-	const pillar = getIntersectingPillar([
-		nextX,
-		nextY,
-		playerAvatar.r.baseVal.value,
-	]);
-	if (pillar) {
-		return;
-	}
-
 	let isStillInRoom = circleFullyInsidePolygon(
 		[nextX, nextY, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
@@ -430,15 +418,15 @@ function doMovement({ nextX, nextY }) {
 	if (isStillInRoom) {
 		updateCoordinates();
 	} else {
-		const rooms = getIntersectingFloors([
-			nextX,
-			nextY,
-			playerAvatar.r.baseVal.value,
-		]);
-		if (rooms.length > 1) {
-			updateCoordinates();
-			return;
-		}
+		// const rooms = getIntersectingFloors([
+		// 	nextX,
+		// 	nextY,
+		// 	playerAvatar.r.baseVal.value,
+		// ]);
+		// if (rooms.length > 1) {
+		// 	updateCoordinates();
+		// 	return;
+		// }
 		const door = getIntersectingDoor([
 			nextX,
 			nextY,
@@ -459,12 +447,6 @@ function doMovement({ nextX, nextY }) {
 	}
 
 	updateCurrentRoom();
-}
-
-function getIntersectingPillar(nextPlayer) {
-	return pillars.find((pillar) => {
-		return circleTouchesPolygonEdges(nextPlayer, pillar.polygon.points);
-	});
 }
 
 function getIntersectingDoor(nextPlayer) {
@@ -522,6 +504,10 @@ function pathToPolyglot(path, { precision = 0.2, color = "tomato" } = {}) {
 
 	for (let [key, value] of Object.entries(path.dataset)) {
 		polygon.dataset[key] = value;
+	}
+
+	if (polygon.id === "floor_corona") {
+		playerAvatar.parentNode.insertBefore(polygon, playerAvatar);
 	}
 
 	return {
