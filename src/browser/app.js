@@ -270,6 +270,7 @@ const keyCodes = Object.freeze({
 });
 
 let movementInterval;
+let movementAllowed = false;
 const keyPressedMap = new Map();
 
 document.addEventListener(
@@ -287,6 +288,7 @@ document.addEventListener(
 );
 
 function stopMovementLoop() {
+	movementAllowed = false;
 	window.clearInterval(movementInterval);
 	keyPressedMap.clear();
 }
@@ -400,7 +402,7 @@ function doMovement({ nextX, nextY }) {
 
 	actionMenu.classList.add("hidden");
 
-	let isStillInRoom = circleFullyInsidePolygon(
+	let isStillInCurrentRoom = circleFullyInsidePolygon(
 		[nextX, nextY, playerAvatar.r.baseVal.value],
 		currentRoom.polygon.points,
 	);
@@ -415,18 +417,21 @@ function doMovement({ nextX, nextY }) {
 		playerAvatar.cy.baseVal.value = nextY;
 	};
 
-	if (isStillInRoom) {
+	if (isStillInCurrentRoom) {
 		updateCoordinates();
 	} else {
-		// const rooms = getIntersectingFloors([
-		// 	nextX,
-		// 	nextY,
-		// 	playerAvatar.r.baseVal.value,
-		// ]);
-		// if (rooms.length > 1) {
-		// 	updateCoordinates();
-		// 	return;
-		// }
+		// get possible next rooom
+		const rooms = getIntersectingFloors([
+			nextX,
+			nextY,
+			playerAvatar.r.baseVal.value,
+		]);
+		if (rooms.length > 1) {
+			updateCoordinates();
+			return;
+		}
+		// there is no next room
+		// check if we're crossing a door
 		const door = getIntersectingDoor([
 			nextX,
 			nextY,
@@ -506,9 +511,13 @@ function pathToPolyglot(path, { precision = 0.2, color = "tomato" } = {}) {
 		polygon.dataset[key] = value;
 	}
 
-	if (polygon.id === "floor_corona") {
-		playerAvatar.parentNode.insertBefore(polygon, playerAvatar);
-	}
+	// if (polygon.id === "floor_main") {
+	// 	playerAvatar.parentNode.insertBefore(polygon, playerAvatar);
+	// }
+
+	// if (polygon.id === "floor_corona") {
+	// 	playerAvatar.parentNode.insertBefore(polygon, playerAvatar);
+	// }
 
 	return {
 		id: path.id,
