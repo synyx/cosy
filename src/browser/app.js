@@ -221,6 +221,13 @@ socket.addEventListener("message", function (event) {
 			playerAvatar.cy.baseVal.value = player.position.y;
 			break;
 		}
+
+		case "user-left": {
+			const player = data.content;
+			const avatar = playerAvatarMap.get(player.name);
+			avatar.remove();
+			break;
+		}
 	}
 });
 
