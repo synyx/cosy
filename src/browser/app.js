@@ -2,6 +2,7 @@ import "./panning-effect.js";
 import { createChatActions } from "./actions/chat-action.js";
 import { createWhiteboardActions } from "./actions/whiteboard-action.js";
 import { createKudoActions } from "./actions/kudo-action.js";
+import { createCoffeeActions } from "./actions/coffee-action.js";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player");
@@ -16,6 +17,7 @@ let currentlyChatting = false;
 const chat = createChatActions({ send, player, playerAvatar });
 const whiteboard = createWhiteboardActions({ send, player, playerAvatar });
 const kudo = createKudoActions({ send, player, playerAvatar });
+const coffee = createCoffeeActions({ send, player, playerAvatar });
 
 chat.onChatStart(function () {
 	currentlyChatting = true;
@@ -104,7 +106,7 @@ document.body.addEventListener("click", (event) => {
 		actionMenu.style.top = `${y + 20}px`;
 		actionMenu.style.left = `${x - width / 2}px`;
 
-		[chat, whiteboard, kudo].forEach(function ({ actions }) {
+		[chat, whiteboard, kudo, coffee].forEach(function ({ actions }) {
 			for (let action of actions) {
 				if (action.shouldBeVisible({ currentRoom })) {
 					if (actionButtons.has(action)) {
