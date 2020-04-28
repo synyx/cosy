@@ -4,6 +4,10 @@ import { createWhiteboardActions } from "./actions/whiteboard-action.js";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player");
+const playerAvatarCoordinates = {
+	x: playerAvatar.cx.baseVal.value,
+	y: playerAvatar.cy.baseVal.value,
+};
 const actionMenu = document.getElementById("action-menu");
 
 let currentlyChatting = false;
@@ -185,6 +189,7 @@ socket.addEventListener("message", function (event) {
 			const newPlayerAvatar = playerAvatar.cloneNode();
 			newPlayerAvatar.dataset.tooltip = newPlayer.name;
 			newPlayerAvatar.setAttributeNS(null, "id", "");
+			newPlayerAvatar.setAttributeNS(null, "transform", "");
 			newPlayerAvatar.setAttributeNS(null, "cx", startPointMainEntrance.x);
 			newPlayerAvatar.setAttributeNS(null, "cy", startPointMainEntrance.y);
 			newPlayerAvatar.setAttributeNS(
@@ -365,33 +370,33 @@ function move() {
 	send({
 		type: "moved",
 		content: {
-			x: playerAvatar.cx.baseVal.value,
-			y: playerAvatar.cy.baseVal.value,
+			x: playerAvatarCoordinates.x,
+			y: playerAvatarCoordinates.y,
 		},
 	});
 }
 
 function moveDown() {
-	const nextX = playerAvatar.cx.baseVal.value;
-	const nextY = playerAvatar.cy.baseVal.value + moveSteps * moveStepsFactor;
+	const nextX = playerAvatarCoordinates.x;
+	const nextY = playerAvatarCoordinates.y + moveSteps * moveStepsFactor;
 	doMovement({ nextX, nextY });
 }
 
 function moveUp() {
-	const nextX = playerAvatar.cx.baseVal.value;
-	const nextY = playerAvatar.cy.baseVal.value - moveSteps * moveStepsFactor;
+	const nextX = playerAvatarCoordinates.x;
+	const nextY = playerAvatarCoordinates.y - moveSteps * moveStepsFactor;
 	doMovement({ nextX, nextY });
 }
 
 function moveLeft() {
-	const nextX = playerAvatar.cx.baseVal.value - moveSteps * moveStepsFactor;
-	const nextY = playerAvatar.cy.baseVal.value;
+	const nextX = playerAvatarCoordinates.x - moveSteps * moveStepsFactor;
+	const nextY = playerAvatarCoordinates.y;
 	doMovement({ nextX, nextY });
 }
 
 function moveRight() {
-	const nextX = playerAvatar.cx.baseVal.value + moveSteps * moveStepsFactor;
-	const nextY = playerAvatar.cy.baseVal.value;
+	const nextX = playerAvatarCoordinates.x + moveSteps * moveStepsFactor;
+	const nextY = playerAvatarCoordinates.y;
 	doMovement({ nextX, nextY });
 }
 
@@ -413,8 +418,12 @@ function doMovement({ nextX, nextY }) {
 		playerHint.cx.baseVal.value = nextX;
 		playerHint.cy.baseVal.value = nextY;
 		// player avatar circle
-		playerAvatar.cx.baseVal.value = nextX;
-		playerAvatar.cy.baseVal.value = nextY;
+		playerAvatarCoordinates.x = nextX;
+		playerAvatarCoordinates.y = nextY;
+		const dx = nextX - playerAvatar.cx.baseVal.value;
+		const dy = nextY - playerAvatar.cy.baseVal.value;
+		// playerAvatar.style.transform = `translate(${dx}px, ${dy}px)`;
+		playerAvatar.setAttributeNS(null, "transform", `translate(${dx} ${dy})`);
 	};
 
 	if (isStillInCurrentRoom) {
@@ -470,8 +479,8 @@ function updateCurrentRoom() {
 	const nextCurrentRoom = floors.find((floor) => {
 		return pointInPolygon(
 			[
-				playerAvatar.cx.baseVal.value,
-				playerAvatar.cy.baseVal.value,
+				playerAvatarCoordinates.x,
+				playerAvatarCoordinates.y,
 				playerAvatar.r.baseVal.value,
 			],
 			floor.polygon.points,
