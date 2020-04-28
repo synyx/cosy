@@ -3,6 +3,7 @@ import { createChatActions } from "./actions/chat-action.js";
 import { createWhiteboardActions } from "./actions/whiteboard-action.js";
 import { createKudoActions } from "./actions/kudo-action.js";
 import { createCoffeeActions } from "./actions/coffee-action.js";
+import { createToiletActions } from "./actions/toilet-action.js";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player");
@@ -18,6 +19,7 @@ const chat = createChatActions({ send, player, playerAvatar });
 const whiteboard = createWhiteboardActions({ send, player, playerAvatar });
 const kudo = createKudoActions({ send, player, playerAvatar });
 const coffee = createCoffeeActions({ send, player, playerAvatar });
+const toilet = createToiletActions({ send, player, playerAvatar });
 
 chat.onChatStart(function () {
 	currentlyChatting = true;
@@ -106,7 +108,7 @@ document.body.addEventListener("click", (event) => {
 		actionMenu.style.top = `${y + 20}px`;
 		actionMenu.style.left = `${x - width / 2}px`;
 
-		[chat, whiteboard, kudo, coffee].forEach(function ({ actions }) {
+		[chat, whiteboard, kudo, coffee, toilet].forEach(function ({ actions }) {
 			for (let action of actions) {
 				if (action.shouldBeVisible({ currentRoom })) {
 					if (actionButtons.has(action)) {
