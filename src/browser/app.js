@@ -115,6 +115,8 @@ document.body.addEventListener("click", (event) => {
 						button.textContent = action.label;
 						button.addEventListener("click", function () {
 							action.handleSelect({ currentRoom, attrs: button.dataset });
+							button.blur();
+							actionMenu.classList.add("hidden");
 						});
 						for (let [attr, value] of action.attrs()) {
 							button.dataset[attr] = value;
