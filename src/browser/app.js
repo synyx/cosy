@@ -235,8 +235,10 @@ function send(data) {
 	}
 }
 
-let moveSteps = 1;
-let moveStepsFactor = 1.1;
+// firefox is much slower than chrome or safari on my machine oO
+// therefore just increase size of one step ¯\_(ツ)_/¯
+const moveSteps = /Firefox/.test(window.navigator.userAgent) ? 4 : 1;
+let moveStepsFactor = 1;
 const startPointMainEntrance = { x: 799, y: 692 };
 const playerAvatarImagePattern = document.getElementById(
 	"player-avatar-image-pattern",
