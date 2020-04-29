@@ -479,7 +479,8 @@ export function createWhiteboardActions({ send, player, playerAvatar }) {
 		actions: [
 			{
 				label: "malen",
-				shouldBeVisible: ({ currentRoom }) => currentRoom.id === "floor-keativ",
+				shouldBeVisible: ({ currentRoom }) =>
+					currentRoom.id === "floor_kreativ",
 				attrs() {
 					return [];
 				},
