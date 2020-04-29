@@ -100,13 +100,11 @@ document.body.addEventListener("click", (event) => {
 	if (actionMenu.contains(event.target)) {
 		//
 	} else if (event.target === playerAvatar) {
+		nameTooltip.innerText = "";
+		nameTooltip.style.top = "-10px";
+		nameTooltip.style.left = "-10px";
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
-
-		const { pageX: x, pageY: y } = event;
-		const { width, height } = actionMenu.getBoundingClientRect();
-		actionMenu.style.top = `${y + 20}px`;
-		actionMenu.style.left = `${x - width / 2}px`;
 
 		[chat, whiteboard, kudo, coffee, toilet].forEach(function ({ actions }) {
 			for (let action of actions) {
@@ -137,6 +135,26 @@ document.body.addEventListener("click", (event) => {
 				}
 			}
 		});
+
+		const { pageX: x, pageY: y } = event;
+		const { width, height } = actionMenu.getBoundingClientRect();
+
+		let menuTop = y + 20;
+		let menuLeft = x - width / 2;
+
+		if (menuTop + height > window.innerHeight) {
+			menuTop = window.innerHeight - height;
+		} else if (menuTop < 0) {
+			menuTop = 0;
+		}
+		if (menuLeft + width > window.innerWidth) {
+			menuLeft = window.innerHeight - width;
+		} else if (menuLeft < 0) {
+			menuLeft = 0;
+		}
+
+		actionMenu.style.top = `${menuTop}px`;
+		actionMenu.style.left = `${menuLeft}px`;
 	} else {
 		actionMenu.classList.add("hidden");
 	}
