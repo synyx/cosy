@@ -169,6 +169,9 @@ socket.addEventListener("message", function (event) {
 
 	chat.handleWebsocket(data.type, data.content);
 	whiteboard.handleWebsocket(data.type, data.content);
+	toilet.handleWebsocket(data.type, data.content, {
+		currentRoomName: currentRoom.id,
+	});
 
 	switch (data.type) {
 		case "user-joined": {
