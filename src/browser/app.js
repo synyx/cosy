@@ -115,6 +115,7 @@ document.body.addEventListener("click", (event) => {
 						const button = document.createElement("button");
 						button.type = "button";
 						button.textContent = action.label;
+						button.classList.add("p-1");
 						button.addEventListener("click", function () {
 							action.handleSelect({ currentRoom, attrs: button.dataset });
 							button.blur();
@@ -125,6 +126,7 @@ document.body.addEventListener("click", (event) => {
 						}
 						const li = document.createElement("li");
 						li.appendChild(button);
+						li.classList.add("hover:bg-blue-200");
 						actionMenu.appendChild(li);
 						actionButtons.set(action, li);
 					}
