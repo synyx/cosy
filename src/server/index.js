@@ -44,6 +44,7 @@ app.use(function viewResolver(context, next) {
 				chat: "./partials/chat",
 				office: "./partials/office",
 				whiteboard: "./partials/whiteboard",
+				"living-room-tv": "./partials/living-room-tv",
 			},
 			helpers: {
 				cspNonceValue: (type) => {
@@ -69,6 +70,7 @@ require("./routes")(app);
 
 // public assets
 app.use(serve(path.resolve(__dirname, "../../static")));
+app.use(serve(path.resolve(__dirname, "../../static/t-rex")));
 app.use(serve(path.resolve(__dirname, "../../out")));
 
 app.listen(PORT, () => {
