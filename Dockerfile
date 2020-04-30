@@ -1,15 +1,21 @@
-FROM node:12-stretch
+FROM node:12.16.2-stretch
 
 RUN mkdir -p /app/node_modules && chown -R node:node /app
-USER node
+# USER node
 
 WORKDIR /app
 
 # copy files required for the build
 COPY --chown=node:node . ./
 
-RUN npm ci
-RUN npm run build
+USER root
+RUN apt-get update && apt-get install -y  python \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN npm i -g npm@latest
+
+USER node
+RUN npm ci && npm run build
 
 # delete devDependencies
 RUN npm prune --production
