@@ -13,24 +13,30 @@ export function createCoffeeActions({ send, player, playerAvatar }) {
 					return [];
 				},
 
-				handleSelect({ currentRoom, attrs }) {
+				handleSelect({ playerAvatar, currentRoom, attrs }) {
 					if (soundPlayingCurrently) {
 						return;
 					}
 
 					soundPlayingCurrently = true;
+					const coffeeAnimation = playerAvatar.cloneNode(true);
 
-					const audio = document.createElement("audio");
-					audio.classList.add("hidden");
-					audio.setAttribute("autoplay", true);
-					audio.src = "/sounds/511553__flamowsky__coffee-machine.mp3";
-
+					const audio = new Audio(
+						"/sounds/511553__flamowsky__coffee-machine.mp3",
+					);
 					audio.addEventListener("ended", (event) => {
 						audio.remove();
 						soundPlayingCurrently = false;
+						coffeeAnimation.remove();
 					});
 
-					document.body.appendChild(audio);
+					audio.load();
+					audio.play().then(function () {
+						coffeeAnimation.classList.add("coffee");
+						coffeeAnimation.setAttributeNS(null, "fill", "none");
+						coffeeAnimation.r.baseVal.value += 2.5;
+						playerAvatar.insertAdjacentElement("afterend", coffeeAnimation);
+					});
 				},
 			},
 		],

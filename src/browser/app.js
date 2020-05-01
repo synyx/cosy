@@ -104,7 +104,11 @@ document.body.addEventListener("click", (event) => {
 						button.textContent = action.label;
 						button.classList.add("p-1");
 						button.addEventListener("click", function () {
-							action.handleSelect({ currentRoom, attrs: button.dataset });
+							action.handleSelect({
+								playerAvatar,
+								currentRoom,
+								attrs: button.dataset,
+							});
 							button.blur();
 							actionMenu.classList.add("hidden");
 						});
