@@ -1,4 +1,4 @@
-import "./panning-effect.js";
+import svgPanZoom from "svg-pan-zoom";
 import { createChatActions } from "./actions/chat-action.js";
 import { createWhiteboardActions } from "./actions/whiteboard-action.js";
 import { createKudoActions } from "./actions/kudo-action.js";
@@ -55,32 +55,15 @@ document.body.appendChild(nameTooltip);
 document.body.style.overflow = "hidden";
 
 const officeSvg = document.getElementById("office");
-let officeScale = 1;
 
-document.addEventListener(
-	"wheel",
-	function (event) {
-		if (!event.altKey) {
-			return;
-		}
-		if (event.deltaY < 0) {
-			// zoom in
-			const nextScaleValue = officeScale + 0.1;
-			if (nextScaleValue <= 3.5) {
-				officeScale = nextScaleValue;
-				officeSvg.setAttributeNS(null, "transform", `scale(${officeScale})`);
-			}
-		} else {
-			// zoom out
-			const nextScaleValue = officeScale - 0.1;
-			if (nextScaleValue >= 1) {
-				officeScale = nextScaleValue;
-				officeSvg.setAttributeNS(null, "transform", `scale(${officeScale})`);
-			}
-		}
-	},
-	{ passive: true },
-);
+svgPanZoom("#office", {
+	panEnabled: true,
+	zoomEnabled: true,
+	dblClickZoomEnabled: true,
+	mouseWheelZoomEnabled: true,
+	controlIconsEnabled: true,
+	zoomScaleSensitivity: 0.15,
+});
 
 officeSvg.addEventListener("mousemove", function (event) {
 	if (event.target.dataset.tooltip && actionMenu.classList.contains("hidden")) {
