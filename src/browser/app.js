@@ -319,7 +319,7 @@ function send(data) {
 
 // firefox is much slower than chrome or safari on my machine oO
 // therefore just increase size of one step ¯\_(ツ)_/¯
-const moveSteps = /Firefox/.test(window.navigator.userAgent) ? 4 : 1;
+const moveSteps = 2;
 let moveStepsFactor = 1;
 const startPointMainEntrance = { x: 799, y: 692 };
 const playerAvatarImagePattern = document.getElementById(
@@ -358,33 +358,29 @@ const keyCodes = Object.freeze({
 	byCode: (code) => Object.keys(keyCodes).find((key) => keyCodes[key] === code),
 });
 
-let movementInterval;
-let movementAllowed = false;
-const keyPressedMap = new Map();
+function coroutine(fn) {
+	let f = fn();
+	f.next();
+	return function (data) {
+		f.next(data);
+	};
+}
 
-document.addEventListener(
-	"keyup",
-	function (event) {
-		if (!event.shiftKey) {
-			keyPressedMap.delete("shift");
-		}
-		keyPressedMap.delete(keyCodes.byCode(event.keyCode));
-		if (keyPressedMap.size === 0) {
-			stopMovementLoop();
-		}
-	},
-	{ passive: true },
-);
+let movementAllowed = false;
 
 function stopMovementLoop() {
 	movementAllowed = false;
-	window.clearInterval(movementInterval);
-	keyPressedMap.clear();
 }
 
-document.addEventListener(
-	"keydown",
-	function (event) {
+const moveRoutine = coroutine(function* () {
+	// keyUp event stops other keyDown events
+	// e.g. you press arrowRight, then arrowUp to move to the top right
+	// then your release arrowUp -> keydown for arrowRight is not triggered anymore
+	// therefore we have to start a loop here.
+	// the loop is stopped as soon as there are no pressed keys anymore
+	const keyPressedMap = new Map();
+
+	function rememberPressedKey(event) {
 		if (event.shiftKey) {
 			keyPressedMap.set("shift", true);
 		}
@@ -392,13 +388,57 @@ document.addEventListener(
 		if (key) {
 			if (keyPressedMap.size === 0) {
 				stopPlayerAvatarAnimate();
-				movementInterval = window.setInterval(move, 10);
 			}
 			keyPressedMap.set(key, true);
 		}
-	},
-	{ passive: true },
-);
+	}
+
+	function forgetPressedKey(event) {
+		if (!event.shiftKey) {
+			keyPressedMap.delete("shift");
+		}
+		keyPressedMap.delete(keyCodes.byCode(event.keyCode));
+	}
+
+	function doMove() {
+		if (!movementAllowed) {
+			return;
+		}
+		requestAnimationFrame(function () {
+			move(keyPressedMap);
+			doMove();
+		});
+	}
+
+	while (true) {
+		// wait for first event
+		let event = yield;
+		if (event.type === "keydown") {
+			rememberPressedKey(event);
+			// start movement loop
+			movementAllowed = true;
+			doMove();
+			while (true) {
+				let event = yield;
+				if (event.type === "keydown") {
+					rememberPressedKey(event);
+				} else if (event.type === "keyup") {
+					forgetPressedKey(event);
+					// and stop movement loop when no key is pressed anymore
+					movementAllowed = keyPressedMap.size > 0;
+					if (!movementAllowed) {
+						// break inner loop so we can start the
+						// movement loop from the beginning
+						break;
+					}
+				}
+			}
+		}
+	}
+});
+
+document.addEventListener("keydown", moveRoutine);
+document.addEventListener("keyup", moveRoutine);
 
 function animatePlayerAvatar(times = 0) {
 	const playerHint = document.getElementById("player-hint");
@@ -435,7 +475,7 @@ function stopPlayerAvatarAnimate() {
 	});
 }
 
-function move() {
+function move(keyPressedMap) {
 	moveStepsFactor = keyPressedMap.has("shift") ? 2 : 1;
 
 	if (keyPressedMap.has("arrowDown") || keyPressedMap.has("s")) {
