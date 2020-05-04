@@ -82,7 +82,6 @@ officeSvg.addEventListener("mousemove", function (event) {
 const actionButtons = new Map();
 
 document.addEventListener("change", (event) => {
-	console.log("> changed", event);
 	switch (event.target.id) {
 		case "show-desks-office": {
 			document.getElementById("office_desks").classList.toggle("hidden");
