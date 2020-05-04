@@ -81,6 +81,45 @@ officeSvg.addEventListener("mousemove", function (event) {
 
 const actionButtons = new Map();
 
+document.addEventListener("change", (event) => {
+	console.log("> changed", event);
+	switch (event.target.id) {
+		case "show-desks-office": {
+			document.getElementById("office_desks").classList.toggle("hidden");
+			break;
+		}
+		case "show-plants": {
+			document.getElementById("pflanzen").classList.toggle("hidden");
+			break;
+		}
+		case "show-bins": {
+			document.getElementById("office_bin").classList.toggle("hidden");
+			break;
+		}
+		case "show-desks-10vorne": {
+			document.getElementById("_10vorne").classList.toggle("hidden");
+			document.getElementById("office_table").classList.toggle("hidden");
+			break;
+		}
+		case "show-nullpointer": {
+			document.getElementById("desks-nullpointer").classList.toggle("hidden");
+			break;
+		}
+		case "show-wasser": {
+			document.getElementById("desks-wasser").classList.toggle("hidden");
+			break;
+		}
+		case "show-cupboards": {
+			document.getElementById("office_cupboard-27").classList.toggle("hidden");
+			break;
+		}
+		case "show-boards": {
+			document.getElementById("office_board").classList.toggle("hidden");
+			break;
+		}
+	}
+});
+
 document.body.addEventListener("click", (event) => {
 	if (actionMenu.contains(event.target)) {
 		//
