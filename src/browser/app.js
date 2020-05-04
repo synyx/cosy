@@ -322,9 +322,6 @@ function send(data) {
 const moveSteps = 2;
 let moveStepsFactor = 1;
 const startPointMainEntrance = { x: 799, y: 692 };
-const playerAvatarImagePattern = document.getElementById(
-	"player-avatar-image-pattern",
-);
 const floors = [...document.querySelectorAll("path[id^=floor_]")].map((floor) =>
 	pathToPolyglot(floor),
 );
