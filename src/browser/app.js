@@ -5,6 +5,7 @@ import { createKudoActions } from "./actions/kudo-action.js";
 import { createCoffeeActions } from "./actions/coffee-action.js";
 import { createToiletActions } from "./actions/toilet-action.js";
 import { createLivingRoomActions } from "./actions/living-room-action";
+import { createRadioActions } from "./actions/radio-action";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player-avatar");
@@ -22,6 +23,7 @@ const kudo = createKudoActions({ send, player, playerAvatar });
 const coffee = createCoffeeActions({ send, player, playerAvatar });
 const toilet = createToiletActions({ send, player, playerAvatar });
 const livingRoom = createLivingRoomActions({ send, player, playerAvatar });
+const radio = createRadioActions({ send, player, playerAvatar });
 
 chat.onChatStart(function () {
 	currentlyChatting = true;
@@ -129,43 +131,43 @@ document.body.addEventListener("click", (event) => {
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
 
-		[chat, whiteboard, kudo, coffee, toilet, livingRoom].forEach(function ({
-			actions,
-		}) {
-			for (let action of actions) {
-				if (action.shouldBeVisible({ currentRoom })) {
-					if (actionButtons.has(action)) {
-						actionButtons.get(action).classList.remove("hidden");
-					} else {
-						const button = document.createElement("button");
-						button.type = "button";
-						button.textContent = action.label;
-						button.classList.add("p-1");
-						button.addEventListener("click", function () {
-							action.handleSelect({
-								playerAvatar,
-								currentRoom,
-								attrs: button.dataset,
+		[chat, whiteboard, kudo, coffee, toilet, livingRoom, radio].forEach(
+			function ({ actions }) {
+				for (let action of actions) {
+					if (action.shouldBeVisible({ currentRoom })) {
+						if (actionButtons.has(action)) {
+							actionButtons.get(action).classList.remove("hidden");
+						} else {
+							const button = document.createElement("button");
+							button.type = "button";
+							button.textContent = action.label;
+							button.classList.add("p-1");
+							button.addEventListener("click", function () {
+								action.handleSelect({
+									playerAvatar,
+									currentRoom,
+									attrs: button.dataset,
+								});
+								button.blur();
+								actionMenu.classList.add("hidden");
 							});
-							button.blur();
-							actionMenu.classList.add("hidden");
-						});
-						for (let [attr, value] of action.attrs()) {
-							button.dataset[attr] = value;
+							for (let [attr, value] of action.attrs()) {
+								button.dataset[attr] = value;
+							}
+							const li = document.createElement("li");
+							li.appendChild(button);
+							li.classList.add("hover:bg-blue-200");
+							actionMenu.appendChild(li);
+							actionButtons.set(action, li);
 						}
-						const li = document.createElement("li");
-						li.appendChild(button);
-						li.classList.add("hover:bg-blue-200");
-						actionMenu.appendChild(li);
-						actionButtons.set(action, li);
-					}
-				} else {
-					if (actionButtons.has(action)) {
-						actionButtons.get(action).classList.add("hidden");
+					} else {
+						if (actionButtons.has(action)) {
+							actionButtons.get(action).classList.add("hidden");
+						}
 					}
 				}
-			}
-		});
+			},
+		);
 
 		const { pageX: x, pageY: y } = event;
 		const { width, height } = actionMenu.getBoundingClientRect();
