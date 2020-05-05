@@ -7,6 +7,7 @@ import { createToiletActions } from "./actions/toilet-action.js";
 import { createLivingRoomActions } from "./actions/living-room-action";
 import { createRadioActions } from "./actions/radio-action";
 import { createShowerActions } from "./actions/shower-action";
+import { createArcadeActions } from "./actions/arcade-action";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player-avatar");
@@ -26,6 +27,7 @@ const toilet = createToiletActions({ send, player, playerAvatar });
 const livingRoom = createLivingRoomActions({ send, player, playerAvatar });
 const radio = createRadioActions({ send, player, playerAvatar });
 const shower = createShowerActions({ send, player, playerAvatar });
+const arcade = createArcadeActions({ send, player, playerAvatar });
 
 chat.onChatStart(function () {
 	currentlyChatting = true;
@@ -133,43 +135,51 @@ document.body.addEventListener("click", (event) => {
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
 
-		[chat, whiteboard, kudo, coffee, toilet, livingRoom, radio, shower].forEach(
-			function ({ actions }) {
-				for (let action of actions) {
-					if (action.shouldBeVisible({ currentRoom })) {
-						if (actionButtons.has(action)) {
-							actionButtons.get(action).classList.remove("hidden");
-						} else {
-							const button = document.createElement("button");
-							button.type = "button";
-							button.textContent = action.label;
-							button.classList.add("p-1");
-							button.addEventListener("click", function () {
-								action.handleSelect({
-									playerAvatar,
-									currentRoom,
-									attrs: button.dataset,
-								});
-								button.blur();
-								actionMenu.classList.add("hidden");
-							});
-							for (let [attr, value] of action.attrs()) {
-								button.dataset[attr] = value;
-							}
-							const li = document.createElement("li");
-							li.appendChild(button);
-							li.classList.add("hover:bg-blue-200");
-							actionMenu.appendChild(li);
-							actionButtons.set(action, li);
-						}
+		[
+			chat,
+			whiteboard,
+			kudo,
+			coffee,
+			toilet,
+			livingRoom,
+			radio,
+			shower,
+			arcade,
+		].forEach(function ({ actions }) {
+			for (let action of actions) {
+				if (action.shouldBeVisible({ currentRoom })) {
+					if (actionButtons.has(action)) {
+						actionButtons.get(action).classList.remove("hidden");
 					} else {
-						if (actionButtons.has(action)) {
-							actionButtons.get(action).classList.add("hidden");
+						const button = document.createElement("button");
+						button.type = "button";
+						button.textContent = action.label;
+						button.classList.add("p-1");
+						button.addEventListener("click", function () {
+							action.handleSelect({
+								playerAvatar,
+								currentRoom,
+								attrs: button.dataset,
+							});
+							button.blur();
+							actionMenu.classList.add("hidden");
+						});
+						for (let [attr, value] of action.attrs()) {
+							button.dataset[attr] = value;
 						}
+						const li = document.createElement("li");
+						li.appendChild(button);
+						li.classList.add("hover:bg-blue-200");
+						actionMenu.appendChild(li);
+						actionButtons.set(action, li);
+					}
+				} else {
+					if (actionButtons.has(action)) {
+						actionButtons.get(action).classList.add("hidden");
 					}
 				}
-			},
-		);
+			}
+		});
 
 		const { pageX: x, pageY: y } = event;
 		const { width, height } = actionMenu.getBoundingClientRect();
@@ -414,23 +424,25 @@ const moveRoutine = coroutine(function* () {
 	while (true) {
 		// wait for first event
 		let event = yield;
-		if (event.type === "keydown") {
+		if (!arcade.isRunning && event.type === "keydown") {
 			rememberPressedKey(event);
 			// start movement loop
 			movementAllowed = true;
 			doMove();
 			while (true) {
 				let event = yield;
-				if (event.type === "keydown") {
-					rememberPressedKey(event);
-				} else if (event.type === "keyup") {
-					forgetPressedKey(event);
-					// and stop movement loop when no key is pressed anymore
-					movementAllowed = keyPressedMap.size > 0;
-					if (!movementAllowed) {
-						// break inner loop so we can start the
-						// movement loop from the beginning
-						break;
+				if (!arcade.isRunning) {
+					if (event.type === "keydown") {
+						rememberPressedKey(event);
+					} else if (event.type === "keyup") {
+						forgetPressedKey(event);
+						// and stop movement loop when no key is pressed anymore
+						movementAllowed = keyPressedMap.size > 0;
+						if (!movementAllowed) {
+							// break inner loop so we can start the
+							// movement loop from the beginning
+							break;
+						}
 					}
 				}
 			}
