@@ -70,6 +70,8 @@ export function createChatActions({ send, player, playerAvatar }) {
 			};
 		},
 
+		handleRoomChange({ previousRoom, nextRoom }) {},
+
 		handleWebsocket(type, content) {
 			switch (type) {
 				case "chat-started": {

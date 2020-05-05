@@ -417,6 +417,8 @@ export function createWhiteboardActions({ send, player, playerAvatar }) {
 	}
 
 	return {
+		handleRoomChange({ previousRoom, nextRoom }) {},
+
 		handleWebsocket(type, content) {
 			switch (type) {
 				case "whiteboard-pointer-moved": {

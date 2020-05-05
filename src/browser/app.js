@@ -609,7 +609,15 @@ function updateCurrentRoom() {
 
 	// no room found -> we're crossing a door right now
 
-	if (nextCurrentRoom) {
+	if (nextCurrentRoom && nextCurrentRoom !== currentRoom) {
+		[chat, whiteboard, kudo, coffee, toilet, livingRoom, radio, shower].forEach(
+			function ({ handleRoomChange }) {
+				handleRoomChange({
+					previousRoom: currentRoom,
+					nextRoom: nextCurrentRoom,
+				});
+			},
+		);
 		currentRoom = nextCurrentRoom;
 	}
 }

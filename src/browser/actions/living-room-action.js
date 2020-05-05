@@ -1,5 +1,7 @@
 export function createLivingRoomActions({ send, player, playerAvatar }) {
 	return {
+		handleRoomChange({ previousRoom, nextRoom }) {},
+
 		handleWebsocket(type, content) {},
 
 		actions: [

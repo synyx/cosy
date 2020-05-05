@@ -3,6 +3,8 @@ export function createRadioActions({ send, player, playerAvatar }) {
 	let radioAudio;
 
 	return {
+		handleRoomChange({ previousRoom, nextRoom }) {},
+
 		handleWebsocket(type, content) {},
 
 		actions: [

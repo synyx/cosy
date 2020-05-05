@@ -1,6 +1,8 @@
 export function createCoffeeActions({ send, player, playerAvatar }) {
 	let soundPlayingCurrently = false;
 	return {
+		handleRoomChange({ previousRoom, nextRoom }) {},
+
 		handleWebsocket(type, content) {},
 
 		actions: [

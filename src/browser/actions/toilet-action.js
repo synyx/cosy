@@ -11,6 +11,8 @@ export function createToiletActions({ send, player, playerAvatar }) {
 	}
 
 	return {
+		handleRoomChange({ previousRoom, nextRoom }) {},
+
 		handleWebsocket(type, content, { currentRoomName }) {
 			switch (type) {
 				case "toilet-flush": {
