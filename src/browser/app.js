@@ -6,6 +6,7 @@ import { createCoffeeActions } from "./actions/coffee-action.js";
 import { createToiletActions } from "./actions/toilet-action.js";
 import { createLivingRoomActions } from "./actions/living-room-action";
 import { createRadioActions } from "./actions/radio-action";
+import { createShowerActions } from "./actions/shower-action";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player-avatar");
@@ -24,6 +25,7 @@ const coffee = createCoffeeActions({ send, player, playerAvatar });
 const toilet = createToiletActions({ send, player, playerAvatar });
 const livingRoom = createLivingRoomActions({ send, player, playerAvatar });
 const radio = createRadioActions({ send, player, playerAvatar });
+const shower = createShowerActions({ send, player, playerAvatar });
 
 chat.onChatStart(function () {
 	currentlyChatting = true;
@@ -131,7 +133,7 @@ document.body.addEventListener("click", (event) => {
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
 
-		[chat, whiteboard, kudo, coffee, toilet, livingRoom, radio].forEach(
+		[chat, whiteboard, kudo, coffee, toilet, livingRoom, radio, shower].forEach(
 			function ({ actions }) {
 				for (let action of actions) {
 					if (action.shouldBeVisible({ currentRoom })) {
