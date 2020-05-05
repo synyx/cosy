@@ -1,5 +1,6 @@
 export function createCoffeeActions({ send, player, playerAvatar }) {
 	let soundPlayingCurrently = false;
+	let billardCoffeeCounter = 0;
 	return {
 		handleRoomChange({ previousRoom, nextRoom }) {},
 
@@ -39,6 +40,24 @@ export function createCoffeeActions({ send, player, playerAvatar }) {
 						coffeeAnimation.r.baseVal.value += 2.5;
 						playerAvatar.insertAdjacentElement("afterend", coffeeAnimation);
 					});
+				},
+			},
+			{
+				label: "Kaffee machen",
+
+				shouldBeVisible: ({ currentRoom }) =>
+					currentRoom.id === "floor_billard_coffee",
+
+				attrs() {
+					return [];
+				},
+
+				handleSelect({ playerAvatar, currentRoom, attrs }) {
+					billardCoffeeCounter++;
+					if (billardCoffeeCounter === 3) {
+						window.alert("Alter! Die Kaffeemaschine geht nicht!");
+						billardCoffeeCounter = 0;
+					}
 				},
 			},
 		],
