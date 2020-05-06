@@ -4,21 +4,21 @@
 >
 	<div
 		id="chat-root-inner"
-		class="w-0 h-0 border border-8 bg-white flex flex-col"
+		class="w-full h-full border border-8 bg-white flex flex-col rounded-lg overflow-hidden"
 	>
-		<div class="bg-teal-900 flex justify-between p-2 text-white">
-			<div class="flex">
+		<div class="flex justify-between p-2 text-black">
+			<div class="flex items-center px-2">
 				<div class="mr-4">
-					Kamera <span id="jitsi-camera-status" class="font-bold">AN</span>
+					Kamera ist <span id="jitsi-camera-status" class="font-bold">AN</span>
 				</div>
 				<div>
-					Mikrofon
+					Mikrofon ist
 					<span id="jitsi-microphone-status" class="font-bold">AN</span>
 				</div>
 			</div>
 			<button
 				id="close-chat-button"
-				class="px-2 py-1 text-sm font-light hover:underline"
+				class="text-black border border-black px-4 py-2 rounded"
 			>
 				Gespräch verlassen
 			</button>
