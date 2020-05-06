@@ -212,7 +212,9 @@ export function createWhiteboardActions({ send, player, playerAvatar }) {
 		}
 
 		let color = document.querySelector("button[id^=pencil-]").dataset.color;
-		let thickness = document.querySelector("#whiteboard-stroke-width").value;
+		let thickness = document.querySelector(
+			"[name='whiteboard-stroke-width']:checked",
+		).value;
 
 		send({
 			type: "whiteboard-user-joined",
@@ -223,16 +225,19 @@ export function createWhiteboardActions({ send, player, playerAvatar }) {
 		for (let button of pencilButtons) {
 			button.addEventListener("click", (event) => {
 				color = event.target.dataset.color;
-				pencilButtons.forEach((b) => (b.style.transform = ""));
+				pencilButtons.forEach(
+					(b) => ((b.style.transform = ""), (b.style.borderWidth = "")),
+				);
 				event.target.style.transform = "translate(0, 2px)";
+				event.target.style.borderWidth = "4px";
 			});
 		}
 
-		document
-			.getElementById("whiteboard-stroke-width")
-			.addEventListener("change", (event) => {
+		document.addEventListener("change", (event) => {
+			if (event.target.matches("[name='whiteboard-stroke-width']")) {
 				thickness = event.target.value;
-			});
+			}
+		});
 
 		let spaceKeyPressed = false;
 		let spaceKeyUpHandled = true;
