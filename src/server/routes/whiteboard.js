@@ -7,7 +7,7 @@ const canvasHeight = 3000;
 
 module.exports = function (app) {
 	app.use(
-		route.get("/whiteboard/canvas-export", async function (context) {
+		route.get("/whiteboard/canvas-export.png", async function (context) {
 			const canvas = createCanvas(canvasWidth, canvasHeight, "png");
 			const canvasContext = canvas.getContext("2d");
 
