@@ -92,6 +92,7 @@ module.exports = function (app) {
 		if (
 			context.originalUrl.startsWith("/login") ||
 			context.originalUrl.startsWith("/css/") ||
+			context.originalUrl.startsWith("/computer.svg") ||
 			context.isAuthenticated()
 		) {
 			await next();
