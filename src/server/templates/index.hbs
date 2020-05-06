@@ -7,6 +7,22 @@
 		<link rel="stylesheet" href="/css/style.css" />
 		<link rel="preload" href="https://{{jitsiDomain}}/external_api.js" as="script">
 		<link rel="preload" href="/js/app.js" as="script">
+		<style nonce={{{cspNonceValue 'style'}}}>
+			.svg-pan-zoom-control {
+				cursor: pointer !important;
+				fill: white !important;
+				fill-opacity: 1 !important;
+			}
+			.svg-pan-zoom-control:hover {
+				fill-opacity: 1 !important;
+			}
+			.svg-pan-zoom-control-background {
+				fill: black !important;
+			}
+			.svg-pan-zoom-control-background {
+				fill-opacity: 1 !important;
+			}
+		</style>
 		<script nonce="{{{cspNonceValue 'script'}}}">
 			window.synyxoffice = {
 				jitsiDomain: "{{jitsiDomain}}",
