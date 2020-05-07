@@ -118,6 +118,10 @@ document.addEventListener("change", (event) => {
 			document.getElementById("wohnzimmer").classList.toggle("hidden");
 			break;
 		}
+		case "show-memory": {
+			document.getElementById("memory").classList.toggle("hidden");
+			break;
+		}
 		case "show-nullpointer": {
 			document.getElementById("desks-nullpointer").classList.toggle("hidden");
 			break;
