@@ -106,6 +106,10 @@ document.addEventListener("change", (event) => {
 			document.getElementById("office_table").classList.toggle("hidden");
 			break;
 		}
+		case "show-kueche": {
+			document.getElementById("kueche").classList.toggle("hidden");
+			break;
+		}
 		case "show-nullpointer": {
 			document.getElementById("desks-nullpointer").classList.toggle("hidden");
 			break;
