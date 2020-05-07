@@ -14,11 +14,9 @@ const rootInner = document.getElementById("chat-root-inner");
 export function startChat({ roomName }) {
 	const externalListeners = new Map();
 
-	const _roomName = "JitsiMeetAPIExample";
-
 	// jitsi connection
 	const options = {
-		roomName: _roomName,
+		roomName,
 		width: "100%",
 		height: "100%",
 		parentNode: jitsiParentElement,
@@ -52,7 +50,7 @@ export function startChat({ roomName }) {
 			jitsiParentElement.innerHTML = "";
 			if (externalListeners.has("close")) {
 				for (let listener of externalListeners.get("close")) {
-					listener({ roomName: _roomName });
+					listener({ roomName });
 				}
 			}
 		});
@@ -79,7 +77,7 @@ export function startChat({ roomName }) {
 
 	return {
 		get roomName() {
-			return _roomName;
+			return roomName;
 		},
 		on(event, listener) {
 			if (!externalListeners.has(event)) {
