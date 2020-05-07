@@ -118,6 +118,14 @@ document.addEventListener("change", (event) => {
 			document.getElementById("wohnzimmer").classList.toggle("hidden");
 			break;
 		}
+		case "show-kreativ": {
+			document.getElementById("kreativ").classList.toggle("hidden");
+			break;
+		}
+		case "show-office-maedels": {
+			document.getElementById("office-maedels").classList.toggle("hidden");
+			break;
+		}
 		case "show-memory": {
 			document.getElementById("memory").classList.toggle("hidden");
 			break;
