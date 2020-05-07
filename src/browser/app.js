@@ -122,6 +122,10 @@ document.addEventListener("change", (event) => {
 			document.getElementById("memory").classList.toggle("hidden");
 			break;
 		}
+		case "show-billard": {
+			document.getElementById("billard").classList.toggle("hidden");
+			break;
+		}
 		case "show-nullpointer": {
 			document.getElementById("desks-nullpointer").classList.toggle("hidden");
 			break;
