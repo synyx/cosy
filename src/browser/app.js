@@ -114,6 +114,10 @@ document.addEventListener("change", (event) => {
 			document.getElementById("balkon").classList.toggle("hidden");
 			break;
 		}
+		case "show-wohnzimmer": {
+			document.getElementById("wohnzimmer").classList.toggle("hidden");
+			break;
+		}
 		case "show-nullpointer": {
 			document.getElementById("desks-nullpointer").classList.toggle("hidden");
 			break;
