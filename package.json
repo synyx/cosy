@@ -36,6 +36,7 @@
 		"koa-websocket": "6.0.0",
 		"passport-ldapauth": "2.1.4",
 		"passport-local": "1.0.0",
+		"request": "2.88.2",
 		"svg-pan-zoom": "3.6.1"
 	},
 	"devDependencies": {
