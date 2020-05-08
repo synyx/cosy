@@ -1,6 +1,6 @@
 {
 	"name": "synyx-remote",
-	"version": "0.18.0",
+	"version": "1.33.7",
 	"private": true,
 	"author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
 	"scripts": {
