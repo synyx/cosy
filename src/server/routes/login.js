@@ -1,6 +1,8 @@
 const passport = require("koa-passport");
 const route = require("koa-route");
 
+const { version } = require("../../../package.json");
+
 module.exports = function (app) {
 	app.use(
 		route.get("/login", async function (ctx) {
@@ -9,7 +11,7 @@ module.exports = function (app) {
 				error: error != undefined,
 				username,
 				csrf: ctx.csrf,
-				version: process.env.npm_package_version,
+				version,
 			});
 		}),
 	);
