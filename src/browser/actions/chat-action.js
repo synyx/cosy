@@ -124,54 +124,54 @@ export function createChatActions({ send, player, playerAvatar }) {
 			// ===========================================================================
 			// start a new chat
 			// ===========================================================================
-			// {
-			// 	label: "hier ein Gespräch starten",
-			// 	shouldBeVisible: () => !isPlayerInRangeOfARunningChat(),
-			// 	attrs() {
-			// 		return [];
-			// 	},
-			// 	handleSelect({ currentRoom, attrs }) {
-			// 		const rnd = () => Math.random().toString(36).substr(2, 5);
-			// 		const roomName = `${currentRoom.id}-${rnd()}-${rnd()}-${rnd()}`;
-			// 		const room = beginChat(roomName);
-			// 		send({
-			// 			type: "chat-started",
-			// 			content: {
-			// 				roomName: room.roomName,
-			// 				userName: player.name,
-			// 				point: {
-			// 					x: playerAvatar.cx.baseVal.value,
-			// 					y: playerAvatar.cy.baseVal.value,
-			// 				},
-			// 			},
-			// 		});
-			// 	},
-			// },
-			// // ===========================================================================
-			// // join a chat
-			// // ===========================================================================
-			// {
-			// 	label: "dem Gespräch beitreten",
-			// 	shouldBeVisible: () => isPlayerInRangeOfARunningChat(),
-			// 	attrs() {
-			// 		const joinableChat = getIntersectingChat();
-			// 		if (joinableChat) {
-			// 			return [["chatRoomName", joinableChat.roomName]];
-			// 		}
-			// 		return [];
-			// 	},
-			// 	handleSelect({ currentRoom, attrs }) {
-			// 		const { chatRoomName } = event.target.dataset;
-			// 		beginChat(chatRoomName);
-			// 		send({
-			// 			type: "chat-user-joined",
-			// 			content: {
-			// 				roomName: chatRoomName,
-			// 				userName: player.name,
-			// 			},
-			// 		});
-			// 	},
-			// },
+			{
+				label: "hier ein Gespräch starten",
+				shouldBeVisible: () => !isPlayerInRangeOfARunningChat(),
+				attrs() {
+					return [];
+				},
+				handleSelect({ currentRoom, attrs }) {
+					const rnd = () => Math.random().toString(36).substr(2, 5);
+					const roomName = `${currentRoom.id}-${rnd()}-${rnd()}-${rnd()}`;
+					const room = beginChat(roomName);
+					send({
+						type: "chat-started",
+						content: {
+							roomName: room.roomName,
+							userName: player.name,
+							point: {
+								x: playerAvatar.cx.baseVal.value,
+								y: playerAvatar.cy.baseVal.value,
+							},
+						},
+					});
+				},
+			},
+			// ===========================================================================
+			// join a chat
+			// ===========================================================================
+			{
+				label: "dem Gespräch beitreten",
+				shouldBeVisible: () => isPlayerInRangeOfARunningChat(),
+				attrs() {
+					const joinableChat = getIntersectingChat();
+					if (joinableChat) {
+						return [["chatRoomName", joinableChat.roomName]];
+					}
+					return [];
+				},
+				handleSelect({ currentRoom, attrs }) {
+					const { chatRoomName } = event.target.dataset;
+					beginChat(chatRoomName);
+					send({
+						type: "chat-user-joined",
+						content: {
+							roomName: chatRoomName,
+							userName: player.name,
+						},
+					});
+				},
+			},
 		],
 	};
 }
