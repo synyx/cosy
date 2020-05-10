@@ -2,6 +2,7 @@ const canvasWidth = 5000;
 const canvasHeight = 3000;
 
 export function createWhiteboardActions({ send, player, playerAvatar }) {
+	let whiteboardCurrentlyOpened = false;
 	const participants = new Map();
 
 	let nextRemoteCursorIndex = 0;
@@ -179,6 +180,8 @@ export function createWhiteboardActions({ send, player, playerAvatar }) {
 		window.addEventListener("beforeunload", onCloseWhiteboard);
 
 		function onCloseWhiteboard() {
+			whiteboardCurrentlyOpened = false;
+
 			root.style.backgroundColor = "rgba(0,0,0,0)";
 			root.classList.remove("z-50", "w-full");
 			root.classList.add("hidden");
@@ -410,6 +413,9 @@ export function createWhiteboardActions({ send, player, playerAvatar }) {
 		handleRoomChange({ previousRoom, nextRoom }) {},
 
 		handleWebsocket(type, content) {
+			if (!whiteboardCurrentlyOpened) {
+				return;
+			}
 			switch (type) {
 				case "whiteboard-pointer-moved": {
 					const { cursors } = content;
@@ -478,6 +484,7 @@ export function createWhiteboardActions({ send, player, playerAvatar }) {
 				},
 				handleSelect({ currentRoom, attrs }) {
 					initWhiteboard();
+					whiteboardCurrentlyOpened = true;
 				},
 			},
 		],
