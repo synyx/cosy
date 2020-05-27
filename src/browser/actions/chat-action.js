@@ -132,8 +132,8 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 					return [];
 				},
 				handleSelect({ currentRoom, attrs }) {
-					const rnd = () => Math.random().toString(36).substr(2, 5);
-					const roomName = `${currentRoom.id}-${rnd()}-${rnd()}-${rnd()}`;
+					const rnd = () => Math.random().toString(36).substr(2, 8);
+					const roomName = `${currentRoom.id}-${rnd()}`;
 					const room = beginChat(roomName);
 					send({
 						type: "chat-started",
