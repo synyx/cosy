@@ -1,6 +1,5 @@
 import svgPanZoom from "svg-pan-zoom";
 import { createChatActions } from "./actions/chat-action.js";
-import { createWhiteboardActions } from "./actions/whiteboard-action.js";
 import { createCoffeeActions } from "./actions/coffee-action.js";
 import { createRadioActions } from "./actions/radio-action";
 import { createShowerActions } from "./actions/shower-action";
@@ -17,7 +16,6 @@ const actionMenu = document.getElementById("action-menu");
 let currentlyChatting = false;
 
 const chat = createChatActions({ send, player, playerAvatar });
-const whiteboard = createWhiteboardActions({ send, player, playerAvatar });
 const coffee = createCoffeeActions({ send, player, playerAvatar });
 const radio = createRadioActions({ send, player, playerAvatar });
 const shower = createShowerActions({ send, player, playerAvatar });
@@ -157,9 +155,7 @@ document.body.addEventListener("click", (event) => {
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
 
-		[chat, whiteboard, coffee, radio, shower, arcade].forEach(function ({
-			actions,
-		}) {
+		[chat, coffee, radio, shower, arcade].forEach(function ({ actions }) {
 			for (let action of actions) {
 				if (action.shouldBeVisible({ currentRoom })) {
 					if (actionButtons.has(action)) {
@@ -245,7 +241,6 @@ socket.addEventListener("message", function (event) {
 	const data = JSON.parse(event.data);
 
 	chat.handleWebsocket(data.type, data.content);
-	whiteboard.handleWebsocket(data.type, data.content);
 
 	switch (data.type) {
 		case "user-joined": {
@@ -633,9 +628,7 @@ function updateCurrentRoom() {
 	// no room found -> we're crossing a door right now
 
 	if (nextCurrentRoom && nextCurrentRoom !== currentRoom) {
-		[chat, whiteboard, coffee, radio, shower].forEach(function ({
-			handleRoomChange,
-		}) {
+		[chat, coffee, radio, shower].forEach(function ({ handleRoomChange }) {
 			handleRoomChange({
 				previousRoom: currentRoom,
 				nextRoom: nextCurrentRoom,
