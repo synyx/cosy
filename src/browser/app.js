@@ -7,6 +7,9 @@ import { createArcadeActions } from "./actions/arcade-action";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player-avatar");
+const playerAvatarImagePattern = document.getElementById(
+	"player-avatar-image-pattern",
+);
 const playerAvatarCoordinates = {
 	x: playerAvatar.cx.baseVal.value,
 	y: playerAvatar.cy.baseVal.value,
@@ -248,17 +251,9 @@ socket.addEventListener("message", function (event) {
 				return;
 			}
 
-			const player = document.getElementById("player");
-			const newPlayerGroup = player.cloneNode(true);
-			newPlayerGroup.setAttributeNS(null, "id", `player-${newPlayer.nickname}`);
-
-			const newPlayerHint = newPlayerGroup.querySelector("#player-hint");
-			newPlayerHint.setAttributeNS(null, "id", `${newPlayer.nickname}-hint`);
-			newPlayerHint.classList.add("hidden");
-
 			// avatar image
-			const newPlayerAvatarImagePattern = newPlayerGroup.querySelector(
-				"#player-avatar-image-pattern",
+			const newPlayerAvatarImagePattern = playerAvatarImagePattern.cloneNode(
+				true,
 			);
 			newPlayerAvatarImagePattern.setAttributeNS(
 				null,
@@ -268,15 +263,17 @@ socket.addEventListener("message", function (event) {
 			newPlayerAvatarImagePattern
 				.querySelector("image")
 				.setAttributeNS(null, "href", newPlayer.avatarUrl);
+			playerAvatarImagePattern.parentNode.appendChild(
+				newPlayerAvatarImagePattern,
+			);
 
 			// avatar element
-			const newPlayerAvatar = newPlayerGroup.querySelector("#player-avatar");
+			const newPlayerAvatar = playerAvatar.cloneNode();
 			newPlayerAvatar.dataset.tooltip = newPlayer.name;
-			newPlayerAvatar.setAttributeNS(
-				null,
-				"id",
-				`${newPlayer.nickname}-avatar`,
-			);
+			newPlayerAvatar.setAttributeNS(null, "id", "");
+			newPlayerAvatar.setAttributeNS(null, "transform", "");
+			newPlayerAvatar.setAttributeNS(null, "cx", startPointMainEntrance.x);
+			newPlayerAvatar.setAttributeNS(null, "cy", startPointMainEntrance.y);
 			newPlayerAvatar.setAttributeNS(
 				null,
 				"fill",
@@ -287,18 +284,12 @@ socket.addEventListener("message", function (event) {
 						`#${newPlayer.nickname}-image-pattern`,
 					),
 			);
-
-			const { x, y } = newPlayer.position || startPointMainEntrance;
-			const dx = x - newPlayerAvatar.cx.baseVal.value;
-			const dy = y - newPlayerAvatar.cy.baseVal.value;
-			newPlayerGroup.setAttributeNS(
-				null,
-				"transform",
-				`translate(${dx} ${dy})`,
-			);
-
-			player.parentNode.insertBefore(newPlayerGroup, player);
-			playerAvatarMap.set(newPlayer.name, newPlayerGroup);
+			if (newPlayer.position) {
+				newPlayerAvatar.cx.baseVal.value = newPlayer.position.x;
+				newPlayerAvatar.cy.baseVal.value = newPlayer.position.y;
+			}
+			playerAvatar.parentNode.insertBefore(newPlayerAvatar, playerAvatar);
+			playerAvatarMap.set(newPlayer.name, newPlayerAvatar);
 			break;
 		}
 
@@ -307,12 +298,9 @@ socket.addEventListener("message", function (event) {
 			if (player.name === window.synyxoffice.player.name) {
 				return;
 			}
-			const { x, y } = player.position;
 			const playerAvatar = playerAvatarMap.get(player.name);
-			const avatar = playerAvatar.querySelector("[id$='-avatar']");
-			const dx = x - avatar.cx.baseVal.value;
-			const dy = y - avatar.cy.baseVal.value;
-			playerAvatar.setAttributeNS(null, "transform", `translate(${dx} ${dy})`);
+			playerAvatar.cx.baseVal.value = player.position.x;
+			playerAvatar.cy.baseVal.value = player.position.y;
 			break;
 		}
 
@@ -555,12 +543,17 @@ function doMovement({ nextX, nextY }) {
 	);
 
 	const updateCoordinates = () => {
+		// player pulse circle
+		const playerHint = document.getElementById("player-hint");
+		playerHint.cx.baseVal.value = nextX;
+		playerHint.cy.baseVal.value = nextY;
+		// player avatar circle
 		playerAvatarCoordinates.x = nextX;
 		playerAvatarCoordinates.y = nextY;
 		const dx = nextX - playerAvatar.cx.baseVal.value;
 		const dy = nextY - playerAvatar.cy.baseVal.value;
-		const player = document.getElementById("player");
-		player.setAttributeNS(null, "transform", `translate(${dx} ${dy})`);
+		// playerAvatar.style.transform = `translate(${dx}px, ${dy}px)`;
+		playerAvatar.setAttributeNS(null, "transform", `translate(${dx} ${dy})`);
 	};
 
 	if (isStillInCurrentRoom) {
