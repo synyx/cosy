@@ -550,10 +550,8 @@ function doMovement({ nextX, nextY }) {
 		// player avatar circle
 		playerAvatarCoordinates.x = nextX;
 		playerAvatarCoordinates.y = nextY;
-		const dx = nextX - playerAvatar.cx.baseVal.value;
-		const dy = nextY - playerAvatar.cy.baseVal.value;
-		// playerAvatar.style.transform = `translate(${dx}px, ${dy}px)`;
-		playerAvatar.setAttributeNS(null, "transform", `translate(${dx} ${dy})`);
+		playerAvatar.cx.baseVal.value = nextX;
+		playerAvatar.cy.baseVal.value = nextY;
 	};
 
 	if (isStillInCurrentRoom) {
