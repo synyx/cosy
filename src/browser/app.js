@@ -1,4 +1,3 @@
-import svgPanZoom from "svg-pan-zoom";
 import { createChatActions } from "./actions/chat-action.js";
 import { createCoffeeActions } from "./actions/coffee-action.js";
 import { createRadioActions } from "./actions/radio-action";
@@ -55,15 +54,6 @@ nameTooltip.classList.add(
 );
 document.body.appendChild(nameTooltip);
 document.body.style.overflow = "hidden";
-
-svgPanZoom("#office", {
-	panEnabled: true,
-	zoomEnabled: true,
-	dblClickZoomEnabled: true,
-	mouseWheelZoomEnabled: true,
-	controlIconsEnabled: true,
-	zoomScaleSensitivity: 0.15,
-});
 
 officeSvg.addEventListener("mousemove", function (event) {
 	if (event.target.dataset.tooltip && actionMenu.classList.contains("hidden")) {

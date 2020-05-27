@@ -34,8 +34,7 @@
 		"koa-views": "6.2.1",
 		"koa-websocket": "6.0.0",
 		"passport-ldapauth": "2.1.4",
-		"passport-local": "1.0.0",
-		"svg-pan-zoom": "3.6.1"
+		"passport-local": "1.0.0"
 	},
 	"devDependencies": {
 		"@fullhuman/postcss-purgecss": "2.1.2",
