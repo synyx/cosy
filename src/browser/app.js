@@ -1,7 +1,6 @@
 import svgPanZoom from "svg-pan-zoom";
 import { createChatActions } from "./actions/chat-action.js";
 import { createWhiteboardActions } from "./actions/whiteboard-action.js";
-import { createKudoActions } from "./actions/kudo-action.js";
 import { createCoffeeActions } from "./actions/coffee-action.js";
 import { createToiletActions } from "./actions/toilet-action.js";
 import { createRadioActions } from "./actions/radio-action";
@@ -20,7 +19,6 @@ let currentlyChatting = false;
 
 const chat = createChatActions({ send, player, playerAvatar });
 const whiteboard = createWhiteboardActions({ send, player, playerAvatar });
-const kudo = createKudoActions({ send, player, playerAvatar });
 const coffee = createCoffeeActions({ send, player, playerAvatar });
 const toilet = createToiletActions({ send, player, playerAvatar });
 const radio = createRadioActions({ send, player, playerAvatar });
@@ -161,7 +159,7 @@ document.body.addEventListener("click", (event) => {
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
 
-		[chat, whiteboard, kudo, coffee, toilet, radio, shower, arcade].forEach(
+		[chat, whiteboard, coffee, toilet, radio, shower, arcade].forEach(
 			function ({ actions }) {
 				for (let action of actions) {
 					if (action.shouldBeVisible({ currentRoom })) {
@@ -640,7 +638,7 @@ function updateCurrentRoom() {
 	// no room found -> we're crossing a door right now
 
 	if (nextCurrentRoom && nextCurrentRoom !== currentRoom) {
-		[chat, whiteboard, kudo, coffee, toilet, radio, shower].forEach(function ({
+		[chat, whiteboard, coffee, toilet, radio, shower].forEach(function ({
 			handleRoomChange,
 		}) {
 			handleRoomChange({
