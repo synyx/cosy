@@ -45,7 +45,6 @@ app.use(function viewResolver(context, next) {
 				office: "./partials/office",
 				whiteboard: "./partials/whiteboard",
 				arcade: "./partials/arcade",
-				"living-room-tv": "./partials/living-room-tv",
 			},
 			helpers: {
 				cspNonceValue: (type) => {
