@@ -2,7 +2,6 @@ import svgPanZoom from "svg-pan-zoom";
 import { createChatActions } from "./actions/chat-action.js";
 import { createWhiteboardActions } from "./actions/whiteboard-action.js";
 import { createCoffeeActions } from "./actions/coffee-action.js";
-import { createToiletActions } from "./actions/toilet-action.js";
 import { createRadioActions } from "./actions/radio-action";
 import { createShowerActions } from "./actions/shower-action";
 import { createArcadeActions } from "./actions/arcade-action";
@@ -20,7 +19,6 @@ let currentlyChatting = false;
 const chat = createChatActions({ send, player, playerAvatar });
 const whiteboard = createWhiteboardActions({ send, player, playerAvatar });
 const coffee = createCoffeeActions({ send, player, playerAvatar });
-const toilet = createToiletActions({ send, player, playerAvatar });
 const radio = createRadioActions({ send, player, playerAvatar });
 const shower = createShowerActions({ send, player, playerAvatar });
 const arcade = createArcadeActions({ send, player, playerAvatar });
@@ -159,43 +157,43 @@ document.body.addEventListener("click", (event) => {
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
 
-		[chat, whiteboard, coffee, toilet, radio, shower, arcade].forEach(
-			function ({ actions }) {
-				for (let action of actions) {
-					if (action.shouldBeVisible({ currentRoom })) {
-						if (actionButtons.has(action)) {
-							actionButtons.get(action).classList.remove("hidden");
-						} else {
-							const button = document.createElement("button");
-							button.type = "button";
-							button.textContent = action.label;
-							button.classList.add("p-1");
-							button.addEventListener("click", function () {
-								action.handleSelect({
-									playerAvatar,
-									currentRoom,
-									attrs: button.dataset,
-								});
-								button.blur();
-								actionMenu.classList.add("hidden");
-							});
-							for (let [attr, value] of action.attrs()) {
-								button.dataset[attr] = value;
-							}
-							const li = document.createElement("li");
-							li.appendChild(button);
-							li.classList.add("hover:bg-blue-200");
-							actionMenu.appendChild(li);
-							actionButtons.set(action, li);
-						}
+		[chat, whiteboard, coffee, radio, shower, arcade].forEach(function ({
+			actions,
+		}) {
+			for (let action of actions) {
+				if (action.shouldBeVisible({ currentRoom })) {
+					if (actionButtons.has(action)) {
+						actionButtons.get(action).classList.remove("hidden");
 					} else {
-						if (actionButtons.has(action)) {
-							actionButtons.get(action).classList.add("hidden");
+						const button = document.createElement("button");
+						button.type = "button";
+						button.textContent = action.label;
+						button.classList.add("p-1");
+						button.addEventListener("click", function () {
+							action.handleSelect({
+								playerAvatar,
+								currentRoom,
+								attrs: button.dataset,
+							});
+							button.blur();
+							actionMenu.classList.add("hidden");
+						});
+						for (let [attr, value] of action.attrs()) {
+							button.dataset[attr] = value;
 						}
+						const li = document.createElement("li");
+						li.appendChild(button);
+						li.classList.add("hover:bg-blue-200");
+						actionMenu.appendChild(li);
+						actionButtons.set(action, li);
+					}
+				} else {
+					if (actionButtons.has(action)) {
+						actionButtons.get(action).classList.add("hidden");
 					}
 				}
-			},
-		);
+			}
+		});
 
 		const { pageX: x, pageY: y } = event;
 		const { width, height } = actionMenu.getBoundingClientRect();
@@ -248,9 +246,6 @@ socket.addEventListener("message", function (event) {
 
 	chat.handleWebsocket(data.type, data.content);
 	whiteboard.handleWebsocket(data.type, data.content);
-	toilet.handleWebsocket(data.type, data.content, {
-		currentRoomName: currentRoom.id,
-	});
 
 	switch (data.type) {
 		case "user-joined": {
@@ -638,7 +633,7 @@ function updateCurrentRoom() {
 	// no room found -> we're crossing a door right now
 
 	if (nextCurrentRoom && nextCurrentRoom !== currentRoom) {
-		[chat, whiteboard, coffee, toilet, radio, shower].forEach(function ({
+		[chat, whiteboard, coffee, radio, shower].forEach(function ({
 			handleRoomChange,
 		}) {
 			handleRoomChange({

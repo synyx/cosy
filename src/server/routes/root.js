@@ -5,7 +5,6 @@ const gravatarUrl = require("gravatar-url");
 const board = require("../websocket/board");
 const conference = require("../websocket/conference");
 const whiteboard = require("../websocket/whiteboard");
-const toilet = require("../websocket/toilet");
 
 const { version } = require("../../../package.json");
 
@@ -54,7 +53,6 @@ module.exports = function (app) {
 		const boardActions = board({ send, broadcast, context });
 		const conferenceActions = conference({ send, broadcast });
 		const whiteboardActions = whiteboard({ send, broadcast });
-		const toiletActions = toilet({ send, broadcast });
 
 		context.websocket.on("message", function (message) {
 			let messageJson;
@@ -73,7 +71,6 @@ module.exports = function (app) {
 			boardActions(type, content);
 			conferenceActions(type, content);
 			whiteboardActions(type, content);
-			toiletActions(type, content);
 		});
 	});
 };
