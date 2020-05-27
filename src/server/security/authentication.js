@@ -36,21 +36,27 @@ passport.deserializeUser((obj, next) => {
 	next(null, obj);
 });
 
-console.log(
-	`configure ldap auth [url=${ldapServerUrl}] [searchBase=${ldapServerSearchBase}]`,
-);
-passport.use(
-	new LdapStrategy({
-		server: {
-			url: ldapServerUrl,
-			searchBase: ldapServerSearchBase,
-			searchFilter: "(uid={{username}})",
-		},
-		// form post requestBody field names
-		usernameField: "username",
-		passwordField: "password",
-	}),
-);
+if (ldapServerUrl && ldapServerSearchBase) {
+	console.log(
+		`configure ldap auth [url=${ldapServerUrl}] [searchBase=${ldapServerSearchBase}]`,
+	);
+	passport.use(
+		new LdapStrategy({
+			server: {
+				url: ldapServerUrl,
+				searchBase: ldapServerSearchBase,
+				searchFilter: "(uid={{username}})",
+			},
+			// form post requestBody field names
+			usernameField: "username",
+			passwordField: "password",
+		}),
+	);
+} else {
+	console.log(
+		`skip ldap config. no env configured (LDAP_SERVER_URL and LDAP_SERVER_SEARCHBASE are required).`,
+	);
+}
 
 console.log(
 	`configure adminApprovedUser auth. add users with the admin board.`,
