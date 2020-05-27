@@ -12,7 +12,6 @@ const bodyParser = require("koa-bodyparser");
 const serve = require("koa-static");
 const CSRF = require("koa-csrf");
 const helmet = require("koa-helmet");
-const cspMiddleware = require("./security/csp-middleware");
 const compress = require("koa-compress");
 
 const { PORT = 3000, APP_SECRET = "super-awesome-app-secret" } = process.env;
@@ -28,8 +27,6 @@ app.use(compress());
 app.use(new CSRF());
 // common security headers
 app.use(helmet());
-// content-security-policy headers
-app.use(cspMiddleware());
 
 // install view resolver
 // Must be used before any router is used
@@ -44,21 +41,6 @@ app.use(function viewResolver(context, next) {
 				chat: "./partials/chat",
 				office: "./partials/office",
 				arcade: "./partials/arcade",
-			},
-			helpers: {
-				cspNonceValue: (type) => {
-					switch (type) {
-						case "script":
-							return cspMiddleware.generateScriptValue(context);
-						case "style":
-							return cspMiddleware.generateStyleValue(context);
-						default:
-							console.log(
-								`cannot handle type=${type} to generate a nonce value. must be of type [script|style]`,
-							);
-							return "";
-					}
-				},
 			},
 		},
 	})(context, next);
