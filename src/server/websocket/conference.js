@@ -29,6 +29,9 @@ module.exports = function conference({ send, broadcast }) {
 						y: data.point.y,
 					},
 				};
+				console.log(
+					`chat-started :: user=${room.userName} room=${room.roomName}`,
+				);
 				chatRooms.set(room.roomName, room);
 				chatParticipants.set(room.roomName, [room.userName]);
 				broadcast({ type: "chat-started", content: room });
@@ -46,6 +49,9 @@ module.exports = function conference({ send, broadcast }) {
 					roomName: data.roomName,
 					userName: data.userName,
 				};
+				console.log(
+					`chat-user-joined :: chat user=${room.userName} room=${room.roomName}`,
+				);
 				const participants = chatParticipants.get(room.roomName);
 				participants.push(room.userName);
 				chatParticipants.set(room.roomName, participants);
@@ -63,11 +69,17 @@ module.exports = function conference({ send, broadcast }) {
 					roomName: data.roomName,
 					userName: data.userName,
 				};
+				console.log(
+					`chat-user-left :: chat user=${room.userName} room=${room.roomName}`,
+				);
 				const currentParticipants = chatParticipants.get(room.roomName);
 				const nextParticipants = currentParticipants.filter(
 					(username) => username !== room.userName,
 				);
 				if (nextParticipants.length === 0) {
+					console.log(
+						`chat-user-left :: chat is now empty. closing ${room.roomName}`,
+					);
 					chatRooms.delete(room.roomName);
 					chatParticipants.delete(room.roomName);
 					broadcast({ type: "chat-closed", content: room });
