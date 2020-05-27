@@ -96,7 +96,8 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 						<animate attributeType="CSS" attributeName="opacity" begin="0s"  dur="3.5s" repeatCount="indefinite" from="1" to="0"/>
 					`;
 
-					officeSvg.append(circle);
+					const parent = document.getElementById("office-remote-actions");
+					parent.append(circle);
 					break;
 				}
 
