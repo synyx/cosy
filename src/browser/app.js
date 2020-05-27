@@ -289,8 +289,14 @@ socket.addEventListener("message", function (event) {
 				return;
 			}
 			const playerAvatar = playerAvatarMap.get(player.name);
-			playerAvatar.cx.baseVal.value = player.position.x;
-			playerAvatar.cy.baseVal.value = player.position.y;
+			// "user-moved" could be received before "use-joined"
+			// user-joind will add the visible remote player avatar
+			// therefore just skip user-moved when there is no playerAvatar yet
+			// and wait for the next movement
+			if (playerAvatar) {
+				playerAvatar.cx.baseVal.value = player.position.x;
+				playerAvatar.cy.baseVal.value = player.position.y;
+			}
 			break;
 		}
 
