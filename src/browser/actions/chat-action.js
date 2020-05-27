@@ -34,7 +34,7 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 		return room;
 	}
 
-	function getIntersectingChat() {
+	function getIntersectingChatElement() {
 		const runningChats = [...document.querySelectorAll("circle[id^=chat-]")];
 		return runningChats.find((chat) => {
 			// kudos https://stackoverflow.com/questions/33490334/check-if-a-circle-is-contained-in-another-circle
@@ -51,7 +51,7 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 	}
 
 	function isPlayerInRangeOfARunningChat() {
-		const joinableChat = getIntersectingChat();
+		const joinableChat = getIntersectingChatElement();
 		return Boolean(joinableChat);
 	}
 
@@ -155,9 +155,9 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 				label: "dem Gespräch beitreten",
 				shouldBeVisible: () => isPlayerInRangeOfARunningChat(),
 				attrs() {
-					const joinableChat = getIntersectingChat();
+					const joinableChat = getIntersectingChatElement();
 					if (joinableChat) {
-						return [["chatRoomName", joinableChat.roomName]];
+						return [["chatRoomName", joinableChat.dataset.chatRoomName]];
 					}
 					return [];
 				},
