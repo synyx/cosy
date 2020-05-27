@@ -12,14 +12,15 @@ const playerAvatarCoordinates = {
 	y: playerAvatar.cy.baseVal.value,
 };
 const actionMenu = document.getElementById("action-menu");
+const officeSvg = document.getElementById("office");
 
 let currentlyChatting = false;
 
-const chat = createChatActions({ send, player, playerAvatar });
-const coffee = createCoffeeActions({ send, player, playerAvatar });
-const radio = createRadioActions({ send, player, playerAvatar });
-const shower = createShowerActions({ send, player, playerAvatar });
-const arcade = createArcadeActions({ send, player, playerAvatar });
+const chat = createChatActions({ send, player, officeSvg, playerAvatar });
+const coffee = createCoffeeActions({ send, player, officeSvg, playerAvatar });
+const radio = createRadioActions({ send, player, officeSvg, playerAvatar });
+const shower = createShowerActions({ send, player, officeSvg, playerAvatar });
+const arcade = createArcadeActions({ send, player, officeSvg, playerAvatar });
 
 chat.onChatStart(function () {
 	currentlyChatting = true;
@@ -51,8 +52,6 @@ nameTooltip.classList.add(
 );
 document.body.appendChild(nameTooltip);
 document.body.style.overflow = "hidden";
-
-const officeSvg = document.getElementById("office");
 
 svgPanZoom("#office", {
 	panEnabled: true,

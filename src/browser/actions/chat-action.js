@@ -1,6 +1,6 @@
 import * as chat from "../jitsi.js";
 
-export function createChatActions({ send, player, playerAvatar }) {
+export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 	let chatStartListeners = [];
 	let chatEndListeners = [];
 
@@ -96,7 +96,7 @@ export function createChatActions({ send, player, playerAvatar }) {
 						<animate attributeType="CSS" attributeName="opacity" begin="0s"  dur="3.5s" repeatCount="indefinite" from="1" to="0"/>
 					`;
 
-					playerAvatar.parentNode.insertBefore(circle, playerAvatar);
+					officeSvg.append(circle);
 					break;
 				}
 
