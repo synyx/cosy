@@ -74,10 +74,9 @@ passport.use(
 			if (approvedUser && approvedUser.password === password) {
 				done(null, approvedUser);
 			} else if (process.env.NODE_ENV === "development") {
-				console.log(`check local auth [usernames=${Object.keys(localUsers)}]`);
-				const user = localUsers[username];
-				if (user) {
-					done(null, user);
+				if (!localUsers.hasOwnProperty(username)) {
+					localUsers[username] = { mail: username, cn: 'Foo Bar', synyxNickname: username };
+					done (null, localUsers[username]);
 				} else {
 					done(null, false);
 				}

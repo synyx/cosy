@@ -27,9 +27,9 @@
 					<input type="hidden" name="_csrf" value="{{csrf}}" />
 					{{#if error}} {{#if username}}
 					<p class="mb-8 text-red-500 text-sm">
-						Ey, du kommst hier net rein.
+						Benutzername schon vergeben
 						<small class="block mt-1"
-							>Vielleicht war auch nur dein Passwort falsch
+							>Probier einfach einen anderen aus
 							<span role="presentation">¯\_(ツ)_/¯</span></small
 						>
 					</p>
@@ -49,21 +49,12 @@
 							placeholder="flauschimir"
 							value="{{username}}"
 						/>
-					</div>
-					<div class="mb-6">
-						<label
-							class="block text-gray-700 text-sm font-light mb-2"
-							for="password"
-						>
-							Password
-						</label>
+						<!-- passport local strategy denies authentication when no password is provided, even if it is never used -->
 						<input
-							class="appearance-none border rounded-sm w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							class="hidden"
 							id="password"
 							name="password"
-							type="password"
-							placeholder="******************"
-						/>
+							value="ignore_me" />
 					</div>
 					<div>
 						<button
