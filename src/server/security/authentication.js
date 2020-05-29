@@ -75,7 +75,7 @@ passport.use(
 				done(null, approvedUser);
 			} else if (process.env.NODE_ENV === "development") {
 				if (!localUsers.hasOwnProperty(username)) {
-					localUsers[username] = { mail: username, cn: 'Foo Bar', synyxNickname: username };
+					localUsers[username] = { mail: username, cn: username, synyxNickname: username };
 					done (null, localUsers[username]);
 				} else {
 					done(null, false);
