@@ -17,7 +17,6 @@
 		"format": "prettier --write src"
 	},
 	"dependencies": {
-		"canvas": "2.6.1",
 		"dotenv": "8.2.0",
 		"glob": "7.1.6",
 		"handlebars": "4.7.6",

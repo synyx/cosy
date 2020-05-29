@@ -40,7 +40,6 @@ app.use(function viewResolver(context, next) {
 					"./partials/application-version-info-script",
 				chat: "./partials/chat",
 				office: "./partials/office",
-				whiteboard: "./partials/whiteboard",
 				arcade: "./partials/arcade",
 			},
 		},
