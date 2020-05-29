@@ -207,15 +207,6 @@ document.body.addEventListener("click", (event) => {
 	}
 });
 
-document
-	.getElementById("logout-form")
-	.addEventListener("submit", function (event) {
-		if (!window.confirm("Schon gebucht?!")) {
-			event.preventDefault();
-			document.activeElement.blur();
-		}
-	});
-
 let playerAvatarMap = new Map();
 
 // Connection opened
