@@ -5,8 +5,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Hello synyx</title>
 		<link rel="stylesheet" href="/css/style.css" />
-		<link rel="preload" href="https://{{jitsiDomain}}/external_api.js" as="script">
-		<link rel="preload" href="/js/app.js" as="script">
+		<link
+			rel="preload"
+			href="https://{{jitsiDomain}}/external_api.js"
+			as="script"
+		/>
+		<link rel="preload" href="/js/app.js" as="script" />
 		<style>
 			.svg-pan-zoom-control {
 				cursor: pointer !important;
@@ -35,14 +39,11 @@
 		</script>
 	</head>
 	<body class="bg-babyblue">
-		{{> chat}}
-		{{> whiteboard}}
-		{{> arcade}}
+		{{> chat}} {{> whiteboard}} {{> arcade}}
 		<ul
 			id="action-menu"
 			class="hidden fixed z-40 text-black text-xs shadow-outline font-bold font-mono bg-white opacity-75 border border-black rounded"
-		>
-		</ul>
+		></ul>
 		<div class="absolute top-0 left-0 p-4 z-10">
 			<ul class="font-mono mb-4">
 				<li>
@@ -59,91 +60,115 @@
 			<ul>
 				<li>
 					<label>
-						<input id="show-desks-office" type="checkbox" checked="checked">&nbsp;
+						<input
+							id="show-desks-office"
+							type="checkbox"
+							checked="checked"
+						/>&nbsp;
 						<span>Großraum</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-desks-10vorne" type="checkbox" checked="checked">&nbsp;
+						<input
+							id="show-desks-10vorne"
+							type="checkbox"
+							checked="checked"
+						/>&nbsp;
 						<span>10vorne</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-wasser" type="checkbox" checked="checked">&nbsp;
+						<input id="show-wasser" type="checkbox" checked="checked" />&nbsp;
 						<span>Wasser</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-nullpointer" type="checkbox" checked="checked">&nbsp;
+						<input
+							id="show-nullpointer"
+							type="checkbox"
+							checked="checked"
+						/>&nbsp;
 						<span>Nullpointer</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-kueche" type="checkbox" checked="checked">&nbsp;
+						<input id="show-kueche" type="checkbox" checked="checked" />&nbsp;
 						<span>Küche</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-balkon" type="checkbox" checked="checked">&nbsp;
+						<input id="show-balkon" type="checkbox" checked="checked" />&nbsp;
 						<span>Balkon</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-wohnzimmer" type="checkbox" checked="checked">&nbsp;
+						<input
+							id="show-wohnzimmer"
+							type="checkbox"
+							checked="checked"
+						/>&nbsp;
 						<span>Wohnzimmer</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-kreativ" type="checkbox" checked="checked">&nbsp;
+						<input id="show-kreativ" type="checkbox" checked="checked" />&nbsp;
 						<span>Kreativraum</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-memory" type="checkbox" checked="checked">&nbsp;
+						<input id="show-memory" type="checkbox" checked="checked" />&nbsp;
 						<span>Memory-Leak</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-billard" type="checkbox" checked="checked">&nbsp;
+						<input id="show-billard" type="checkbox" checked="checked" />&nbsp;
 						<span>Billard</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-office-maedels" type="checkbox" checked="checked">&nbsp;
+						<input
+							id="show-office-maedels"
+							type="checkbox"
+							checked="checked"
+						/>&nbsp;
 						<span>Office</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-plants" type="checkbox" checked="checked">&nbsp;
+						<input id="show-plants" type="checkbox" checked="checked" />&nbsp;
 						<span>Pflanzen</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-bins" type="checkbox" checked="checked">&nbsp;
+						<input id="show-bins" type="checkbox" checked="checked" />&nbsp;
 						<span>Mülleimer</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-cupboards" type="checkbox" checked="checked">&nbsp;
+						<input
+							id="show-cupboards"
+							type="checkbox"
+							checked="checked"
+						/>&nbsp;
 						<span>Regale</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input id="show-boards" type="checkbox" checked="checked">&nbsp;
+						<input id="show-boards" type="checkbox" checked="checked" />&nbsp;
 						<span>Boards</span>
 					</label>
 				</li>
@@ -164,7 +189,12 @@
 			{{> office}}
 		</div>
 		<script async src="https://{{jitsiDomain}}/external_api.js"></script>
-		<script async type="module" crossorigin="use-credentials" src="/js/app.js"></script>
+		<script
+			async
+			type="module"
+			crossorigin="use-credentials"
+			src="/js/app.js"
+		></script>
 		{{> application-version-info-script}}
 	</body>
 </html>

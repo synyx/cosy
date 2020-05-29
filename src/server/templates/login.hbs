@@ -14,16 +14,12 @@
 						WASDa los?
 					</div>
 					<div class="flex-1">
-						<img src="/computer.svg" >
+						<img src="/computer.svg" />
 					</div>
 				</div>
 			</div>
 			<div class="w-1/3 flex items-center bg-white shadow p-8">
-				<form
-					action="/login"
-					method="POST"
-					class="w-full max-w-xs"
-				>
+				<form action="/login" method="POST" class="w-full max-w-xs">
 					<input type="hidden" name="_csrf" value="{{csrf}}" />
 					{{#if error}} {{#if username}}
 					<p class="mb-8 text-red-500 text-sm">
@@ -54,7 +50,8 @@
 							class="hidden"
 							id="password"
 							name="password"
-							value="ignore_me" />
+							value="ignore_me"
+						/>
 					</div>
 					<div>
 						<button

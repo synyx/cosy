@@ -58,28 +58,37 @@ passport.use(
 			passwordField: "password",
 		},
 		function (username, password, done) {
-				if (!currentUsers.hasOwnProperty(username)) {
-					currentUsers[username] = { mail: username, cn: username, synyxNickname: username };
-					setTimeout(() => removeUser(username), SESSION_TIMEOUT);
-					done (null, currentUsers[username]);
-				} else {
-					done(null, false);
-				}
+			if (!currentUsers.hasOwnProperty(username)) {
+				currentUsers[username] = {
+					mail: username,
+					cn: username,
+					synyxNickname: username,
+				};
+				setTimeout(() => removeUser(username), SESSION_TIMEOUT);
+				done(null, currentUsers[username]);
+			} else {
+				done(null, false);
+			}
 		},
 	),
 );
 
 const removeUser = function (username) {
 	if (currentUsers.hasOwnProperty(username)) {
-		console.log(`removing user ${username}`)
+		console.log(`removing user ${username}`);
 		delete currentUsers[username];
 	}
 };
 
 module.exports = function (app) {
-	app.use(session({
-		maxAge: SESSION_TIMEOUT
-	}, app));
+	app.use(
+		session(
+			{
+				maxAge: SESSION_TIMEOUT,
+			},
+			app,
+		),
+	);
 	app.use(passport.initialize());
 	app.use(passport.session());
 
