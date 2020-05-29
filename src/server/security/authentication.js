@@ -1,17 +1,8 @@
 const session = require("koa-session");
 const passport = require("koa-passport");
-const LdapStrategy = require("passport-ldapauth");
 const LocalStrategy = require("passport-local");
-const crypto = require("crypto");
-const path = require("path");
-const fs = require("fs");
 
 const SESSION_TIMEOUT = 3 * 60 * 60 * 1000;
-
-const {
-	LDAP_SERVER_URL: ldapServerUrl,
-	LDAP_SERVER_SEARCHBASE: ldapServerSearchBase,
-} = process.env;
 
 let currentUsers = {};
 
@@ -26,28 +17,6 @@ passport.serializeUser((user, next) => {
 passport.deserializeUser((obj, next) => {
 	next(null, obj);
 });
-
-if (ldapServerUrl && ldapServerSearchBase) {
-	console.log(
-		`configure ldap auth [url=${ldapServerUrl}] [searchBase=${ldapServerSearchBase}]`,
-	);
-	passport.use(
-		new LdapStrategy({
-			server: {
-				url: ldapServerUrl,
-				searchBase: ldapServerSearchBase,
-				searchFilter: "(uid={{username}})",
-			},
-			// form post requestBody field names
-			usernameField: "username",
-			passwordField: "password",
-		}),
-	);
-} else {
-	console.log(
-		`skip ldap config. no env configured (LDAP_SERVER_URL and LDAP_SERVER_SEARCHBASE are required).`,
-	);
-}
 
 passport.use(
 	new LocalStrategy(
