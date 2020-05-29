@@ -6,6 +6,8 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
+const SESSION_TIMEOUT = 3 * 60 * 60 * 1000;
+
 const {
 	LDAP_SERVER_URL: ldapServerUrl,
 	LDAP_SERVER_SEARCHBASE: ldapServerSearchBase,
@@ -76,6 +78,7 @@ passport.use(
 			} else if (process.env.NODE_ENV === "development") {
 				if (!localUsers.hasOwnProperty(username)) {
 					localUsers[username] = { mail: username, cn: username, synyxNickname: username };
+					setTimeout(() => removeUser(username), SESSION_TIMEOUT);
 					done (null, localUsers[username]);
 				} else {
 					done(null, false);
@@ -87,8 +90,17 @@ passport.use(
 	),
 );
 
+const removeUser = function (username) {
+	if (localUsers.hasOwnProperty(username)) {
+		console.log(`removing user ${username}`)
+		delete localUsers[username];
+	}
+};
+
 module.exports = function (app) {
-	app.use(session({}, app));
+	app.use(session({
+		maxAge: SESSION_TIMEOUT
+	}, app));
 	app.use(passport.initialize());
 	app.use(passport.session());
 
@@ -127,3 +139,5 @@ module.exports.addAdminApprovedUser = function addAdminApprovedUser({
 module.exports.getAdminApprovedUsers = function getAdminApprovedUsers() {
 	return [...adminApprovedUsers.values()];
 };
+
+module.exports.removeUser = removeUser;
