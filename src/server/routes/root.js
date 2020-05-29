@@ -1,6 +1,6 @@
 const route = require("koa-route");
 const websockify = require("koa-websocket");
-const gravatarUrl = require("gravatar-url");
+const { getAvatarUrl } = require("../avatar");
 
 const board = require("../websocket/board");
 const conference = require("../websocket/conference");
@@ -23,7 +23,7 @@ module.exports = function (app) {
 				player: {
 					name: context.state.user.username,
 					email: context.state.user.email,
-					avatarUrl: gravatarUrl(context.state.user.email, { size: 64 }),
+					avatarUrl: getAvatarUrl(context.state.user.email, { size: 64 }),
 				},
 			});
 		}),

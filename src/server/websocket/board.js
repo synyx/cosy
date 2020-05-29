@@ -1,4 +1,4 @@
-const gravatarUrl = require("gravatar-url");
+const { getAvatarUrl } = require("../avatar");
 
 let users = [];
 
@@ -7,7 +7,7 @@ function user(internalAppUser) {
 		name: internalAppUser.username,
 		nickname: internalAppUser.nickname,
 		avatarUrl: internalAppUser.email
-			? gravatarUrl(internalAppUser.email, { size: 64 })
+			? getAvatarUrl(internalAppUser.email, { size: 64 })
 			: "",
 	};
 }
