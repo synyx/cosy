@@ -13,18 +13,8 @@ const {
 	LDAP_SERVER_SEARCHBASE: ldapServerSearchBase,
 } = process.env;
 
-let localUsers = {};
+let currentUsers = {};
 const adminApprovedUsers = new Map();
-
-const localUsersFilePath = path.resolve(__dirname, "../../../local-users.json");
-try {
-	const localUsersFile = fs.readFileSync(localUsersFilePath, "utf8");
-	localUsers = JSON.parse(localUsersFile);
-} catch (error) {
-	console.log(
-		`[WARN] could not load local user file '${localUsersFilePath}'. Only Ldap is active now.`,
-	);
-}
 
 passport.serializeUser((user, next) => {
 	next(null, {
@@ -76,10 +66,10 @@ passport.use(
 			if (approvedUser && approvedUser.password === password) {
 				done(null, approvedUser);
 			} else if (process.env.NODE_ENV === "development") {
-				if (!localUsers.hasOwnProperty(username)) {
-					localUsers[username] = { mail: username, cn: username, synyxNickname: username };
+				if (!currentUsers.hasOwnProperty(username)) {
+					currentUsers[username] = { mail: username, cn: username, synyxNickname: username };
 					setTimeout(() => removeUser(username), SESSION_TIMEOUT);
-					done (null, localUsers[username]);
+					done (null, currentUsers[username]);
 				} else {
 					done(null, false);
 				}
@@ -91,9 +81,9 @@ passport.use(
 );
 
 const removeUser = function (username) {
-	if (localUsers.hasOwnProperty(username)) {
+	if (currentUsers.hasOwnProperty(username)) {
 		console.log(`removing user ${username}`)
-		delete localUsers[username];
+		delete currentUsers[username];
 	}
 };
 
