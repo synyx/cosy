@@ -1,0 +1,120 @@
+<div
+	id="whiteboard-root"
+	class="hidden z-50 fixed top-0 left-0 flex items-center justify-center p-12 w-screen h-screen rounded"
+>
+	<div
+		id="whiteboard-root-inner"
+		class="w-full h-full border border-8 bg-white flex flex-col rounded-lg overflow-hidden"
+	>
+		<div class="bg-white flex justify-between p-2 text-white">
+			<div class="flex">
+				<div class="ml-2 mr-12 flex items-center">
+					<style>
+						#whiteboard-export a[download] > div {
+							opacity: 0;
+							transform: translate(0, 0);
+							transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+						}
+						#whiteboard-export a[download]:hover > div {
+							opacity: 1;
+							transform: translate(0, 2rem);
+						}
+					</style>
+					<div id="whiteboard-export" class="relative">
+						<a download="" href="/whiteboard/canvas-export.png" class="text-black border border-black px-4 py-2 rounded">
+							<div class="absolute inset-0 bg-black text-white text-xs z-50 flex items-center justify-center p-2" style="height: 140px; width: 180px">
+								zur Sicherheit bitte Rechtsklick und Speichern unter. Der Firefox bei mir öffnet das Bild im selben Fenster. Und verlässt damit den Kreativraum :x
+							</div>
+							Speichern
+						</a>
+					</div>
+				</div>
+				<div class="flex flex-row mr-8">
+					<button
+						id="pencil-black"
+						class="rounded-full w-10 mr-2 bg-gray-900 text-white py-1 px-2 border border-black"
+						data-color="#1a202c"
+						style="transform: translate(0, 2px);"
+					>
+						<span class="hidden">Schwarz</span>
+					</button>
+					<button
+						id="pencil-blue"
+						class="rounded-full w-10 mr-2 bg-blue-600 text-black py-1 px-2 border border-blue-900"
+						data-color="#3182ce"
+					>
+						<span class="hidden">Blau</span>
+					</button>
+					<button
+						id="pencil-red"
+						class="rounded-full w-10 mr-2 bg-red-600 text-black py-1 px-2 border border-red-900"
+						data-color="#e53e3e"
+					>
+						<span class="hidden">Rot</span>
+					</button>
+					<button
+						id="pencil-orange"
+						class="rounded-full w-10 mr-2 bg-orange-500 text-black py-1 px-2 border border-orange-900"
+						data-color="#ed8936"
+					>
+						<span class="hidden">Orange</span>
+					</button>
+					<button
+						id="pencil-green"
+						class="rounded-full w-10 mr-2 bg-green-600 text-black py-1 px-2 border border-green-900"
+						data-color="#38a169"
+					>
+						<span class="hidden">Grün</span>
+					</button>
+					<button
+						id="pencil-purple"
+						class="rounded-full w-10 mr-2 bg-purple-600 text-black py-1 px-2 border border-purple-900"
+						data-color="#805ad5"
+					>
+						<span class="hidden">Lila</span>
+					</button>
+					<button
+						id="pencil-white"
+						class="rounded-full w-10 mr-2 bg-white text-black py-1 px-2 border border-teal-900"
+						data-color="#ffffff"
+					>
+						<span class="hidden">Weiß</span>
+					</button>
+				</div>
+				<div class="flex items-center mr-3">
+					<style nonce="{{{cspNonceValue 'style'}}}">
+						label > input:checked ~ svg {
+							border-bottom: 2px solid #363636;
+							padding-bottom: 2px;
+						}
+					</style>
+					<label class="cursor-pointer">
+						<input type="radio" name="whiteboard-stroke-width" value="3" class="hidden" checked="checked">
+						<svg viewbox="0 0 10 10" width="24" height="24" class="h-full" preserveAspectRatio="xMidYMid meet">
+							<circle cx="5" cy="5" r="3" fill="black"></circle>
+						</svg>
+					</label>
+					<label class="cursor-pointer mr-1">
+						<input type="radio" name="whiteboard-stroke-width" value="5" class="hidden">
+						<svg viewbox="0 0 10 10" width="24" height="24" class="h-full" preserveAspectRatio="xMidYMid meet">
+							<circle cx="5" cy="5" r="4" fill="black"></circle>
+						</svg>
+					</label>
+					<label class="cursor-pointer">
+						<input type="radio" name="whiteboard-stroke-width" value="8" class="hidden">
+						<svg viewbox="0 0 10 10" width="24" height="24" class="h-full" preserveAspectRatio="xMidYMid meet">
+							<circle cx="5" cy="5" r="5" fill="black"></circle>
+						</svg>
+					</label>
+				</div>
+			</div>
+			<button
+				id="close-whiteboard-button"
+				class="text-black border border-black px-4 py-2 rounded"
+			>
+				Genug Kreativität für heute
+			</button>
+		</div>
+		<div id="whiteboard-canvas" class="flex-1"></div>
+	</div>
+</div>
