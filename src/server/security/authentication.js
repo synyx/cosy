@@ -14,7 +14,6 @@ const {
 } = process.env;
 
 let currentUsers = {};
-const adminApprovedUsers = new Map();
 
 passport.serializeUser((user, next) => {
 	next(null, {
@@ -50,9 +49,6 @@ if (ldapServerUrl && ldapServerSearchBase) {
 	);
 }
 
-console.log(
-	`configure adminApprovedUser auth. add users with the admin board.`,
-);
 passport.use(
 	new LocalStrategy(
 		{
@@ -62,10 +58,6 @@ passport.use(
 			passwordField: "password",
 		},
 		function (username, password, done) {
-			const approvedUser = adminApprovedUsers.get(username);
-			if (approvedUser && approvedUser.password === password) {
-				done(null, approvedUser);
-			} else if (process.env.NODE_ENV === "development") {
 				if (!currentUsers.hasOwnProperty(username)) {
 					currentUsers[username] = { mail: username, cn: username, synyxNickname: username };
 					setTimeout(() => removeUser(username), SESSION_TIMEOUT);
@@ -73,9 +65,6 @@ passport.use(
 				} else {
 					done(null, false);
 				}
-			} else {
-				done(null, false);
-			}
 		},
 	),
 );
@@ -110,24 +99,6 @@ module.exports = function (app) {
 			context.redirect("/login");
 		}
 	});
-};
-
-module.exports.addAdminApprovedUser = function addAdminApprovedUser({
-	cn,
-	email,
-	synyxNickname,
-}) {
-	const password = crypto.randomBytes(20).toString("hex").substring(0, 16);
-	adminApprovedUsers.set(synyxNickname, {
-		cn,
-		mail: email,
-		synyxNickname,
-		password,
-	});
-};
-
-module.exports.getAdminApprovedUsers = function getAdminApprovedUsers() {
-	return [...adminApprovedUsers.values()];
 };
 
 module.exports.removeUser = removeUser;
