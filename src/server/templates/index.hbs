@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hello synyx</title>
+		<title>COSY</title>
 		<link rel="stylesheet" href="/css/style.css" />
 		<link
 			rel="preload"
@@ -25,6 +25,15 @@
 			}
 			.svg-pan-zoom-control-background {
 				fill-opacity: 1 !important;
+			}
+			#graphic-settings-content {
+				display: none;
+			}
+			#graphic-settings:target #graphic-settings-content {
+				display: inline-block;
+			}
+			#graphic-settings:target #open-graphic-settings {
+				display: none;
 			}
 		</style>
 		<script>
@@ -48,15 +57,15 @@
 		<div class="absolute top-0 left-0 p-4 z-10">
 			<ul class="font-mono mb-4">
 				<li>
-					email: {{email}}
-				</li>
-				<li>
-					username: {{name}}
-				</li>
-				<li>
-					nickname: {{nickname}}
+					Name: {{name}}
 				</li>
 			</ul>
+			<div id="graphic-settings">
+			<a href="#graphic-settings"
+				 id="open-graphic-settings"
+				 class="border bg-white text-black font-bold py-2 px-4 rounded-sm">Graphic settings</a>
+				<div id="graphic-settings-content"
+						 class="border bg-white text-black py-2 px-4 rounded-sm">
 			<p>Wenns ruckelt kannst du hier Dinge ausblenden:</p>
 			<ul>
 				<li>
@@ -174,6 +183,11 @@
 					</label>
 				</li>
 			</ul>
+					<a href="#hide-graphic-settings"
+						 id="close-graphic-settings"
+						 class="border bg-white text-black font-bold py-2 px-4 rounded-sm">Close</a>
+				</div>
+			</div>
 		</div>
 		<div class="absolute top-0 right-0 p-4 z-10">
 			<form id="logout-form" action="/logout" method="POST">
