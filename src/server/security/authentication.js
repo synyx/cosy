@@ -68,6 +68,9 @@ module.exports = function (app) {
 			context.originalUrl.startsWith("/css/") ||
 			context.originalUrl.startsWith("/logo_cosy.svg") ||
 			context.originalUrl.startsWith("/mockup.png") ||
+			context.originalUrl.startsWith("/icon_together.svg") ||
+			context.originalUrl.startsWith("/icon_collaborate.svg") ||
+			context.originalUrl.startsWith("/icon_fun.svg") ||
 			context.isAuthenticated()
 		) {
 			await next();
