@@ -15,16 +15,17 @@
 		</style>
 	</head>
 	<body class="flex flex-col">
+		<h1 class="hidden">cosy</h1>
 		<div class="flex-1 mb-16 md:mb-32">
 			<div class="grid gap-16 md:grid-cols-2 p-16 md:mb-16">
 				<div class="flex items-center justify-center">
 					<div class="flex flex-col">
 						<div class="flex-1 mb-4">
-							<img class="w-full" src="/logo_cosy.svg" />
+							<img class="w-full" src="/logo_cosy.svg" width="640px" />
 						</div>
-						<div class="mb-4">
+						<p class="mb-4">
 							Your colleagues. Your office. Your home.
-						</div>
+						</p>
 						<form action="/login" method="POST" class="w-full max-w-xs">
 							<input type="hidden" name="_csrf" value="{{csrf}}" />
 							{{#if error}} {{#if username}}
