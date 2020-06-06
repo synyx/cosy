@@ -4,7 +4,7 @@ const LocalStrategy = require("passport-local");
 
 const SESSION_TIMEOUT = 3 * 60 * 60 * 1000;
 
-let currentUsers = {};
+const currentUsers = new Map();
 
 passport.serializeUser((user, next) => {
 	next(null, {
@@ -27,15 +27,15 @@ passport.use(
 			passwordField: "password",
 		},
 		function (username, password, done) {
-			if (!currentUsers.hasOwnProperty(username)) {
-				currentUsers[username] = {
+			if (!currentUsers.has(username)) {
+				currentUsers.set(username, {
 					mail: username,
 					cn: username,
 					synyxNickname: username,
-				};
+				});
 				setTimeout(() => removeUser(username), SESSION_TIMEOUT);
-				console.log(`user ${username} joined, total users: ${Object.keys(currentUsers).length}`);
-				done(null, currentUsers[username]);
+				console.log(`user ${username} joined, total users: ${currentUsers.size}`);
+				done(null, currentUsers.get(username));
 			} else {
 				done(null, false);
 			}
@@ -45,8 +45,9 @@ passport.use(
 
 const removeUser = function (username) {
 	if (currentUsers.hasOwnProperty(username)) {
+		if (currentUsers.has(username)) {
 		console.log(`removing user ${username}, total users: ${Object.keys(currentUsers).length}`);
-		delete currentUsers[username];
+		currentUsers.delete(username);
 	}
 };
 
