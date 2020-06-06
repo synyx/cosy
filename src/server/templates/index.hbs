@@ -55,150 +55,173 @@
 			class="hidden fixed z-40 text-black text-xs shadow-outline font-bold font-mono bg-white opacity-75 border border-black rounded"
 		></ul>
 		<div class="absolute top-0 left-0 p-4 z-10">
-			<ul class="font-mono mb-4">
-				<li>
-					Name: {{name}}
+		</div>
+		<div class="absolute top-0 p-4" style="max-width: 40%; max-height: 40%">
+			<ul>
+				<li class="mb-2">
+					&raquo; Du kannst Dich mit den Pfeiltasten auf deiner Tastatur fortbewegen.
+				</li>
+				<li class="mb-2">
+					&raquo; Halte Shift gedrückt, um dich schneller bewegen zu können.
+				</li>
+				<li class="mb-2">
+					&raquo; Klicke auf deinen Avatar, um ein Gespräch zu starten oder eines der versteckten Features zu entdecken.
+				</li>
+				<li class="mb-2">
+					&raquo; Wenn ein Nutzer ein Gespräch gestartet hat, siehst Du einen grünen Kreis um ihn. Gehe in seine Nähe und tritt dem Video-Call bei.
+				</li>
+				<li class="mb-2">
+					&raquo; Findest du die Kaffeemaschinen? Geh doch mal hin und klicke auf deinen Avatar.
+				</li>
+				<li class="mb-2">
+					&raquo; Seid nett zueinander.
 				</li>
 			</ul>
-			<div id="graphic-settings">
-			<a href="#graphic-settings"
-				 id="open-graphic-settings"
-				 class="border bg-white text-black font-bold py-2 px-4 rounded-sm">Graphic settings</a>
+		</div>
+		<div class="absolute top-0 right-0 p-4 z-10 flex flex-col items-end">
+			<div class="mb-4">
+					Name: {{name}}
+			</div>
+			<div class="mb-4">
+				<form id="logout-form" action="/logout" method="POST">
+					<input type="hidden" name="_csrf" value="{{{csrf}}}" />
+					<button
+									type="submit"
+									class="border bg-white text-black font-bold py-2 px-4 rounded-sm"
+					>
+						Feierabend
+					</button>
+				</form>
+			</div>
+			<div id="graphic-settings"
+					 class="mt-4">
+				<a href="#graphic-settings"
+					 id="open-graphic-settings"
+					 class="border bg-white text-black font-bold py-2 px-4 rounded-sm">Graphic settings</a>
 				<div id="graphic-settings-content"
 						 class="border bg-white text-black py-2 px-4 rounded-sm">
-			<p>Wenns ruckelt kannst du hier Dinge ausblenden:</p>
-			<ul>
-				<li>
-					<label>
-						<input
-							id="show-desks-office"
-							type="checkbox"
-							checked="checked"
-						/>&nbsp;
-						<span>Großraum</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input
-							id="show-desks-10vorne"
-							type="checkbox"
-							checked="checked"
-						/>&nbsp;
-						<span>10vorne</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-wasser" type="checkbox" checked="checked" />&nbsp;
-						<span>Wasser</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input
-							id="show-nullpointer"
-							type="checkbox"
-							checked="checked"
-						/>&nbsp;
-						<span>Nullpointer</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-kueche" type="checkbox" checked="checked" />&nbsp;
-						<span>Küche</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-balkon" type="checkbox" checked="checked" />&nbsp;
-						<span>Balkon</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input
-							id="show-wohnzimmer"
-							type="checkbox"
-							checked="checked"
-						/>&nbsp;
-						<span>Wohnzimmer</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-kreativ" type="checkbox" checked="checked" />&nbsp;
-						<span>Kreativraum</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-memory" type="checkbox" checked="checked" />&nbsp;
-						<span>Memory-Leak</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-billard" type="checkbox" checked="checked" />&nbsp;
-						<span>Billard</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input
-							id="show-office-maedels"
-							type="checkbox"
-							checked="checked"
-						/>&nbsp;
-						<span>Office</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-plants" type="checkbox" checked="checked" />&nbsp;
-						<span>Pflanzen</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-bins" type="checkbox" checked="checked" />&nbsp;
-						<span>Mülleimer</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input
-							id="show-cupboards"
-							type="checkbox"
-							checked="checked"
-						/>&nbsp;
-						<span>Regale</span>
-					</label>
-				</li>
-				<li>
-					<label>
-						<input id="show-boards" type="checkbox" checked="checked" />&nbsp;
-						<span>Boards</span>
-					</label>
-				</li>
-			</ul>
+					<p>Wenn die Seite ruckelt, kannst Du hier Gegenstände ausblenden:</p>
+					<ul class="mb-2">
+						<li>
+							<label>
+								<input
+												id="show-desks-office"
+												type="checkbox"
+												checked="checked"
+								/>&nbsp;
+								<span>Großraum</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input
+												id="show-desks-10vorne"
+												type="checkbox"
+												checked="checked"
+								/>&nbsp;
+								<span>10vorne</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-wasser" type="checkbox" checked="checked" />&nbsp;
+								<span>Wasser</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input
+												id="show-nullpointer"
+												type="checkbox"
+												checked="checked"
+								/>&nbsp;
+								<span>Nullpointer</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-kueche" type="checkbox" checked="checked" />&nbsp;
+								<span>Küche</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-balkon" type="checkbox" checked="checked" />&nbsp;
+								<span>Balkon</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input
+												id="show-wohnzimmer"
+												type="checkbox"
+												checked="checked"
+								/>&nbsp;
+								<span>Wohnzimmer</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-kreativ" type="checkbox" checked="checked" />&nbsp;
+								<span>Kreativraum</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-memory" type="checkbox" checked="checked" />&nbsp;
+								<span>Memory-Leak</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-billard" type="checkbox" checked="checked" />&nbsp;
+								<span>Billard</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input
+												id="show-office-maedels"
+												type="checkbox"
+												checked="checked"
+								/>&nbsp;
+								<span>Office</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-plants" type="checkbox" checked="checked" />&nbsp;
+								<span>Pflanzen</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-bins" type="checkbox" checked="checked" />&nbsp;
+								<span>Mülleimer</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input
+												id="show-cupboards"
+												type="checkbox"
+												checked="checked"
+								/>&nbsp;
+								<span>Regale</span>
+							</label>
+						</li>
+						<li>
+							<label>
+								<input id="show-boards" type="checkbox" checked="checked" />&nbsp;
+								<span>Boards</span>
+							</label>
+						</li>
+					</ul>
 					<a href="#hide-graphic-settings"
 						 id="close-graphic-settings"
-						 class="border bg-white text-black font-bold py-2 px-4 rounded-sm">Close</a>
+						 class="border bg-white text-black font-bold py-2 px-4 rounded-sm mb-2">Close</a>
 				</div>
 			</div>
-		</div>
-		<div class="absolute top-0 right-0 p-4 z-10">
-			<form id="logout-form" action="/logout" method="POST">
-				<input type="hidden" name="_csrf" value="{{{csrf}}}" />
-				<button
-					type="submit"
-					class="border bg-white text-black font-bold py-2 px-4 rounded-sm"
-				>
-					Feierabend
-				</button>
-			</form>
 		</div>
 		<div class="w-screen h-screen relative">
 			{{> office}}
