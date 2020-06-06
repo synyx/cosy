@@ -34,6 +34,7 @@ passport.use(
 					synyxNickname: username,
 				};
 				setTimeout(() => removeUser(username), SESSION_TIMEOUT);
+				console.log(`user ${username} joined, total users: ${Object.keys(currentUsers).length}`);
 				done(null, currentUsers[username]);
 			} else {
 				done(null, false);
@@ -44,7 +45,7 @@ passport.use(
 
 const removeUser = function (username) {
 	if (currentUsers.hasOwnProperty(username)) {
-		console.log(`removing user ${username}`);
+		console.log(`removing user ${username}, total users: ${Object.keys(currentUsers).length}`);
 		delete currentUsers[username];
 	}
 };
