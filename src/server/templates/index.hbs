@@ -79,28 +79,22 @@
 			</ul>
 		</div>
 		<div class="absolute top-0 right-0 p-4 z-10 flex flex-col items-end">
-			<div class="mb-4">
-					Name: {{name}}
-			</div>
-			<div class="mb-4">
+			<div class="mb-2">
 				<form id="logout-form" action="/logout" method="POST">
 					<input type="hidden" name="_csrf" value="{{{csrf}}}" />
-					<button
-									type="submit"
-									class="border bg-white text-black font-bold py-2 px-4 rounded-sm"
-					>
-						Feierabend
+					<button type="submit">
+						<img src="/close.png" alt="Feierabend!">
 					</button>
 				</form>
 			</div>
-			<div id="graphic-settings"
-					 class="mt-4">
+			<div id="graphic-settings">
 				<a href="#graphic-settings"
-					 id="open-graphic-settings"
-					 class="border bg-white text-black font-bold py-2 px-4 rounded-sm">Graphic settings</a>
+					 id="open-graphic-settings">
+					<img src="/layers.png" alt="Grafik-Einstellungen">
+				</a>
 				<div id="graphic-settings-content"
 						 class="border bg-white text-black py-2 px-4 rounded-sm">
-					<p>Wenn die Seite ruckelt, kannst Du hier Gegenstände ausblenden:</p>
+					<p class="font-bold">Ebenen ein-/ausblenden:</p>
 					<ul class="mb-2">
 						<li>
 							<label>
@@ -219,8 +213,13 @@
 					</ul>
 					<a href="#hide-graphic-settings"
 						 id="close-graphic-settings"
-						 class="border bg-white text-black font-bold py-2 px-4 rounded-sm mb-2">Close</a>
+						 class="border bg-white text-black font-bold py-1 px-4 rounded-sm mb-2 block text-center">Schließen</a>
 				</div>
+			</div>
+		</div>
+		<div class="absolute bottom-0 left-0 p-4 z-10">
+			<div>
+				Name: {{name}}
 			</div>
 		</div>
 		<div class="w-screen h-screen relative">

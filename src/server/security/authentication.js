@@ -97,6 +97,8 @@ module.exports = function (app) {
 			context.originalUrl.startsWith("/icon_together.svg") ||
 			context.originalUrl.startsWith("/icon_collaborate.svg") ||
 			context.originalUrl.startsWith("/icon_fun.svg") ||
+			context.originalUrl.startsWith("/layers.png") ||
+			context.originalUrl.startsWith("/close.png") ||
 			context.isAuthenticated()
 		) {
 			await next();
