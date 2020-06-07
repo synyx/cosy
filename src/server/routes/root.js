@@ -1,3 +1,4 @@
+const debug = require("debug")("cosy:route-root");
 const route = require("koa-route");
 const websockify = require("koa-websocket");
 const { getAvatarUrl } = require("../avatar");
@@ -50,7 +51,7 @@ module.exports = function (app) {
 		}
 
 		function closeWebsocket({ username }) {
-			console.log(`closing websocket connection for username=${username}`);
+			debug(`closing websocket connection for username=${username}`);
 			context.websocket.close();
 		}
 

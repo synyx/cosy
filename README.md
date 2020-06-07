@@ -22,6 +22,8 @@ Mehr Infos gibt es auf https://github.com/visionmedia/debug
 > tldr;  
 > `DEBUG=* node src/server/index.js`
 
+Cosy loggt mit `console.log` auf _stdout_ und verwendet auch [debug] mit namespace `cosy` / `cosy:*`
+
 ## Development
 
 Was du brauchst:

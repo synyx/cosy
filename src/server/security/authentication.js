@@ -1,3 +1,4 @@
+const debug = require("debug")("cosy:authentication");
 const session = require("koa-session");
 const passport = require("koa-passport");
 const LocalStrategy = require("passport-local");
@@ -29,11 +30,16 @@ module.exports = function (app) {
 
 	function startSessionExpireTimeout({ username }) {
 		const handle = userTimeoutHandles.get(username);
-		clearTimeout(handle);
+		if (handle) {
+			debug(`clear previous session timeout handle for username=${username}`);
+			clearTimeout(handle);
+		}
 
+		debug(`start session timeout handle for username=${username}`);
 		userTimeoutHandles.set(
 			username,
 			setTimeout(function () {
+				debug(`session expired for username=${username}`);
 				removeUser({ username });
 				app.emit("session-expired", { username });
 			}, SESSION_TIMEOUT),
