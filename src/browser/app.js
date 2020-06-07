@@ -219,6 +219,11 @@ socket.addEventListener("open", function (event) {
 	);
 });
 
+socket.addEventListener("close", function (event) {
+	// TODO user feedback for session timeout / websocket close / whatever
+	window.location.reload();
+});
+
 // Listen for messages
 socket.addEventListener("message", function (event) {
 	const data = JSON.parse(event.data);

@@ -49,10 +49,21 @@ module.exports = function (app) {
 			context.websocket.send(stringified);
 		}
 
+		function closeWebsocket({ username }) {
+			console.log(`closing websocket connection for username=${username}`);
+			context.websocket.close();
+		}
+
+		app.on("session-expired", closeWebsocket);
+
 		const boardActions = board({ send, broadcast, context });
 		const conferenceActions = conference({ send, broadcast });
 
 		context.websocket.on("message", function (message) {
+			context.app.emit("user-heartbeat", {
+				username: context.state.user.username,
+			});
+
 			let messageJson;
 			try {
 				messageJson = JSON.parse(message);

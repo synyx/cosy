@@ -5,6 +5,7 @@ const LocalStrategy = require("passport-local");
 const SESSION_TIMEOUT = 3 * 60 * 60 * 1000;
 
 const currentUsers = new Map();
+const userTimeoutHandles = new Map();
 
 passport.serializeUser((user, next) => {
 	next(null, {
@@ -18,40 +19,57 @@ passport.deserializeUser((obj, next) => {
 	next(null, obj);
 });
 
-passport.use(
-	new LocalStrategy(
-		{
-			session: true,
-			// form post requestBody field names
-			usernameField: "username",
-			passwordField: "password",
-		},
-		function (username, password, done) {
-			if (!currentUsers.has(username)) {
-				currentUsers.set(username, {
-					mail: username,
-					cn: username,
-					synyxNickname: username,
-				});
-				setTimeout(() => removeUser(username), SESSION_TIMEOUT);
-				console.log(`user ${username} joined, total users: ${currentUsers.size}`);
-				done(null, currentUsers.get(username));
-			} else {
-				done(null, false);
-			}
-		},
-	),
-);
-
-const removeUser = function (username) {
-	if (currentUsers.hasOwnProperty(username)) {
-		if (currentUsers.has(username)) {
-		console.log(`removing user ${username}, total users: ${Object.keys(currentUsers).length}`);
-		currentUsers.delete(username);
-	}
-};
-
 module.exports = function (app) {
+	function removeUser({ username }) {
+		if (currentUsers.has(username)) {
+			console.log(`removing user ${username}`);
+			currentUsers.delete(username);
+		}
+	}
+
+	function startSessionExpireTimeout({ username }) {
+		const handle = userTimeoutHandles.get(username);
+		clearTimeout(handle);
+
+		userTimeoutHandles.set(
+			username,
+			setTimeout(function () {
+				removeUser({ username });
+				app.emit("session-expired", { username });
+			}, SESSION_TIMEOUT),
+		);
+	}
+
+	passport.use(
+		new LocalStrategy(
+			{
+				session: true,
+				// form post requestBody field names
+				usernameField: "username",
+				passwordField: "password",
+			},
+			function (username, password, done) {
+				if (!currentUsers.has(username)) {
+					currentUsers.set(username, {
+						mail: username,
+						cn: username,
+						synyxNickname: username,
+					});
+					startSessionExpireTimeout({ username });
+					console.log(
+						`user ${username} joined, total users: ${currentUsers.size}`,
+					);
+					done(null, currentUsers.get(username));
+				} else {
+					done(null, false);
+				}
+			},
+		),
+	);
+
+	app.on("user-logged-out", removeUser);
+	app.on("user-heartbeat", startSessionExpireTimeout);
+
 	app.use(
 		session(
 			{
@@ -84,5 +102,3 @@ module.exports = function (app) {
 		}
 	});
 };
-
-module.exports.removeUser = removeUser;
