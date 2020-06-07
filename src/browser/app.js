@@ -220,8 +220,31 @@ socket.addEventListener("open", function (event) {
 });
 
 socket.addEventListener("close", function (event) {
-	// TODO user feedback for session timeout / websocket close / whatever
-	window.location.reload();
+	const sessionExpiredInfo = document.createElement("div");
+	sessionExpiredInfo.classList.add(
+		"absolute",
+		"z-50",
+		"bottom-0",
+		"w-screen",
+		"flex",
+		"flex-col",
+		"items-center",
+		"justify-center",
+		"bg-opacity-75",
+		"bg-gray-800",
+	);
+	sessionExpiredInfo.style.height = "50vh";
+
+	sessionExpiredInfo.innerHTML = `
+		<p class="text-xl text-white mb-4">
+			Deine Session ist abgelaufen. Bitte lade die Seite neu und melde dich wieder an.
+		<p>
+		<a href="javascript:window.location.reload()" class="text-xl text-blue-400 underline">
+			jetzt neu laden
+		</a>
+	`;
+
+	document.body.append(sessionExpiredInfo);
 });
 
 // Listen for messages

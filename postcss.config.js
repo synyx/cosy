@@ -6,7 +6,7 @@ module.exports = {
 		// remove unused css classes
 		isProduction &&
 			require("@fullhuman/postcss-purgecss")({
-				content: ["./src/server/templates/**/*.hbs"],
+				content: ["./src/server/templates/**/*.hbs", "./src/browser/**/*.js"],
 				defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
 			}),
 		// minify css
