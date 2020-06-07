@@ -14,12 +14,14 @@ function user(internalAppUser) {
 
 module.exports = function ({ send, broadcast, context }) {
 	context.websocket.on("close", function () {
-		const currentUser = user(context.state.user);
-		users = users.filter((u) => u.name !== currentUser.name);
-		broadcast({
-			type: "user-left",
-			content: currentUser,
-		});
+		if (context.state && context.state.user) {
+			const currentUser = user(context.state.user);
+			users = users.filter((u) => u.name !== currentUser.name);
+			broadcast({
+				type: "user-left",
+				content: currentUser,
+			});
+		}
 	});
 
 	return function (type, data) {

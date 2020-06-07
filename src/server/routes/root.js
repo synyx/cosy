@@ -61,6 +61,11 @@ module.exports = function (app) {
 		const conferenceActions = conference({ send, broadcast });
 
 		context.websocket.on("message", function (message) {
+			if (!context.state) {
+				debug(`got websocket message for an expired session.`);
+				return;
+			}
+
 			context.app.emit("user-heartbeat", {
 				username: context.state.user.username,
 			});
