@@ -53,6 +53,12 @@ module.exports = function conference({ send, broadcast }) {
 					`chat-user-joined :: chat user=${room.userName} room=${room.roomName}`,
 				);
 				const participants = chatParticipants.get(room.roomName);
+
+				if (!participants) {
+					console.log(`chat-user-joined :: warning: room=${room.roomName} does not exist!`);
+					break;
+				}
+
 				participants.push(room.userName);
 				chatParticipants.set(room.roomName, participants);
 				broadcast({
@@ -73,6 +79,12 @@ module.exports = function conference({ send, broadcast }) {
 					`chat-user-left :: chat user=${room.userName} room=${room.roomName}`,
 				);
 				const currentParticipants = chatParticipants.get(room.roomName);
+
+				if (!currentParticipants) {
+					console.log(`chat-user-left :: warning: room=${room.roomName} does not exist!`);
+					break;
+				}
+
 				const nextParticipants = currentParticipants.filter(
 					(username) => username !== room.userName,
 				);
