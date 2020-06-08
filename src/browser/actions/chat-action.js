@@ -50,9 +50,27 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 		});
 	}
 
+	function playerInChatArea(point) {
+		const px = playerAvatar.cx.baseVal.value;
+		const py = playerAvatar.cy.baseVal.value;
+		const dist = Math.sqrt((point.x - px) ** 2 + (point.y - py) ** 2);
+		return dist <= 50;
+	}
+
 	function isPlayerInRangeOfARunningChat() {
 		const joinableChat = getIntersectingChatElement();
 		return Boolean(joinableChat);
+	}
+
+	function joinChat(roomName) {
+		beginChat(roomName);
+		send({
+			type: "chat-user-joined",
+			content: {
+				roomName: roomName,
+				userName: player.name,
+			},
+		});
 	}
 
 	return {
@@ -75,7 +93,7 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 		handleWebsocket(type, content) {
 			switch (type) {
 				case "chat-started": {
-					const { roomName, point } = content;
+					const { roomName, point, userName } = content;
 
 					const circle = document.createElementNS(
 						"http://www.w3.org/2000/svg",
@@ -98,6 +116,14 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 
 					const parent = document.getElementById("office-remote-actions");
 					parent.append(circle);
+
+					if (playerInChatArea(point) && userName !== player.name) {
+						const result = confirm(`${userName} möchte ein Gespräch mit dir starten, einverstanden?`);
+						if (result) {
+							joinChat(roomName);
+						}
+					}
+
 					break;
 				}
 
@@ -163,14 +189,7 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 				},
 				handleSelect({ currentRoom, attrs }) {
 					const { chatRoomName } = event.target.dataset;
-					beginChat(chatRoomName);
-					send({
-						type: "chat-user-joined",
-						content: {
-							roomName: chatRoomName,
-							userName: player.name,
-						},
-					});
+					joinChat(chatRoomName);
 				},
 			},
 		],
