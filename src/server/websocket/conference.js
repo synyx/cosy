@@ -1,7 +1,41 @@
 let chatRooms = new Map();
 let chatParticipants = new Map();
 
-module.exports = function conference({ send, broadcast }) {
+const removeUserFromChat = (currentParticipants, room, broadcast) => {
+	const nextParticipants = currentParticipants.filter(
+		(username) => username !== room.userName,
+	);
+	if (nextParticipants.length === 0) {
+		console.log(
+			`chat-user-left :: chat is now empty. closing ${room.roomName}`,
+		);
+		chatRooms.delete(room.roomName);
+		chatParticipants.delete(room.roomName);
+		broadcast({type: "chat-closed", content: room});
+	} else {
+		chatParticipants.set(room.roomName, nextParticipants);
+		broadcast({
+			type: "chat-user-left",
+			content: {
+				roomName: room.roomName,
+				userName: room.userName,
+			},
+		});
+	}
+};
+
+module.exports.handleUserRemoved = function handleUserRemoved(username, broadcast) {
+	for (let room of chatRooms.values()) {
+		const currentParticipants = chatParticipants.get(room.roomName);
+		for (let participant of currentParticipants) {
+			if (participant === username) {
+				removeUserFromChat(currentParticipants, room, broadcast);
+			}
+		}
+	}
+}
+
+module.exports.conference = function conference({ send, broadcast }) {
 	return function (type, data) {
 		switch (type) {
 			case "join": {
@@ -85,26 +119,7 @@ module.exports = function conference({ send, broadcast }) {
 					break;
 				}
 
-				const nextParticipants = currentParticipants.filter(
-					(username) => username !== room.userName,
-				);
-				if (nextParticipants.length === 0) {
-					console.log(
-						`chat-user-left :: chat is now empty. closing ${room.roomName}`,
-					);
-					chatRooms.delete(room.roomName);
-					chatParticipants.delete(room.roomName);
-					broadcast({ type: "chat-closed", content: room });
-				} else {
-					chatParticipants.set(room.roomName, nextParticipants);
-					broadcast({
-						type: "chat-user-left",
-						content: {
-							roomName: room.roomName,
-							userName: room.userName,
-						},
-					});
-				}
+				removeUserFromChat(currentParticipants, room, broadcast);
 				break;
 			}
 		}

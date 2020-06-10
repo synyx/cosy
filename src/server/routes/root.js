@@ -4,7 +4,7 @@ const websockify = require("koa-websocket");
 const { getAvatarUrl } = require("../avatar");
 
 const board = require("../websocket/board");
-const conference = require("../websocket/conference");
+const { conference, handleUserRemoved } = require("../websocket/conference");
 
 const { version } = require("../../../package.json");
 
@@ -50,12 +50,15 @@ module.exports = function (app) {
 			context.websocket.send(stringified);
 		}
 
-		function closeWebsocket({ username }) {
+		function handleSessionExpired({ username }) {
 			debug(`closing websocket connection for username=${username}`);
 			context.websocket.close();
+
+			debug(`closing any remaining chats for username=${username}`);
+			handleUserRemoved(username, send);
 		}
 
-		app.on("session-expired", closeWebsocket);
+		app.on("session-expired", handleSessionExpired);
 
 		const boardActions = board({ send, broadcast, context });
 		const conferenceActions = conference({ send, broadcast });
