@@ -51,11 +51,11 @@ module.exports = function (app) {
 		}
 
 		function handleSessionExpired({ username }) {
-			debug(`closing websocket connection for username=${username}`);
-			context.websocket.close();
-
 			debug(`closing any remaining chats for username=${username}`);
 			handleUserRemoved(username, send);
+
+			debug(`closing websocket connection for username=${username}`);
+			context.websocket.close();
 		}
 
 		app.once(`session-expired-${context.state.user.username}`, handleSessionExpired);
