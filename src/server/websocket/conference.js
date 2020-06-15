@@ -29,7 +29,11 @@ module.exports.handleUserRemoved = function handleUserRemoved(username, broadcas
 		const currentParticipants = chatParticipants.get(room.roomName);
 		for (let participant of currentParticipants) {
 			if (participant === username) {
-				removeUserFromChat(currentParticipants, room, broadcast);
+				const data = {
+					roomName: room.roomName,
+					userName: username,
+				};
+				removeUserFromChat(currentParticipants, data, broadcast);
 			}
 		}
 	}
