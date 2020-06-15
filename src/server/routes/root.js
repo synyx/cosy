@@ -58,7 +58,7 @@ module.exports = function (app) {
 			handleUserRemoved(username, send);
 		}
 
-		app.on("session-expired", handleSessionExpired);
+		app.once(`session-expired-${context.state.user.username}`, handleSessionExpired);
 
 		const boardActions = board({ send, broadcast, context });
 		const conferenceActions = conference({ send, broadcast });

@@ -41,7 +41,7 @@ module.exports = function (app) {
 			setTimeout(function () {
 				debug(`session expired for username=${username}`);
 				removeUser({ username });
-				app.emit("session-expired", { username });
+				app.emit(`session-expired-${username}`, { username });
 			}, SESSION_TIMEOUT),
 		);
 	}
