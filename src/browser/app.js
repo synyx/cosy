@@ -260,6 +260,8 @@ socket.addEventListener("message", function (event) {
 				return;
 			}
 
+			const playerAvatarId = uniqueID();
+
 			// avatar image
 			const newPlayerAvatarImagePattern = playerAvatarImagePattern.cloneNode(
 				true,
@@ -267,7 +269,7 @@ socket.addEventListener("message", function (event) {
 			newPlayerAvatarImagePattern.setAttributeNS(
 				null,
 				"id",
-				`${newPlayer.nickname}-image-pattern`,
+				`${playerAvatarId}-image-pattern`,
 			);
 			newPlayerAvatarImagePattern
 				.querySelector("image")
@@ -290,7 +292,7 @@ socket.addEventListener("message", function (event) {
 					.getAttributeNS(null, "fill")
 					.replace(
 						"#player-avatar-image-pattern",
-						`#${newPlayer.nickname}-image-pattern`,
+						`#${playerAvatarId}-image-pattern`,
 					),
 			);
 			if (newPlayer.position) {
@@ -768,4 +770,13 @@ function pointCommandsToSVGPoints(pointCommands) {
 	return pointCommands
 		.map((value, index) => (index % 2 === 1 ? "," : " ") + value)
 		.join("");
+}
+
+function uniqueID(){
+	const random = () => Math.random().toString(16).slice(-4);
+	return random() + random() +
+		'-' + random() +
+		'-' + random() +
+		'-' + random() +
+		'-' + random() + random() + random();
 }
