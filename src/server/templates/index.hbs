@@ -35,6 +35,15 @@
 			#graphic-settings:target #open-graphic-settings {
 				display: none;
 			}
+			#instructions-content {
+				display: none;
+			}
+			#instructions:target #instructions-content {
+				display: inline-block;
+			}
+			#instructions:target #open-instructions {
+				display: none;
+			}
 		</style>
 		<script>
 			window.synyxoffice = {
@@ -47,6 +56,8 @@
 			};
 		</script>
 	</head>
+	<span id="hide-instructions"></span>
+	<span id="hide-graphic-settings"></span>
 	<body class="bg-grey">
 		{{> chat}}
 		{{> arcade}}
@@ -56,27 +67,26 @@
 		></ul>
 		<div class="absolute top-0 left-0 p-4 z-10">
 		</div>
-		<div class="absolute top-0 p-4" style="max-width: 40%; max-height: 40%">
-			<ul>
-				<li class="mb-2">
-					&raquo; Du kannst Dich mit den Pfeiltasten auf deiner Tastatur fortbewegen.
-				</li>
-				<li class="mb-2">
-					&raquo; Halte Shift gedrückt, um dich schneller bewegen zu können.
-				</li>
-				<li class="mb-2">
-					&raquo; Klicke auf deinen Avatar, um ein Gespräch mit den Menschen in deiner Umgebung zu starten (oder eines der versteckten Features zu entdecken).
-				</li>
-				<li class="mb-2">
-					&raquo; Wenn ein Nutzer ein Gespräch gestartet hat, siehst Du einen grünen Kreis um ihn. Gehe in seine Nähe und tritt dem Video-Call bei.
-				</li>
-				<li class="mb-2">
-					&raquo; Findest du die Kaffeemaschinen? Geh doch mal hin und klicke auf deinen Avatar.
-				</li>
-				<li class="mb-2">
-					&raquo; Seid nett zueinander.
-				</li>
-			</ul>
+		<div class="absolute top-0 left-0 p-4 z-20 flex flex-col items-start block lg:hidden">
+			<div id="instructions">
+				<a href="#instructions"
+					 id="open-instructions">
+					<img src="/help.svg"
+							 alt="Anleitung"
+							 class="w-16">
+				</a>
+				<div id="instructions-content"
+						 class="border bg-white text-black py-2 px-4 rounded-sm overflow-hidden">
+					<p class="font-bold">Anleitung:</p>
+					{{> instructions}}
+					<a href="#hide-instructions"
+						 id="close-instructions"
+						 class="border bg-white text-black font-bold py-1 px-4 rounded-sm mb-2 block text-center">Schließen</a>
+				</div>
+			</div>
+		</div>
+		<div class="absolute top-0 p-4 hidden lg:block w-2/5">
+			{{> instructions}}
 		</div>
 		<div class="absolute top-0 right-0 p-4 z-10 flex flex-col items-end">
 			<div class="mb-2">

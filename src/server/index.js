@@ -41,6 +41,7 @@ app.use(function viewResolver(context, next) {
 				chat: "./partials/chat",
 				office: "./partials/office",
 				arcade: "./partials/arcade",
+				instructions: "./partials/instructions",
 			},
 		},
 	})(context, next);

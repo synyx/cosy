@@ -99,6 +99,7 @@ module.exports = function (app) {
 			context.originalUrl.startsWith("/icon_fun.svg") ||
 			context.originalUrl.startsWith("/layers.png") ||
 			context.originalUrl.startsWith("/close.png") ||
+			context.originalUrl.startsWith("/help.svg") ||
 			context.isAuthenticated()
 		) {
 			await next();
