@@ -6,6 +6,13 @@ import { createArcadeActions } from "./actions/arcade-action";
 
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player-avatar");
+
+// on mobile, make sure our player avatar is easy to spot
+// TODO: see if this can be done with a media query
+if (window.innerWidth < 1024) {
+	playerAvatar.setAttributeNS(null, "r", "40");
+}
+
 const playerAvatarImagePattern = document.getElementById(
 	"player-avatar-image-pattern",
 );
@@ -147,6 +154,13 @@ document.body.addEventListener("click", (event) => {
 		stopPlayerAvatarAnimate();
 		actionMenu.classList.remove("hidden");
 
+		// pinch-zooming on mobile works great for the svg, but we want the action menu to stay the same size
+		if (window.visualViewport.scale !== 1) {
+			actionMenu.classList.remove("text-xs");
+			const fontSize = 0.75 / window.visualViewport.scale;
+			actionMenu.style.fontSize = `${fontSize}rem`;
+		}
+
 		[chat, coffee, radio, shower, arcade].forEach(function ({ actions }) {
 			for (let action of actions) {
 				if (action.shouldBeVisible({ currentRoom })) {
@@ -285,6 +299,7 @@ socket.addEventListener("message", function (event) {
 			newPlayerAvatar.setAttributeNS(null, "transform", "");
 			newPlayerAvatar.setAttributeNS(null, "cx", startPointMainEntrance.x);
 			newPlayerAvatar.setAttributeNS(null, "cy", startPointMainEntrance.y);
+			newPlayerAvatar.setAttributeNS(null, "r", "10");
 			newPlayerAvatar.setAttributeNS(
 				null,
 				"fill",
