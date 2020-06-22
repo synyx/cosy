@@ -799,9 +799,9 @@ function uniqueID(){
 }
 
 function makePlayerAvatarDraggable() {
-// touchmove events are broken in chrome since 72
-// https://stackoverflow.com/a/56786312
-	document.body.addEventListener( "touchstart", (e) => { e.preventDefault(); } );
+	// touchmove events are broken in chrome since 72
+	// https://stackoverflow.com/a/56786312
+	document.body.addEventListener( "touchstart", () => {} );
 
 	var deltaX, deltaY;
 	var dragHandler = d3.drag()
@@ -811,14 +811,9 @@ function makePlayerAvatarDraggable() {
 			deltaY = current.attr("cy") - d3.event.y;
 		})
 		.on("drag", function () {
-			d3.select(this)
-				.attr("cx", d3.event.x + deltaX)
-				.attr("cy", d3.event.y + deltaY);
+			doMovement({nextX: d3.event.x + deltaX, nextY: d3.event.y + deltaY});
 		})
 		.on("end", function () {
-			d3.select(this)
-				.attr("cx", d3.event.x)
-				.attr("cy", d3.event.y);
 		});
 
 	dragHandler(d3.selectAll("#player-avatar"));
