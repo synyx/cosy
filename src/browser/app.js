@@ -13,6 +13,8 @@ if (window.innerWidth < 1024) {
 	playerAvatar.setAttributeNS(null, "r", "40");
 }
 
+makePlayerAvatarDraggable();
+
 const playerAvatarImagePattern = document.getElementById(
 	"player-avatar-image-pattern",
 );
@@ -794,4 +796,30 @@ function uniqueID(){
 		'-' + random() +
 		'-' + random() +
 		'-' + random() + random() + random();
+}
+
+function makePlayerAvatarDraggable() {
+// touchmove events are broken in chrome since 72
+// https://stackoverflow.com/a/56786312
+	document.body.addEventListener( "touchstart", (e) => { e.preventDefault(); } );
+
+	var deltaX, deltaY;
+	var dragHandler = d3.drag()
+		.on("start", function () {
+			var current = d3.select(this);
+			deltaX = current.attr("cx") - d3.event.x;
+			deltaY = current.attr("cy") - d3.event.y;
+		})
+		.on("drag", function () {
+			d3.select(this)
+				.attr("cx", d3.event.x + deltaX)
+				.attr("cy", d3.event.y + deltaY);
+		})
+		.on("end", function () {
+			d3.select(this)
+				.attr("cx", d3.event.x)
+				.attr("cy", d3.event.y);
+		});
+
+	dragHandler(d3.selectAll("#player-avatar"));
 }
