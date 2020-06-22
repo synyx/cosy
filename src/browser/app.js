@@ -155,7 +155,7 @@ document.body.addEventListener("click", (event) => {
 		actionMenu.classList.remove("hidden");
 
 		// pinch-zooming on mobile works great for the svg, but we want the action menu to stay the same size
-		if (window.visualViewport.scale !== 1) {
+		if (window.visualViewport && window.visualViewport.scale !== 1) {
 			actionMenu.classList.remove("text-xs");
 			const fontSize = 0.75 / window.visualViewport.scale;
 			actionMenu.style.fontSize = `${fontSize}rem`;
