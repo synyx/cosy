@@ -530,14 +530,6 @@ function move(keyPressedMap) {
 	if (keyPressedMap.has("arrowRight") || keyPressedMap.has("d")) {
 		moveRight();
 	}
-
-	send({
-		type: "moved",
-		content: {
-			x: playerAvatarCoordinates.x,
-			y: playerAvatarCoordinates.y,
-		},
-	});
 }
 
 function moveDown() {
@@ -623,6 +615,14 @@ function doMovement({ nextX, nextY }) {
 	}
 
 	updateCurrentRoom();
+
+	send({
+		type: "moved",
+		content: {
+			x: playerAvatarCoordinates.x,
+			y: playerAvatarCoordinates.y,
+		},
+	});
 }
 
 function getIntersectingDoor(nextPlayer) {
