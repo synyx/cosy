@@ -535,25 +535,37 @@ function move(keyPressedMap) {
 function moveDown() {
 	const nextX = playerAvatarCoordinates.x;
 	const nextY = playerAvatarCoordinates.y + moveSteps * moveStepsFactor;
-	doMovement({ nextX, nextY });
+	moveAndBroadcast({ nextX, nextY });
 }
 
 function moveUp() {
 	const nextX = playerAvatarCoordinates.x;
 	const nextY = playerAvatarCoordinates.y - moveSteps * moveStepsFactor;
-	doMovement({ nextX, nextY });
+	moveAndBroadcast({ nextX, nextY });
 }
 
 function moveLeft() {
 	const nextX = playerAvatarCoordinates.x - moveSteps * moveStepsFactor;
 	const nextY = playerAvatarCoordinates.y;
-	doMovement({ nextX, nextY });
+	moveAndBroadcast({ nextX, nextY });
 }
 
 function moveRight() {
 	const nextX = playerAvatarCoordinates.x + moveSteps * moveStepsFactor;
 	const nextY = playerAvatarCoordinates.y;
+	moveAndBroadcast({ nextX, nextY });
+}
+
+function moveAndBroadcast({ nextX, nextY }) {
 	doMovement({ nextX, nextY });
+
+	send({
+		type: "moved",
+		content: {
+			x: playerAvatarCoordinates.x,
+			y: playerAvatarCoordinates.y,
+		},
+	});
 }
 
 function doMovement({ nextX, nextY }) {
@@ -615,14 +627,6 @@ function doMovement({ nextX, nextY }) {
 	}
 
 	updateCurrentRoom();
-
-	send({
-		type: "moved",
-		content: {
-			x: playerAvatarCoordinates.x,
-			y: playerAvatarCoordinates.y,
-		},
-	});
 }
 
 function getIntersectingDoor(nextPlayer) {
@@ -811,9 +815,10 @@ function makePlayerAvatarDraggable() {
 			deltaY = current.attr("cy") - d3.event.y;
 		})
 		.on("drag", function () {
-			doMovement({nextX: d3.event.x + deltaX, nextY: d3.event.y + deltaY});
+			moveAndBroadcast({nextX: d3.event.x + deltaX, nextY: d3.event.y + deltaY});
 		})
 		.on("end", function () {
+			moveAndBroadcast({nextX: d3.event.x + deltaX, nextY: d3.event.y + deltaY});
 		});
 
 	dragHandler(d3.selectAll("#player-avatar"));
