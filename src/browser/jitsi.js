@@ -11,6 +11,8 @@ root.style.backgroundColor = "rgba(0,0,0,0)";
 
 const rootInner = document.getElementById("chat-root-inner");
 
+let closeChat;
+
 export function startChat({ roomName }) {
 	const externalListeners = new Map();
 
@@ -35,7 +37,7 @@ export function startChat({ roomName }) {
 		jitsiCamStatus.innerText = muted ? "AUS" : "AN";
 	});
 
-	jitsiApi.addEventListener("readyToClose", () => {
+	closeChat = function() {
 		jitsiApi.dispose();
 
 		root.style.backgroundColor = "rgba(0,0,0,0)";
@@ -54,6 +56,10 @@ export function startChat({ roomName }) {
 				}
 			}
 		});
+	}
+
+	jitsiApi.addEventListener("readyToClose", () => {
+		closeChat();
 	});
 
 	jitsiApi.executeCommand("avatarUrl", player.avatarUrl);
@@ -95,6 +101,10 @@ closeChatButton.addEventListener("click", function (event) {
 	if (jitsiApi) {
 		jitsiApi.executeCommand("hangup");
 	}
+
+	if (isMobile()) {
+		closeChat();
+	}
 });
 
 window.addEventListener("beforeunload", function () {
@@ -102,3 +112,23 @@ window.addEventListener("beforeunload", function () {
 		jitsiApi.executeCommand("hangup");
 	}
 });
+
+function isMobile() {
+	// Jitsis way of detecting whether we are on mobile or not
+	// https://github.com/jitsi/jitsi-meet/blob/master/react/features/base/react/Platform.web.js
+
+	const { userAgent } = navigator;
+	let OS;
+
+	if (userAgent.match(/Android/i)) {
+		OS = 'android';
+	} else if (userAgent.match(/iP(ad|hone|od)/i)) {
+		OS = 'ios';
+	} else if (userAgent.match(/Mac(intosh| OS X)/i)) {
+		OS = 'macos';
+	} else if (userAgent.match(/Windows/i)) {
+		OS = 'windows';
+	}
+
+	return OS === 'android' || OS === 'ios';
+}
