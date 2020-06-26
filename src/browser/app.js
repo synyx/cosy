@@ -7,12 +7,6 @@ import { createArcadeActions } from "./actions/arcade-action";
 const { player } = window.synyxoffice;
 const playerAvatar = document.getElementById("player-avatar");
 
-// on mobile, make sure our player avatar is easy to spot
-// TODO: see if this can be done with a media query
-if (window.innerWidth < 1024) {
-	playerAvatar.setAttributeNS(null, "r", "40");
-}
-
 makePlayerAvatarDraggable();
 
 const playerAvatarImagePattern = document.getElementById(
@@ -145,6 +139,17 @@ document.addEventListener("change", (event) => {
 		}
 	}
 });
+
+// TODO: see if this can be done with a media query
+if (window.innerWidth < 1024) {
+	// on mobile, make sure our player avatar is easy to spot
+	playerAvatar.setAttributeNS(null, "r", "40");
+	document.getElementById("player-hint").setAttributeNS(null, "r", "40");
+	document.querySelector("#player-hint animate[attributeName=r]").setAttributeNS(null, "to", "88");
+} else {
+	// on desktop, turn on office desks (turned off on mobile because they cost a lost of performance)
+	document.querySelector("#show-desks-office").click();
+}
 
 document.body.addEventListener("click", (event) => {
 	if (actionMenu.contains(event.target)) {
