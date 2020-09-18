@@ -3,6 +3,7 @@
 	"version": "1.54.4",
 	"private": true,
 	"author": "Benjamin Seber <seber@synyx.de> (https://www.synyx.de)",
+	"license": "Apache-2.0",
 	"scripts": {
 		"lint": "eslint src",
 		"predev": "rimraf out",

@@ -13,8 +13,6 @@ auf dem Flur begegnen, sich in der Kaffee Ecke tummeln und sich unterhalten, ode
 
 ## Run
 
-if you just want to start the app:
-
 ```bash
 npm run dev
 ```
@@ -77,5 +75,9 @@ Lege eine neue _run configuration_ an:
 * `env:DEBUG=*`: logge alles von Bibliotheken die [debug] nutzen
   * kann eingeschränkt werden mit z. B. `env:DEBUG=koa-route`. Dann wird nur `koa-route` geloggt
 * `outputCapture:std`: [debug] loggt auf `stderr`. mit `outputCapture:std` wird alles in der _debug console_ von VSCode geloggt
+
+## Lizenz
+
+Lizensiert unter [Apache 2.0](./LICENSE)
 
 [debug]: https://github.com/visionmedia/debug
