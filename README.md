@@ -1,16 +1,29 @@
-# synyx-remote
+# cosy
 
-spiel, spaß und spannung
+![](./docs/cosy.png)
 
-![](./docs/screen.gif)
+Cosy ist als Gimmick für unser gemeinsames monatliches synyx Frühstück entstanden. In Zeiten der remote Arbeit
+wollten wir im Mai 2020 das Gefühl schärfen "wieder vor Ort zu sein". Den Kollegen in __unserem__ Büro
+auf dem Flur begegnen, sich in der Kaffee Ecke tummeln und sich unterhalten, oder eine Runde am Arcade zocken.
+
+> Disclaimer:  
+> Das Projekt wird aktuell nicht aktiv gepflegt. Cosy ist aus der Lust am Programmieren und am
+> Lernen entstanden. Es wurden keine fertigen Spiele Engines verwendet und generell viel experimentiert.
+> Für eine erste Demo hat es gereicht :-) 
 
 ## Run
 
 if you just want to start the app:
 
 ```bash
-node src/server/index.js
+npm run dev
 ```
+
+Rufe dann die URL die dir gesagt wird im Browser auf (müsste `http://localhost:3000` sein).
+Einloggen kannst du dich mit einem beliebigen Benutzernamen.
+
+Um Jitsi als Videochat benutzen zu können musst du in der [server/routes/root.js](./src/server/routes/root.js) Datei
+die URL zu deinem Jitsi Server eintragen. 
 
 ### Logging
 
@@ -29,7 +42,6 @@ Cosy loggt mit `console.log` auf _stdout_ und verwendet auch [debug] mit namespa
 Was du brauchst:
 
 - NodeJS 12
-- synyx Internet / aktiver synyx VPN
 
 Wie du startest:
 
@@ -38,12 +50,7 @@ Wie du startest:
 
 Rufe dann die URL die dir gesagt wird im Browser auf (müsste `http://localhost:3000` sein).
 
-Einloggen kannst du dich mit deinen LDAP Credentials.
-
-Um den Multiplayer lokal ausprobieren zu können kannst du dich im
-`dev` Modus auch mit loken Benutzern einloggen. Das Passwort ist bei diesen Benutzern egal. Es
-muss jedoch mindestens ein Zeichen sein. Die lokalen Benutzer kannst du in der [local-users.json](./local-users.json)
-Datei pflegen.
+Einloggen kannst du dich mit einem beliebigen Benutzernamen.
 
 ### VSCode Debug
 
