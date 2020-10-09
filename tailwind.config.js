@@ -3,6 +3,9 @@ module.exports = {
 		removeDeprecatedGapUtilities: true,
 		purgeLayersByDefault: true,
 	},
+	purge: {
+		content: ["./src/server/templates/**/*.hbs", "./src/browser/**/*.js"],
+	},
 	theme: {
 		extend: {
 			colors: {

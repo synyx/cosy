@@ -3,12 +3,6 @@ const isProduction = process.env.NODE_ENV === "production";
 module.exports = {
 	plugins: [
 		require("tailwindcss"),
-		// remove unused css classes
-		isProduction &&
-			require("@fullhuman/postcss-purgecss")({
-				content: ["./src/server/templates/**/*.hbs", "./src/browser/**/*.js"],
-				defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
-			}),
 		// minify css
 		isProduction &&
 			require("cssnano")({
