@@ -1,8 +1,8 @@
 require("dotenv").config();
 
-const resolve = require("@rollup/plugin-node-resolve");
-const commonjs = require("@rollup/plugin-commonjs");
-const replace = require("@rollup/plugin-replace");
+import nodeResolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import replace from "@rollup/plugin-replace";
 
 // NODE_ENV is set in the `<root>/.env` file intialized by `dotenv` above
 // a configured environment variable will override the default one
@@ -24,7 +24,7 @@ module.exports = {
 		replace({
 			"process.env.NODE_ENV": JSON.stringify(NODE_ENV),
 		}),
-		resolve(),
+		nodeResolve(),
 		commonjs(),
 	],
 };
