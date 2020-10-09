@@ -26,7 +26,9 @@ app.use(compress());
 // csrf tokens for html forms
 app.use(new CSRF());
 // common security headers
-app.use(helmet());
+app.use(helmet({
+	contentSecurityPolicy: false,
+}));
 
 // install view resolver
 // Must be used before any router is used
