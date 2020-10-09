@@ -37,7 +37,7 @@ export function startChat({ roomName }) {
 		jitsiCamStatus.innerText = muted ? "AUS" : "AN";
 	});
 
-	closeChat = function() {
+	closeChat = function () {
 		jitsiApi.dispose();
 
 		root.style.backgroundColor = "rgba(0,0,0,0)";
@@ -56,7 +56,7 @@ export function startChat({ roomName }) {
 				}
 			}
 		});
-	}
+	};
 
 	jitsiApi.addEventListener("readyToClose", () => {
 		closeChat();
@@ -121,14 +121,14 @@ function isMobile() {
 	let OS;
 
 	if (userAgent.match(/Android/i)) {
-		OS = 'android';
+		OS = "android";
 	} else if (userAgent.match(/iP(ad|hone|od)/i)) {
-		OS = 'ios';
+		OS = "ios";
 	} else if (userAgent.match(/Mac(intosh| OS X)/i)) {
-		OS = 'macos';
+		OS = "macos";
 	} else if (userAgent.match(/Windows/i)) {
-		OS = 'windows';
+		OS = "windows";
 	}
 
-	return OS === 'android' || OS === 'ios';
+	return OS === "android" || OS === "ios";
 }

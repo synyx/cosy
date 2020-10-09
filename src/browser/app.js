@@ -145,7 +145,9 @@ if (window.innerWidth < 1024) {
 	// on mobile, make sure our player avatar is easy to spot
 	playerAvatar.setAttributeNS(null, "r", "40");
 	document.getElementById("player-hint").setAttributeNS(null, "r", "40");
-	document.querySelector("#player-hint animate[attributeName=r]").setAttributeNS(null, "to", "88");
+	document
+		.querySelector("#player-hint animate[attributeName=r]")
+		.setAttributeNS(null, "to", "88");
 } else {
 	// on desktop, turn on office desks (turned off on mobile because they cost a lost of performance)
 	document.querySelector("#show-desks-office").click();
@@ -798,32 +800,48 @@ function pointCommandsToSVGPoints(pointCommands) {
 		.join("");
 }
 
-function uniqueID(){
+function uniqueID() {
 	const random = () => Math.random().toString(16).slice(-4);
-	return random() + random() +
-		'-' + random() +
-		'-' + random() +
-		'-' + random() +
-		'-' + random() + random() + random();
+	return (
+		random() +
+		random() +
+		"-" +
+		random() +
+		"-" +
+		random() +
+		"-" +
+		random() +
+		"-" +
+		random() +
+		random() +
+		random()
+	);
 }
 
 function makePlayerAvatarDraggable() {
 	// touchmove events are broken in chrome since 72
 	// https://stackoverflow.com/a/56786312
-	document.body.addEventListener( "touchstart", () => {} );
+	document.body.addEventListener("touchstart", () => {});
 
 	var deltaX, deltaY;
-	var dragHandler = d3.drag()
+	var dragHandler = d3
+		.drag()
 		.on("start", function () {
 			var current = d3.select(this);
 			deltaX = current.attr("cx") - d3.event.x;
 			deltaY = current.attr("cy") - d3.event.y;
 		})
 		.on("drag", function () {
-			moveAndBroadcast({nextX: d3.event.x + deltaX, nextY: d3.event.y + deltaY});
+			moveAndBroadcast({
+				nextX: d3.event.x + deltaX,
+				nextY: d3.event.y + deltaY,
+			});
 		})
 		.on("end", function () {
-			moveAndBroadcast({nextX: d3.event.x + deltaX, nextY: d3.event.y + deltaY});
+			moveAndBroadcast({
+				nextX: d3.event.x + deltaX,
+				nextY: d3.event.y + deltaY,
+			});
 		});
 
 	dragHandler(d3.selectAll("#player-avatar"));

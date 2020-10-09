@@ -11,7 +11,7 @@ const removeUserFromChat = (currentParticipants, room, broadcast) => {
 		);
 		chatRooms.delete(room.roomName);
 		chatParticipants.delete(room.roomName);
-		broadcast({type: "chat-closed", content: room});
+		broadcast({ type: "chat-closed", content: room });
 	} else {
 		chatParticipants.set(room.roomName, nextParticipants);
 		broadcast({
@@ -24,7 +24,10 @@ const removeUserFromChat = (currentParticipants, room, broadcast) => {
 	}
 };
 
-module.exports.handleUserRemoved = function handleUserRemoved(username, broadcast) {
+module.exports.handleUserRemoved = function handleUserRemoved(
+	username,
+	broadcast,
+) {
 	for (let room of chatRooms.values()) {
 		const currentParticipants = chatParticipants.get(room.roomName);
 		for (let participant of currentParticipants) {
@@ -37,7 +40,7 @@ module.exports.handleUserRemoved = function handleUserRemoved(username, broadcas
 			}
 		}
 	}
-}
+};
 
 module.exports.conference = function conference({ send, broadcast }) {
 	return function (type, data) {
@@ -93,7 +96,9 @@ module.exports.conference = function conference({ send, broadcast }) {
 				const participants = chatParticipants.get(room.roomName);
 
 				if (!participants) {
-					console.log(`chat-user-joined :: warning: room=${room.roomName} does not exist!`);
+					console.log(
+						`chat-user-joined :: warning: room=${room.roomName} does not exist!`,
+					);
 					break;
 				}
 
@@ -119,7 +124,9 @@ module.exports.conference = function conference({ send, broadcast }) {
 				const currentParticipants = chatParticipants.get(room.roomName);
 
 				if (!currentParticipants) {
-					console.log(`chat-user-left :: warning: room=${room.roomName} does not exist!`);
+					console.log(
+						`chat-user-left :: warning: room=${room.roomName} does not exist!`,
+					);
 					break;
 				}
 

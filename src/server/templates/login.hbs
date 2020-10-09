@@ -21,11 +21,14 @@
 				<div class="flex items-center justify-center">
 					<div class="flex flex-col">
 						<div class="flex-1 mb-4">
-							<img class="w-full" src="/logo_cosy.svg" width="640px" role="presentation" />
+							<img
+								class="w-full"
+								src="/logo_cosy.svg"
+								width="640px"
+								role="presentation"
+							/>
 						</div>
-						<p class="mb-4">
-							Your colleagues. Your office. Your home.
-						</p>
+						<p class="mb-4">Your colleagues. Your office. Your home.</p>
 						<form action="/login" method="POST" class="w-full max-w-xs">
 							<input type="hidden" name="_csrf" value="{{csrf}}" />
 							{{#if error}} {{#if username}}
@@ -66,7 +69,11 @@
 					</div>
 				</div>
 				<div class="flex items-center justify-center">
-					<img class="shadow-xl rounded max-w-xl w-full" src="/mockup.png" alt="Das virtuelle synyx Büro in dem sich deine Kollegen tummeln." />
+					<img
+						class="shadow-xl rounded max-w-xl w-full"
+						src="/mockup.png"
+						alt="Das virtuelle synyx Büro in dem sich deine Kollegen tummeln."
+					/>
 				</div>
 			</div>
 			<h2 class="sr-only">Benefits</h2>
@@ -127,14 +134,14 @@
 			<div class="mb-8">
 				<p class="mb-2 text-xs">
 					This is a beta version of COSY, a virtual office tool by synyx in the
-					process of being tested before its official release. This being so, COSY
-					by synyx does not give any warranties, whether express or implied, as to
-					the suitability or usability of the website, its software or any of its
-					content.
+					process of being tested before its official release. This being so,
+					COSY by synyx does not give any warranties, whether express or
+					implied, as to the suitability or usability of the website, its
+					software or any of its content.
 				</p>
 				<p class="text-xs">
-					Should you encounter any bugs, glitches, lack of functionality or other
-					problems on the website, please let us know
+					Should you encounter any bugs, glitches, lack of functionality or
+					other problems on the website, please let us know
 					<a
 						href="mailto:cosy@synyx.de?subject=Cosy%20Feedback"
 						class="underline text-gray-800 hover:text-black"
@@ -146,13 +153,23 @@
 			<nav class="flex items-center mb-8">
 				<ul class="flex mx-auto space-x-4">
 					<li class="">
-						<a href="https://synyx.de" class="underline font-light text-sm">synyx</a>
+						<a href="https://synyx.de" class="underline font-light text-sm"
+							>synyx</a
+						>
 					</li>
 					<li class="">
-						<a href="https://synyx.de/impressum" class="underline font-light text-sm">Impressum</a>
+						<a
+							href="https://synyx.de/impressum"
+							class="underline font-light text-sm"
+							>Impressum</a
+						>
 					</li>
 					<li class="">
-						<a href="https://synyx.de/datenschutz" class="underline font-light text-sm">Datenschutz</a>
+						<a
+							href="https://synyx.de/datenschutz"
+							class="underline font-light text-sm"
+							>Datenschutz</a
+						>
 					</li>
 				</ul>
 			</nav>

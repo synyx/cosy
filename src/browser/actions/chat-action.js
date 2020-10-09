@@ -118,7 +118,9 @@ export function createChatActions({ send, player, officeSvg, playerAvatar }) {
 					parent.append(circle);
 
 					if (playerInChatArea(point) && userName !== player.name) {
-						const result = confirm(`${userName} möchte ein Gespräch mit dir starten, einverstanden?`);
+						const result = confirm(
+							`${userName} möchte ein Gespräch mit dir starten, einverstanden?`,
+						);
 						if (result) {
 							joinChat(roomName);
 						}
